@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-/* Conecta las variables inyectadas por Next.js font loader a las utilidades de Tailwind */
 @theme inline {
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
+
+  /* Brand tokens directos */
   --color-brand-black: #0A0A0A;
   --color-brand-white: #FFFFFF;
   --color-brand-red: #E11D2E;
@@ -13,6 +14,23 @@
   --color-gray-200: #E5E5E5;
   --color-gray-600: #666666;
   --color-gray-900: #1A1A1A;
+
+  /* Variables semánticas (shadcn-compatible) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
 @layer base {
@@ -20,6 +38,7 @@
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
 
+    /* Brand tokens */
     --brand-black: #0A0A0A;
     --brand-white: #FFFFFF;
     --brand-red: #E11D2E;
@@ -28,6 +47,28 @@
     --gray-200: #E5E5E5;
     --gray-600: #666666;
     --gray-900: #1A1A1A;
+
+    /* Variables semánticas — todos mapeados a la paleta GuateLive */
+    --background: #FFFFFF;
+    --foreground: #0A0A0A;
+    --card: #FFFFFF;
+    --card-foreground: #0A0A0A;
+    --primary: #E11D2E;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F5F5F5;
+    --secondary-foreground: #0A0A0A;
+    --muted: #F5F5F5;
+    --muted-foreground: #666666;
+    --accent: #E11D2E;
+    --accent-foreground: #FFFFFF;
+    --border: #E5E5E5;
+    --input: #E5E5E5;
+    --ring: #E11D2E;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   body {
@@ -49,6 +90,11 @@
   h3 {
     @apply text-2xl md:text-3xl;
   }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
 @layer components {
