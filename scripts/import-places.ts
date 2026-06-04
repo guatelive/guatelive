@@ -84,7 +84,7 @@ async function importPlaces() {
                     detailsUrl.searchParams.append('key', GOOGLE_PLACES_API_KEY);
                     detailsUrl.searchParams.append(
                         'fields',
-                        'name,formatted_address,geometry,rating,user_ratings_total,opening_hours,formatted_phone_number,website,types'
+                        'name,formatted_address,geometry,rating,user_ratings_total,opening_hours,photos,formatted_phone_number,website,types'
                     );
 
                     const detailsResponse = await fetch(detailsUrl.toString());
@@ -108,6 +108,7 @@ async function importPlaces() {
                             slug: slug,
                             name: place.name,
                             address: place.formatted_address,
+                            photo_reference: place.photos?.[0]?.photo_reference || null,
                             zone: zone,
                             city: 'Guatemala',
                             latitude: place.geometry?.location?.lat || null,
