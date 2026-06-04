@@ -1,34 +1,46 @@
-import Link from 'next/link';
+import Link from "next/link";
+import { Search } from "lucide-react";
+
+const nav = [
+  { href: "/buscar", label: "Lugares" },
+  { href: "/eventos", label: "Eventos" },
+  { href: "/promos", label: "Promos" },
+];
 
 export function Header() {
-    return (
-        <header className="border-b border-[#E5E5E5] sticky top-0 bg-white z-50">
-            <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-full bg-[#0A0A0A] flex items-center justify-center">
-                        <span className="text-white font-serif font-bold">G</span>
-                    </div>
-                    <span className="font-serif font-bold text-xl hidden sm:inline">
-                        GuateLive
-                    </span>
-                </Link>
+  return (
+    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="font-serif text-2xl font-semibold tracking-tight text-primary">
+          GuateLive
+        </Link>
 
-                {/* Nav */}
-                <nav className="flex items-center gap-6">
-                    <Link href="/promos" className="text-sm hover:text-[#E11D2E] transition">
-                        Promociones
-                    </Link>
-                    <input
-                        type="text"
-                        placeholder="Buscar..."
-                        className="hidden md:block px-3 py-2 border border-[#E5E5E5] rounded-lg text-sm focus:outline-none focus:border-[#E11D2E]"
-                    />
-                    <button className="btn-primary px-4 py-2 text-sm rounded">
-                        Newsletter
-                    </button>
-                </nav>
-            </div>
-        </header>
-    );
+        <nav className="hidden items-center gap-8 md:flex">
+          {nav.map((n) => (
+            <Link
+              key={n.href}
+              href={n.href}
+              className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
+            >
+              {n.label}
+            </Link>
+          ))}
+          <Link
+            href="/login"
+            className="rounded-full border border-border px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+          >
+            Iniciar sesión
+          </Link>
+        </nav>
+
+        <Link
+          href="/buscar"
+          aria-label="Buscar"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground md:hidden"
+        >
+          <Search className="h-4 w-4" />
+        </Link>
+      </div>
+    </header>
+  );
 }
