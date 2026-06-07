@@ -1,5 +1,7 @@
 import { PlaceCard } from '@/components/cards/place-card';
 import { createClient } from '@/lib/supabase/server';
+import Link from 'next/link';
+
 
 type Params = Promise<{ zone: string }>;
 
@@ -61,7 +63,13 @@ export default async function ZonaRestaurantesPage(props: { params: Params }) {
             {places && places.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {places.map(place => (
-                        <PlaceCard key={place.id} place={place} />
+                        <Link
+                            key={place.id}
+                            href={`/lugar/${place.slug}`}
+                            className="block hover:opacity-90 transition-opacity"
+                        >
+                            <PlaceCard place={place} />
+                        </Link>
                     ))}
                 </div>
             ) : (
