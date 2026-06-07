@@ -17,6 +17,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://guatelive.com'),
   title: 'GuateLive',
   description: 'Descubrí los mejores planes en Guatemala',
 };
