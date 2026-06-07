@@ -7,6 +7,7 @@ import { PromoCard } from "@/components/cards/promo-card";
 import { FeaturedShowcase } from "@/components/home/featured-showcase";
 import { categories, events, places as mockPlaces, promos } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/server";
+import { SearchHero } from "@/components/home/search-hero";
 
 export const metadata = {
   title: "GuateLive — Cafés, restaurantes y eventos en Guate",
@@ -35,30 +36,8 @@ export default async function HomePage() {
   return (
     <SiteLayout>
       {/* Hero */}
-      <section className="px-4 pb-10 pt-8 sm:px-6 md:pt-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 className="font-serif text-4xl leading-[1.05] text-foreground md:text-6xl">
-            Todo lo que pasa en Guate,{" "}
-            <span className="italic text-primary">en un solo lugar.</span>
-          </h1>
-          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground md:text-lg">
-            Cafés escondidos, eventos del fin de semana y las promos bancarias que sí valen la pena.
-          </p>
 
-          <Link
-            href="/buscar"
-            className="mx-auto mt-8 flex max-w-xl items-center gap-3 rounded-full border border-border bg-card px-5 py-4 text-left shadow-sm transition-shadow hover:shadow-md"
-          >
-            <Search className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              Busca cafés, restaurantes, eventos…
-            </span>
-            <span className="ml-auto hidden rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground md:inline">
-              Buscar
-            </span>
-          </Link>
-        </div>
-      </section>
+      <SearchHero />
 
       {/* Categorías */}
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">

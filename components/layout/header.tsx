@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 
 const nav = [
-  { href: "/buscar", label: "Lugares" },
+  { href: "/buscar", label: "Lugares" },    // ← "Lugares" ya es el link a buscar
   { href: "/eventos", label: "Eventos" },
   { href: "/promos", label: "Promos" },
 ];
@@ -33,6 +33,7 @@ export function Header() {
           </Link>
         </nav>
 
+        {/* Solo mobile: icono de búsqueda */}
         <Link
           href="/buscar"
           aria-label="Buscar"
