@@ -1,4 +1,3 @@
-import { createClient as createServerClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { getPlacePhotoUrl } from '@/lib/google-places';
@@ -39,7 +38,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Params }) {
     const params = await props.params;
-    const supabase = await createServerClient();
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const { data: place } = await supabase
         .from('places')
         .select('*')
@@ -63,7 +65,10 @@ export async function generateMetadata(props: { params: Params }) {
 
 export default async function LugarPage(props: { params: Params }) {
     const params = await props.params;
-    const supabase = await createServerClient();
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const { data: place } = await supabase
         .from('places')
         .select('*')
