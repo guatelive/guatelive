@@ -1,14 +1,14 @@
-import { createClient, createBuildTimeClient } from '@/lib/supabase/server';
+import { createClient as createServerClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { getPlacePhotoUrl } from '@/lib/google-places';
 import Link from 'next/link';
 import { MapPin, Phone, Globe, Clock } from 'lucide-react';
 
-export const revalidate = 3600; // ISR
+export const revalidate = 3600;
 
 type Params = Promise<{ slug: string }>;
 
-// Agregar al inicio del archivo
 function zoneToSlug(zone: string): string {
     return zone
         .toLowerCase()
@@ -21,7 +21,12 @@ function zoneToSlug(zone: string): string {
 }
 
 export async function generateStaticParams() {
-    const supabase = createBuildTimeClient();
+    // Usar createClient directo de Supabase, no custom
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     const { data: places } = await supabase
         .from('places')
         .select('slug')
@@ -34,7 +39,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Params }) {
     const params = await props.params;
-    const supabase = await createClient();
+    const supabase = await createServerClient();
     const { data: place } = await supabase
         .from('places')
         .select('*')
@@ -58,7 +63,7 @@ export async function generateMetadata(props: { params: Params }) {
 
 export default async function LugarPage(props: { params: Params }) {
     const params = await props.params;
-    const supabase = await createClient();
+    const supabase = await createServerClient();
     const { data: place } = await supabase
         .from('places')
         .select('*')
