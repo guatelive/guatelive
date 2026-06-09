@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { Search, UtensilsCrossed, Coffee, Wine, CalendarDays, Landmark, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/layout/site-layout";
-import { PlaceCard } from "@/components/cards/place-card";
-import { EventCard } from "@/components/cards/event-card";
-import { PromoCard } from "@/components/cards/promo-card";
-import { FeaturedShowcase } from "@/components/home/featured-showcase";
-import { categories, events, places as mockPlaces, promos } from "@/lib/mock-data";
+// import { Search, UtensilsCrossed, Coffee, Wine, CalendarDays, Landmark, Sparkles } from "lucide-react";
+// import { PlaceCard } from "@/components/cards/place-card";
+// import { EventCard } from "@/components/cards/event-card";
+// import { PromoCard } from "@/components/cards/promo-card";
+// import { FeaturedShowcase } from "@/components/home/featured-showcase";
+// import { categories, events, places as mockPlaces, promos } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/server";
 import { SearchHero } from "@/components/home/search-hero";
+import { getPlacePhotoUrl } from "@/lib/google-places";
 
 export const metadata = {
   title: "GuateLive — Cafés, restaurantes y eventos en Guate",
@@ -21,35 +23,36 @@ export const metadata = {
   },
 };
 
-const ICONS = { UtensilsCrossed, Coffee, Wine, CalendarDays, Landmark, Sparkles } as const;
+// const ICONS = { UtensilsCrossed, Coffee, Wine, CalendarDays, Landmark, Sparkles } as const;
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const { data: dbPlaces, error: dbError } = await supabase
-    .from("places")
-    .select("id, name, slug, zone, rating, primary_category")
-    .eq("is_active", true)
-    .limit(6);
 
-  // Fetch última edición publicada
-  const { data: latestEdition } = await supabase
-    .from('editions')
-    .select('number, slug, title, subtitle')
-    .eq('status', 'published')
-    .order('published_at', { ascending: false })
-    .limit(1)
-    .single();
+  const [{ data: recentPlaces }, { data: latestEdition }] = await Promise.all([
+    supabase
+      .from("places")
+      .select("id, name, slug, zone, rating, primary_category, photo_reference")
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+      .limit(6),
+    supabase
+      .from("editions")
+      .select("number, slug, title, subtitle")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(1)
+      .single(),
+  ]);
 
-  const dbConnected = !dbError;
-  const usingRealData = dbConnected && dbPlaces && dbPlaces.length > 0;
   return (
     <SiteLayout>
-      {/* Hero */}
-
       <SearchHero />
 
-      {/* Categorías */}
-      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+      {/* TODO: Uncomment when featured places curation is ready */}
+      {/* <FeaturedShowcase /> */}
+
+      {/* TODO: Uncomment when real categories/zones data is available */}
+      {/* <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
         <div className="grid grid-cols-3 gap-3 md:grid-cols-6 md:gap-4">
           {categories.map((c) => {
             const Icon = ICONS[c.icon as keyof typeof ICONS];
@@ -67,13 +70,10 @@ export default async function HomePage() {
             );
           })}
         </div>
-      </section>
+      </section> */}
 
-      {/* Destacados */}
-      <FeaturedShowcase />
-
-      {/* Esta semana */}
-      <Section title="Esta semana en Guate" link="/eventos" linkLabel="Ver todos">
+      {/* TODO: Uncomment when real events data is available */}
+      {/* <Section title="Esta semana en Guate" link="/eventos" linkLabel="Ver todos">
         <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
           {events.map((e) => (
             <div key={e.slug} className="w-[78%] shrink-0 snap-start sm:w-[320px]">
@@ -81,71 +81,63 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
-      </Section>
+      </Section> */}
 
-      {/* Promos */}
-      <Section title="Promos del día" link="/promos" linkLabel="Ver todas">
+      {/* TODO: Uncomment when real promos data is available */}
+      {/* <Section title="Promos del día" link="/promos" linkLabel="Ver todas">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {promos.slice(0, 4).map((p) => (
             <PromoCard key={p.id} promo={p} />
           ))}
         </div>
-      </Section>
+      </Section> */}
 
-      {/* Banner de estado de conexión — solo visible en desarrollo */}
-      <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">
+      {/* DEBUG: Remove when home is production-ready */}
+      {/* <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">
         {usingRealData ? (
           <p className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
             <span className="h-2 w-2 rounded-full bg-emerald-500" />
             Supabase conectado · {dbPlaces!.length} lugar{dbPlaces!.length !== 1 ? "es" : ""} desde la DB
           </p>
-        ) : dbConnected ? (
-          <p className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-700">
-            <span className="h-2 w-2 rounded-full bg-amber-400" />
-            Supabase conectado · tabla vacía — mostrando mock data
-          </p>
         ) : (
           <p className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
             <span className="h-2 w-2 rounded-full bg-red-500" />
-            Sin conexión a Supabase — mostrando mock data
+            Sin conexión a Supabase
           </p>
         )}
-      </div>
+      </div> */}
 
-      {/* Recién agregados — datos reales de Supabase con fallback a mock */}
-      <Section title="Recién agregados" link="/buscar" linkLabel="Ver mapa">
-        {dbPlaces && dbPlaces.length > 0 ? (
+      {/* Recién agregados — fotos reales de Google Places */}
+      {recentPlaces && recentPlaces.length > 0 && (
+        <Section title="Recién agregados" link="/buscar" linkLabel="Ver todos">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {dbPlaces.map((p) => (
+            {recentPlaces.map((p) => (
               <Link
                 key={p.id}
                 href={`/lugar/${p.slug}`}
-                className="place-card cursor-pointer"
+                className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary hover:-translate-y-0.5"
               >
-                <div className="w-full h-48 bg-secondary flex items-center justify-center">
-                  <span className="text-muted-foreground text-sm">Foto de {p.name}</span>
+                <div className="relative h-48 w-full overflow-hidden">
+                  <img
+                    src={getPlacePhotoUrl(p.photo_reference, 600)}
+                    alt={p.name}
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  />
                 </div>
                 <div className="p-4">
                   <h4 className="font-serif text-lg mb-1">{p.name}</h4>
                   <p className="text-sm text-muted-foreground mb-2">
-                    {p.zone} · {p.primary_category}
+                    {p.zone}{p.primary_category ? ` · ${p.primary_category}` : ""}
                   </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">⭐ {p.rating ?? "—"}</span>
-                    <span className="text-xs badge-editorial">Ver</span>
-                  </div>
+                  {p.rating && (
+                    <span className="text-sm">⭐ {p.rating.toFixed(1)}</span>
+                  )}
                 </div>
               </Link>
             ))}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {mockPlaces.slice(0, 6).map((p) => (
-              <PlaceCard key={p.slug} place={p} />
-            ))}
-          </div>
-        )}
-      </Section>
+        </Section>
+      )}
 
       {/* Strip editorial */}
       {latestEdition && (
