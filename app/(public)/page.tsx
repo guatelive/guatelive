@@ -31,6 +31,15 @@ export default async function HomePage() {
     .eq("is_active", true)
     .limit(6);
 
+  // Fetch última edición publicada
+  const { data: latestEdition } = await supabase
+    .from('editions')
+    .select('number, slug, title, subtitle')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .single();
+
   const dbConnected = !dbError;
   const usingRealData = dbConnected && dbPlaces && dbPlaces.length > 0;
   return (
@@ -139,20 +148,27 @@ export default async function HomePage() {
       </Section>
 
       {/* Strip editorial */}
-      <section className="mx-auto mt-16 max-w-6xl px-4 sm:px-6">
-        <div className="rounded-3xl bg-foreground px-6 py-12 text-background md:px-12 md:py-16">
-          <p className="text-xs uppercase tracking-[0.2em] opacity-60">Editorial</p>
-          <h2 className="mt-3 max-w-2xl font-serif text-3xl leading-tight md:text-4xl">
-            Cinco lugares para una primera cita sin estresar el presupuesto.
-          </h2>
-          <Link
-            href="/"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
-          >
-            Leer la guía <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
+      {latestEdition && (
+        <section className="mx-auto mt-16 max-w-6xl px-4 sm:px-6">
+          <div className="rounded-3xl bg-foreground px-6 py-12 text-background md:px-12 md:py-16">
+            <p className="text-xs uppercase tracking-[0.2em] opacity-60">
+              Edición Nº {latestEdition.number}
+            </p>
+            <h2 className="mt-3 max-w-2xl font-serif text-3xl leading-tight md:text-4xl">
+              {latestEdition.title}
+            </h2>
+            {latestEdition.subtitle && (
+              <p className="mt-3 text-sm opacity-60">{latestEdition.subtitle}</p>
+            )}
+            <Link
+              href={`/edicion/${latestEdition.slug}`}
+              className="mt-6 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
+            >
+              Leer la edición <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
+      )}
     </SiteLayout>
   );
 }
