@@ -42,4 +42,17 @@ next-env.d.ts
 
 /docs
 CLAUDE.md
-CLAUDE.md
+
+# scripts — pipeline propio y exploratorios (no borrar, solo ignorar)
+scripts/output/
+scripts/fetch-reviews.ts
+scripts/fetch-reviews-test5.ts
+scripts/fetch-details-test5.ts
+scripts/inspect-schema.ts
+scripts/inspect-place-sample.ts
+scripts/auto-tag-from-google.ts
+scripts/auto-tag-places.ts
+scripts/backfill-all-places.ts
+scripts/backfill-price-level.ts
+scripts/fetch-details-top50.ts
+scripts/expand-importer.ts
