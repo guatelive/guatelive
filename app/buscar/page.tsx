@@ -50,25 +50,25 @@ function BuscarContent() {
     }, [places, selectedZone, searchQuery]);
 
     return (
-        <div className="container mx-auto px-4 py-12">
-            <h1 className="text-4xl font-bold mb-8">Buscar</h1>
+        <div className="mx-auto px-8 py-10" style={{ maxWidth: '1150px' }}>
+            <h1 className="font-serif text-3xl font-bold text-[#0A0A0A] mb-8">Buscar</h1>
 
-            <div className="mb-8">
+            <div className="mb-6">
                 <Input
                     type="text"
                     placeholder="Busca un restaurante, categoría..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full text-lg p-3"
+                    className="w-full text-base p-3"
                 />
             </div>
 
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="flex flex-wrap gap-2 mb-6">
                 <button
                     onClick={() => setSelectedZone(null)}
-                    className={`px-4 py-2 rounded-full font-semibold transition ${selectedZone === null
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                    className={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${selectedZone === null
+                        ? 'bg-[#E11D2E] text-white'
+                        : 'bg-[#F0F0F0] text-[#0A0A0A] hover:bg-[#E5E5E5]'
                         }`}
                 >
                     Todas las zonas
@@ -78,9 +78,9 @@ function BuscarContent() {
                     <button
                         key={zone}
                         onClick={() => setSelectedZone(zone)}
-                        className={`px-4 py-2 rounded-full font-semibold transition ${selectedZone === zone
-                            ? 'bg-red-600 text-white'
-                            : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                        className={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${selectedZone === zone
+                            ? 'bg-[#E11D2E] text-white'
+                            : 'bg-[#F0F0F0] text-[#0A0A0A] hover:bg-[#E5E5E5]'
                             }`}
                     >
                         {zone}
@@ -89,7 +89,7 @@ function BuscarContent() {
             </div>
 
             <div>
-                <p className="text-gray-600 mb-6">
+                <p className="text-sm text-[#666666] mb-6">
                     {filteredPlaces.length} lugares encontrados
                 </p>
 
@@ -107,7 +107,7 @@ function BuscarContent() {
                     </div>
                 ) : (
                     <div className="text-center py-12">
-                        <p className="text-gray-500 text-lg">
+                        <p className="text-sm text-[#666666]">
                             No encontramos restaurantes que coincidan
                         </p>
                     </div>
@@ -119,7 +119,7 @@ function BuscarContent() {
 
 export default function BuscarPage() {
     return (
-        <Suspense fallback={<div className="container mx-auto px-4 py-12">Cargando...</div>}>
+        <Suspense fallback={<div className="mx-auto px-8 py-12" style={{ maxWidth: '1150px' }}>Cargando...</div>}>
             <BuscarContent />
         </Suspense>
     );
