@@ -1,220 +1,299 @@
 import { createClient } from '@supabase/supabase-js';
-import Image from 'next/image';
-import { getPlacePhotoUrl } from '@/lib/google-places';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { MapPin, Phone, Globe, Clock } from 'lucide-react';
+import { MapPin } from 'lucide-react';
+import { getPlacePhotoUrl } from '@/lib/google-places';
+import GalleryClient from './GalleryClient';
+import { TagsBadges } from './TagsBadges';
+import { HorariosAccordion } from './HorariosAccordion';
+import { ContactSidebar } from './ContactSidebar';
+import { ReviewCard } from './ReviewCard';
 
 export const revalidate = 3600;
 
 type Params = Promise<{ slug: string }>;
 
-function zoneToSlug(zone: string): string {
-    return zone
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/á/g, 'a')
-        .replace(/é/g, 'e')
-        .replace(/í/g, 'i')
-        .replace(/ó/g, 'o')
-        .replace(/ú/g, 'u');
+type Review = {
+    author: string;
+    rating: number;
+    text: string;
+    time?: number;                        // Unix timestamp de Google
+    relative_time_description?: string;   // "hace 3 meses"
+};
+
+type PlacePhoto = {
+    url: string;
+    is_primary: boolean;
+    order_index: number;
+};
+
+type HoursRecord = Record<string, string>;
+
+const DAY_NAMES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+const EN_TO_ES: Record<string, string> = {
+    monday: 'lunes', tuesday: 'martes', wednesday: 'miércoles',
+    thursday: 'jueves', friday: 'viernes', saturday: 'sábado', sunday: 'domingo',
+};
+
+function createSb() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+}
+
+function normalizeHours(raw: unknown): HoursRecord | null {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const obj = raw as Record<string, unknown>;
+
+    if (Object.keys(obj).some((k) => DAY_NAMES.includes(k))) {
+        return obj as HoursRecord;
+    }
+
+    if (Array.isArray(obj.weekday_text)) {
+        const result: HoursRecord = {};
+        (obj.weekday_text as string[]).forEach((line) => {
+            const colonIdx = line.indexOf(':');
+            if (colonIdx > 0) {
+                const rawDay = line.slice(0, colonIdx).toLowerCase().trim();
+                const day = EN_TO_ES[rawDay] ?? rawDay;
+                result[day] = line.slice(colonIdx + 1).trim();
+            }
+        });
+        return result;
+    }
+
+    return null;
+}
+
+function renderStars(rating: number): string {
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
 }
 
 export async function generateStaticParams() {
-    // Usar createClient directo de Supabase, no custom
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
-    const { data: places } = await supabase
+    const supabase = createSb();
+    const { data } = await supabase
         .from('places')
         .select('slug')
         .eq('is_published', true);
-
-    return (places ?? []).map(({ slug }) => ({
-        slug: slug,
-    }));
+    return (data ?? []).map(({ slug }: { slug: string }) => ({ slug }));
 }
 
 export async function generateMetadata(props: { params: Params }) {
-    const params = await props.params;
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const { slug } = await props.params;
+    const supabase = createSb();
     const { data: place } = await supabase
         .from('places')
-        .select('*')
-        .eq('slug', params.slug)
+        .select('name, address, description, photo_reference')
+        .eq('slug', slug)
         .single();
 
-    if (!place) {
-        return { title: 'Lugar no encontrado' };
-    }
+    if (!place) return { title: 'Lugar no encontrado' };
 
     return {
-        title: `${place.name} - GuateLive`,
-        description: place.address || `Descubre ${place.name} en GuateLive`,
+        title: `${place.name} — GuateLive`,
+        description: place.description ?? `Descubre ${place.name} en GuateLive`,
         openGraph: {
             title: place.name,
-            description: place.address,
+            description: place.description ?? place.address ?? '',
+            images: place.photo_reference
+                ? [{ url: getPlacePhotoUrl(place.photo_reference, 1200) }]
+                : [],
             type: 'website',
         },
     };
 }
 
 export default async function LugarPage(props: { params: Params }) {
-    const params = await props.params;
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const { slug } = await props.params;
+    const supabase = createSb();
+
     const { data: place } = await supabase
         .from('places')
         .select('*')
-        .eq('slug', params.slug)
+        .eq('slug', slug)
+        .eq('is_published', true)
         .single();
 
-    if (!place) {
-        return <div className="container py-12">Lugar no encontrado</div>;
-    }
+    if (!place) notFound();
 
-    const imageUrl = getPlacePhotoUrl(place.photo_reference);
-    const whatsappUrl = place.phone
-        ? `https://wa.me/502${place.phone.replace(/\s/g, '')}`
+    const { data: placePhotosRaw } = await supabase
+        .from('place_photos')
+        .select('url, is_primary, order_index')
+        .eq('place_id', place.id)
+        .order('order_index', { ascending: true })
+        .limit(10);
+
+    const placePhotos = (placePhotosRaw ?? []) as PlacePhoto[];
+
+    const galleryPhotos: PlacePhoto[] =
+        placePhotos.length > 0
+            ? placePhotos
+            : place.photo_reference
+                ? [{ url: getPlacePhotoUrl(place.photo_reference, 1200), is_primary: true, order_index: 0 }]
+                : [{ url: 'https://images.unsplash.com/photo-1555939594-58d7cb561404?w=1200&h=800&fit=crop', is_primary: true, order_index: 0 }];
+
+    const allReviews = (place.reviews_snapshot ?? []) as Review[];
+    const hours = normalizeHours(place.hours);
+    const todayName = DAY_NAMES[new Date(Date.now() - 6 * 60 * 60 * 1000).getDay()];
+
+    // Filtrar reseñas de IA (>500 chars) y vacías/muy cortas (<50 chars)
+    const reviews = allReviews.filter(
+        (r) => r.text && r.text.length >= 50 && r.text.length <= 500
+    );
+
+    // 1 reseña como quote si no hay description, el resto van a "Lo que dicen"
+    const fallbackReview = !place.description && reviews.length > 0 ? reviews[0] : null;
+    const loQueDicen = fallbackReview ? reviews.slice(1, 4) : reviews.slice(0, 3);
+
+    const whatsappNumber = place.phone
+        ? place.phone.replace(/\D/g, '').replace(/^0/, '')
         : null;
+    const whatsappUrl = whatsappNumber ? `https://wa.me/502${whatsappNumber}` : null;
+
+    const tags = (place.tags ?? []) as string[];
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            {/* Imagen principal */}
-            <div className="relative h-96 w-full mb-8 rounded-lg overflow-hidden">
-                <Image
-                    src={imageUrl}
-                    alt={place.name}
-                    fill
-                    className="object-cover"
-                    priority
-                />
-            </div>
+        <div className="min-h-screen bg-white">
+            <div className="mx-auto px-8 py-8" style={{ maxWidth: '1150px' }}>
 
-            {/* Información principal */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
-                    <h1 className="text-4xl font-bold mb-2">{place.name}</h1>
+                <Link
+                    href="/buscar"
+                    className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] mb-8 transition-colors"
+                >
+                    ← Explorar lugares
+                </Link>
 
-                    {/* Rating */}
+                {/* GALERÍA — full width, collage */}
+                <GalleryClient photos={galleryPhotos} />
+
+                {/* IDENTIDAD — full width */}
+                {place.primary_category && (
+                    <p className="text-xs uppercase tracking-widest text-[#E11D2E] font-semibold mb-1">
+                        {place.primary_category}
+                    </p>
+                )}
+
+                <h1 className="font-serif text-3xl font-bold text-[#0A0A0A] leading-tight mb-3">
+                    {place.name}
+                </h1>
+
+                <div className="flex flex-wrap items-center gap-3 mb-2">
                     {place.rating && (
-                        <div className="flex items-center gap-2 mb-4">
-                            <span className="text-yellow-500 text-xl">★</span>
-                            <span className="text-lg font-semibold">{place.rating.toFixed(1)}</span>
-                            <span className="text-gray-500">({place.rating_count} reseñas)</span>
-                        </div>
-                    )}
-
-                    {/* Categoría */}
-                    {place.category && (
-                        <p className="text-gray-600 mb-4 text-lg">{place.category}</p>
-                    )}
-
-                    {/* Descripción */}
-                    {place.description && (
-                        <p className="text-gray-700 mb-6 leading-relaxed">
-                            {place.description}
-                        </p>
-                    )}
-
-                    {/* Tags */}
-                    {place.tags && place.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-8">
-                            {place.tags.map((tag: string) => (
-                                <span
-                                    key={tag}
-                                    className="bg-gray-100 px-3 py-1 rounded-full text-sm"
-                                >
-                                    {tag}
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[#E11D2E] text-base leading-none">
+                                {renderStars(place.rating)}
+                            </span>
+                            <span className="font-semibold text-[#0A0A0A] text-sm">
+                                {place.rating.toFixed(1)}
+                            </span>
+                            {place.rating_count && (
+                                <span className="text-sm text-[#666666]">
+                                    ({place.rating_count.toLocaleString()})
                                 </span>
-                            ))}
+                            )}
                         </div>
+                    )}
+                    {place.price_range && (
+                        <span className="text-sm font-medium text-[#0A0A0A] border border-[#E5E5E5] px-2 py-0.5 rounded">
+                            {place.price_range}
+                        </span>
                     )}
                 </div>
 
-                {/* Sidebar de contacto */}
-                <div className="lg:col-span-1">
-                    <div className="bg-gray-50 rounded-lg p-6 sticky top-4">
-                        <h3 className="font-bold text-lg mb-4">Información</h3>
+                {place.zone && (
+                    <div className="flex items-center gap-1.5 text-sm text-[#666666] mb-5">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>{place.zone}</span>
+                        {place.address && <span>— {place.address}</span>}
+                    </div>
+                )}
 
-                        {/* Ubicación */}
-                        {place.address && (
-                            <div className="flex gap-3 mb-4">
-                                <MapPin className="w-5 h-5 text-red-600 flex-shrink-0 mt-1" />
-                                <div>
-                                    <p className="font-semibold text-sm">Ubicación</p>
-                                    <p className="text-sm text-gray-600">{place.address}</p>
-                                </div>
-                            </div>
-                        )}
+                {tags.length > 0 && <TagsBadges tags={tags} />}
 
-                        {/* Teléfono */}
-                        {place.phone && (
-                            <div className="flex gap-3 mb-4">
-                                <Phone className="w-5 h-5 text-red-600 flex-shrink-0 mt-1" />
-                                <div>
-                                    <p className="font-semibold text-sm">Teléfono</p>
-                                    <p className="text-sm text-gray-600">{place.phone}</p>
-                                </div>
-                            </div>
-                        )}
+                {/* Mobile: cards lado a lado debajo de tags */}
+                <div
+                    className="mobile-only mb-6"
+                    style={{ gridTemplateColumns: '1fr 1fr', gap: '12px', alignItems: 'start' }}
+                >
+                    <HorariosAccordion hours={hours} todayName={todayName} compact />
+                    <ContactSidebar
+                        address={place.address ?? null}
+                        phone={place.phone ?? null}
+                        googleMapsUrl={place.google_maps_url ?? null}
+                        whatsappUrl={whatsappUrl}
+                        website={place.website ?? null}
+                        compact
+                    />
+                </div>
 
-                        {/* Horarios */}
-                        {place.hours && (
-                            <div className="flex gap-3 mb-4">
-                                <Clock className="w-5 h-5 text-red-600 flex-shrink-0 mt-1" />
-                                <div>
-                                    <p className="font-semibold text-sm">Horarios</p>
-                                    {place.hours.weekday_text?.map((day: string, i: number) => (
-                                        <p key={i} className="text-xs text-gray-600">
-                                            {day}
+                {/* SECCIÓN DE 2 COLUMNAS: contenido + sidebar sticky */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start mt-2">
+
+                    {/* ── IZQUIERDA: descripción + reseñas ── */}
+                    <div>
+
+                        {/* Descripción o quote */}
+                        {(place.description || fallbackReview) && (
+                            <div className="mb-6">
+                                <h2 className="font-semibold text-base text-[#0A0A0A] mb-3">
+                                    Sobre el lugar
+                                </h2>
+                                {place.description ? (
+                                    <p className="text-sm text-[#333333] leading-relaxed">
+                                        {place.description}
+                                    </p>
+                                ) : fallbackReview ? (
+                                    <blockquote className="border-l-2 border-[#E11D2E] pl-4 py-1">
+                                        <p className="text-sm text-[#333333] leading-relaxed italic">
+                                            &ldquo;{fallbackReview.text}&rdquo;
                                         </p>
+                                        <footer className="mt-2 flex items-center gap-2 text-xs text-[#666666]">
+                                            <span className="font-medium">{fallbackReview.author}</span>
+                                            <span className="text-[#E11D2E]">
+                                                {'★'.repeat(Math.min(fallbackReview.rating, 5))}
+                                            </span>
+                                        </footer>
+                                    </blockquote>
+                                ) : null}
+                            </div>
+                        )}
+
+                        {/* Reseñas */}
+                        {loQueDicen.length > 0 && (
+                            <div className="pt-6 border-t border-[#E5E5E5]">
+                                <h2 className="font-semibold text-base text-[#0A0A0A] mb-4">
+                                    Reseñas
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {loQueDicen.map((review, i) => (
+                                        <ReviewCard
+                                            key={i}
+                                            author={review.author}
+                                            rating={review.rating}
+                                            text={review.text}
+                                            relativeTime={review.relative_time_description}
+                                        />
                                     ))}
                                 </div>
                             </div>
                         )}
+                    </div>
 
-                        {/* Website */}
-                        {place.website && (
-                            <div className="flex gap-3 mb-6">
-                                <Globe className="w-5 h-5 text-red-600 flex-shrink-0 mt-1" />
-                                <div>
-                                    <p className="font-semibold text-sm">Sitio web</p>
-                                    <Link
-                                        href={place.website}
-                                        target="_blank"
-                                        className="text-sm text-blue-600 hover:underline"
-                                    >
-                                        Visitar →
-                                    </Link>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* CTAs */}
-                        <div className="space-y-2">
-                            {whatsappUrl && (
-                                <Link
-                                    href={whatsappUrl}
-                                    target="_blank"
-                                    className="block w-full bg-green-500 text-white py-2 rounded text-center font-semibold hover:bg-green-600"
-                                >
-                                    WhatsApp
-                                </Link>
-                            )}
-                            <Link
-                                href={`/zona/${zoneToSlug(place.zone)}/restaurantes`}
-                                className="block w-full bg-gray-900 text-white py-2 rounded text-center font-semibold hover:bg-gray-800"
-                            >
-                                Volver a {place.zone}
-                            </Link>
-                        </div>
+                    {/* ── DERECHA: horarios + contacto, sticky (solo desktop) ── */}
+                    <div className="desktop-only sticky top-6" style={{ flexDirection: 'column', gap: '12px' }}>
+                        <HorariosAccordion hours={hours} todayName={todayName} />
+                        <ContactSidebar
+                            address={place.address ?? null}
+                            phone={place.phone ?? null}
+                            googleMapsUrl={place.google_maps_url ?? null}
+                            whatsappUrl={whatsappUrl}
+                            website={place.website ?? null}
+                        />
                     </div>
                 </div>
             </div>

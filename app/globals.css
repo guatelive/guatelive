@@ -122,4 +122,21 @@
   .badge-editorial {
     @apply px-3 py-1 text-xs uppercase tracking-wider font-semibold text-[#E11D2E];
   }
+
+  /* Visibilidad responsive garantizada (bypasa problemas de Tailwind v4) */
+  .mobile-only {
+    display: grid;
+  }
+  .desktop-only {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+  .desktop-only {
+    display: flex !important;
+  }
 }
