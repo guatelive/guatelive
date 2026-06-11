@@ -1,47 +1,22 @@
-import Link from "next/link";
-import { Search } from "lucide-react";
-
-const nav = [
-  { href: "/buscar", label: "Lugares" },    // ← "Lugares" ya es el link a buscar
-  { href: "/eventos", label: "Eventos" },
-  { href: "/promos", label: "Promos" },
-];
+import Link from 'next/link';
 
 export function Header() {
-  return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="font-serif text-2xl font-semibold tracking-tight text-primary">
-          GuateLive
-        </Link>
-
-        <nav className="hidden items-center gap-8 md:flex">
-          {nav.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
-            >
-              {n.label}
-            </Link>
-          ))}
-          <Link
-            href="/login"
-            className="rounded-full border border-border px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
-          >
-            Iniciar sesión
-          </Link>
-        </nav>
-
-        {/* Solo mobile: icono de búsqueda */}
-        <Link
-          href="/buscar"
-          aria-label="Buscar"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground md:hidden"
-        >
-          <Search className="h-4 w-4" />
-        </Link>
-      </div>
-    </header>
-  );
+    return (
+        <header className="sticky top-0 z-40 border-b border-[#E5E5E5] bg-white">
+            <div className="mx-auto flex h-14 items-center justify-between px-8" style={{ maxWidth: '1150px' }}>
+                <Link
+                    href="/"
+                    className="font-serif text-xl font-bold tracking-tight text-[#0A0A0A] hover:opacity-80 transition-opacity"
+                >
+                    GuateLive
+                </Link>
+                <Link
+                    href="/"
+                    className="text-sm font-medium text-[#0A0A0A] border border-[#E5E5E5] rounded-full px-4 py-1.5 hover:bg-[#F5F5F5] transition-colors"
+                >
+                    Inicio
+                </Link>
+            </div>
+        </header>
+    );
 }
