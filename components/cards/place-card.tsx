@@ -13,6 +13,7 @@ export function PlaceCard({ place }: { place: any }) {
   return (
     <div className="rounded-lg overflow-hidden bg-white border border-border hover:shadow-lg transition-shadow cursor-pointer">
       {/* Imagen */}
+
       <div className="relative h-48 w-full bg-gray-200">
         <Image
           src={imageUrl}
