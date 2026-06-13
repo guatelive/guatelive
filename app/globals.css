@@ -140,3 +140,79 @@
     display: flex !important;
   }
 }
+
+/* ── Bubble Search ── */
+@keyframes bubbleFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes bubbleNudge {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-5px); }
+  60%  { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+.bubble-step-content {
+  animation: bubbleFadeIn 0.25s ease forwards;
+}
+
+/* badge style — same visual language as zone chips */
+.bubble-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid #E5E5E5;
+  background-color: #F0F0F0;
+  color: #0A0A0A;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+.bubble-btn:hover {
+  background-color: #E5E5E5;
+  border-color: #0A0A0A;
+}
+
+/* When input is focused → nudge each bubble with staggered delay */
+.bubble-nudge .bubble-btn { animation: bubbleNudge 0.55s ease forwards; }
+.bubble-nudge .bubble-btn:nth-child(1)  { animation-delay: 0.05s; }
+.bubble-nudge .bubble-btn:nth-child(2)  { animation-delay: 0.10s; }
+.bubble-nudge .bubble-btn:nth-child(3)  { animation-delay: 0.15s; }
+.bubble-nudge .bubble-btn:nth-child(4)  { animation-delay: 0.20s; }
+.bubble-nudge .bubble-btn:nth-child(5)  { animation-delay: 0.25s; }
+.bubble-nudge .bubble-btn:nth-child(6)  { animation-delay: 0.30s; }
+.bubble-nudge .bubble-btn:nth-child(7)  { animation-delay: 0.35s; }
+.bubble-nudge .bubble-btn:nth-child(8)  { animation-delay: 0.40s; }
+
+.bubble-back-btn {
+  display: block;
+  margin-bottom: 16px;
+  color: #666666;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+.bubble-back-btn:hover {
+  color: #0A0A0A;
+}
+.bubble-reset-btn {
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: 1.5px solid #E11D2E;
+  background: none;
+  color: #E11D2E;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.bubble-reset-btn:hover {
+  background-color: #E11D2E;
+  color: #ffffff;
+}

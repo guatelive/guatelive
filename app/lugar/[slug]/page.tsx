@@ -130,9 +130,18 @@ export default async function LugarPage(props: { params: Params }) {
 
     const placePhotos = (placePhotosRaw ?? []) as PlacePhoto[];
 
+    // Si la URL es de Google con una key vieja, reemplazarla con la key actual del env
+    const currentKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
+    const normalizePhotoUrl = (url: string) => {
+        if (url.includes('maps.googleapis.com') && currentKey) {
+            return url.replace(/&key=[^&]+/, `&key=${currentKey}`);
+        }
+        return url;
+    };
+
     const galleryPhotos: PlacePhoto[] =
         placePhotos.length > 0
-            ? placePhotos
+            ? placePhotos.map(p => ({ ...p, url: normalizePhotoUrl(p.url) }))
             : place.photo_reference
                 ? [{ url: getPlacePhotoUrl(place.photo_reference, 1200), is_primary: true, order_index: 0 }]
                 : [{ url: 'https://images.unsplash.com/photo-1555939594-58d7cb561404?w=1200&h=800&fit=crop', is_primary: true, order_index: 0 }];
