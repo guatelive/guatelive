@@ -8,8 +8,9 @@ import { SiteLayout } from "@/components/layout/site-layout";
 // import { FeaturedShowcase } from "@/components/home/featured-showcase";
 // import { categories, events, places as mockPlaces, promos } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/server";
-import { SearchHero } from "@/components/home/search-hero";
+import { BubbleSearch } from "@/components/home/bubble-search";
 import { getPlacePhotoUrl } from "@/lib/google-places";
+import { normalizeHours, getOpenStatus, guatNow } from "@/lib/hours-utils";
 
 export const metadata = {
   title: "GuateLive — Cafés, restaurantes y eventos en Guate",
@@ -31,7 +32,7 @@ export default async function HomePage() {
   const [{ data: recentPlaces }, { data: latestEdition }] = await Promise.all([
     supabase
       .from("places")
-      .select("id, name, slug, zone, rating, primary_category, photo_reference")
+      .select("id, name, slug, zone, rating, primary_category, photo_reference, hours")
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .limit(6),
@@ -46,7 +47,7 @@ export default async function HomePage() {
 
   return (
     <SiteLayout>
-      <SearchHero />
+      <BubbleSearch />
 
       {/* TODO: Uncomment when featured places curation is ready */}
       {/* <FeaturedShowcase /> */}
@@ -111,30 +112,44 @@ export default async function HomePage() {
       {recentPlaces && recentPlaces.length > 0 && (
         <Section title="Recién agregados" link="/buscar" linkLabel="Ver todos">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {recentPlaces.map((p) => (
-              <Link
-                key={p.id}
-                href={`/lugar/${p.slug}`}
-                className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary hover:-translate-y-0.5"
-              >
-                <div className="relative h-48 w-full overflow-hidden">
-                  <img
-                    src={getPlacePhotoUrl(p.photo_reference, 600)}
-                    alt={p.name}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-4">
-                  <h4 className="font-serif text-lg mb-1">{p.name}</h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {p.zone}{p.primary_category ? ` · ${p.primary_category}` : ""}
-                  </p>
-                  {p.rating && (
-                    <span className="text-sm">⭐ {p.rating.toFixed(1)}</span>
-                  )}
-                </div>
-              </Link>
-            ))}
+            {recentPlaces.map((p) => {
+              const openNow = getOpenStatus(normalizeHours(p.hours), guatNow());
+              return (
+                <Link
+                  key={p.id}
+                  href={`/lugar/${p.slug}`}
+                  className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary hover:-translate-y-0.5"
+                >
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <img
+                      src={getPlacePhotoUrl(p.photo_reference, 600)}
+                      alt={p.name}
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    />
+                    {openNow !== 'unknown' && (
+                      <span style={{
+                        position: 'absolute', top: 10, right: 10,
+                        padding: '3px 10px', borderRadius: '999px',
+                        fontSize: '11px', fontWeight: 600,
+                        backgroundColor: openNow === 'open' ? '#16a34a' : '#6b7280',
+                        color: '#ffffff',
+                      }}>
+                        {openNow === 'open' ? 'Abierto' : 'Cerrado'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-serif text-lg mb-1">{p.name}</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {p.zone}{p.primary_category ? ` · ${p.primary_category}` : ""}
+                    </p>
+                    {p.rating && (
+                      <span className="text-sm">⭐ {p.rating.toFixed(1)}</span>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </Section>
       )}

@@ -9,9 +9,16 @@ const supabase = createClient(
 export async function GET() {
     const { data: places, error } = await supabase
         .from('places')
-        .select('*')
+        .select(`
+            id, slug, name, zone, rating, rating_count,
+            primary_category, category, photo_reference,
+            tags, hours, address, price_range,
+            google_maps_url, phone, website, whatsapp,
+            description
+        `)
         .eq('is_published', true)
-        .order('rating', { ascending: false });
+        .order('rating', { ascending: false })
+        .limit(500);
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

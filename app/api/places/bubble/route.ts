@@ -1,0 +1,63 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+type PlaceRow = {
+    id: string;
+    slug: string;
+    name: string;
+    zone: string | null;
+    rating: number | null;
+    rating_count: number | null;
+    primary_category: string | null;
+    photo_reference: string | null;
+    tags: string[] | null;
+    hours: unknown;
+};
+
+export async function GET(req: NextRequest) {
+    const { searchParams } = req.nextUrl;
+    const tagsParam = searchParams.get('tags');
+    const zone = searchParams.get('zone')?.slice(0, 100) ?? null;
+    const surprise = searchParams.get('surprise') === 'true';
+
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    let query = supabase
+        .from('places')
+        .select('id, slug, name, zone, rating, rating_count, primary_category, photo_reference, tags, hours')
+        .eq('is_published', true);
+
+    if (surprise) {
+        query = query.gte('rating', 4.3);
+    } else if (tagsParam) {
+        const tags = tagsParam.split(',').filter(Boolean);
+        if (tags.length > 0) {
+            query = query.overlaps('tags', tags);
+        }
+    }
+
+    if (zone) {
+        query = query.ilike('zone', `%${zone}%`);
+    }
+
+    if (!surprise) {
+        query = query.order('rating', { ascending: false });
+    }
+
+    const { data, error } = await query.limit(surprise ? 60 : 12);
+
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    let result = (data ?? []) as PlaceRow[];
+
+    if (surprise) {
+        result = result.sort(() => Math.random() - 0.5).slice(0, 12);
+    }
+
+    return NextResponse.json(result);
+}
