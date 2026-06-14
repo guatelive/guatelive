@@ -105,3 +105,40 @@ export function isOpenWeekend(hours: HoursRecord | null): boolean {
     const sunOpen = sun && !sun.includes('cerrado') && !sun.includes('closed');
     return !!(satOpen || sunOpen);
 }
+
+// ¿Está abierto mañana en horario normal?
+export function isOpenTomorrow(hours: HoursRecord | null, today: Date): boolean {
+    if (!hours) return true;
+    const tomorrowIdx = (today.getUTCDay() + 1) % 7;
+    const dayName = DAY_NAMES[tomorrowIdx];
+    const hoursStr = hours[dayName]?.toLowerCase() ?? '';
+    if (!hoursStr) return true;
+    return !hoursStr.includes('cerrado') && !hoursStr.includes('closed');
+}
+
+// OpenStatus para una selección de "Cuándo" — usado para badge y sorting
+// 'unknown' = sin datos de horario o selección 'anytime' (sin badge)
+export function openStatusForSelection(
+    hours: HoursRecord | null,
+    selection: string,
+    now: Date
+): OpenStatus {
+    if (selection === 'anytime') return 'unknown';
+    if (!hours) return 'unknown';
+
+    switch (selection) {
+        case 'today':
+            return getOpenStatus(hours, now);
+        case 'tonight': {
+            const evening = new Date(now);
+            evening.setUTCHours(20, 0, 0, 0);
+            return getOpenStatus(hours, evening);
+        }
+        case 'tomorrow':
+            return isOpenTomorrow(hours, now) ? 'open' : 'closed';
+        case 'weekend':
+            return isOpenWeekend(hours) ? 'open' : 'closed';
+        default:
+            return 'unknown';
+    }
+}

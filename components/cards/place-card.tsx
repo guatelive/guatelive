@@ -48,7 +48,7 @@ export function PlaceCard({ place, openNow }: PlaceCardProps) {
                             borderRadius: '999px',
                             fontSize: '11px',
                             fontWeight: 600,
-                            backgroundColor: openNow === 'open' ? '#16a34a' : '#6b7280',
+                            backgroundColor: openNow === 'open' ? '#16a34a' : '#dc2626',
                             color: '#ffffff',
                             letterSpacing: '0.02em',
                         }}

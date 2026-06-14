@@ -40,7 +40,8 @@ export async function GET(req: NextRequest) {
     }
 
     if (zone) {
-        query = query.ilike('zone', `%${zone}%`);
+        // Exact match para evitar que "Zona 1" matchee "Zona 10", "Zona 11", etc.
+        query = query.eq('zone', zone);
     }
 
     if (!surprise) {
