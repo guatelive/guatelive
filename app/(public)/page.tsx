@@ -131,7 +131,7 @@ export default async function HomePage() {
                         position: 'absolute', top: 10, right: 10,
                         padding: '3px 10px', borderRadius: '999px',
                         fontSize: '11px', fontWeight: 600,
-                        backgroundColor: openNow === 'open' ? '#16a34a' : '#6b7280',
+                        backgroundColor: openNow === 'open' ? '#16a34a' : '#dc2626',
                         color: '#ffffff',
                       }}>
                         {openNow === 'open' ? 'Abierto' : 'Cerrado'}

@@ -6,10 +6,7 @@ import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
 import {
     normalizeHours,
-    getOpenStatus,
-    isOpenToday,
-    isOpenTonight,
-    isOpenWeekend,
+    openStatusForSelection,
     guatNow,
     type OpenStatus,
 } from '@/lib/hours-utils';
@@ -48,21 +45,14 @@ const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '✨ Sorprendeme', key: 'Sorprendeme', special: true },
 ];
 
-const ZONES: { label: string; value: string }[] = [
-    { label: 'Zona 10', value: 'Zona 10' },
-    { label: 'Zona 14', value: 'Zona 14' },
-    { label: 'Zona 15', value: 'Zona 15' },
-    { label: 'Cayalá', value: 'Cayalá' },
-    { label: 'Antigua', value: 'Antigua' },
-    { label: 'Zona 4', value: 'Zona 4' },
-    { label: 'En cualquier lugar', value: 'all' },
-];
+type ZoneOption = { label: string; value: string };
 
 const WHEN: { label: string; value: string }[] = [
-    { label: '🌞 Hoy', value: 'today' },
-    { label: '🌙 Esta noche', value: 'tonight' },
+    { label: '🌞 Hoy',               value: 'today' },
+    { label: '🌙 Esta noche',        value: 'tonight' },
+    { label: '☀️ Mañana',            value: 'tomorrow' },
     { label: '📅 Este fin de semana', value: 'weekend' },
-    { label: '🕐 Cuando sea', value: 'anytime' },
+    { label: '🕐 Cuando sea',        value: 'anytime' },
 ];
 
 const STEP_TITLE: Record<1 | 2 | 3, string> = {
@@ -77,6 +67,19 @@ export function BubbleSearch() {
     const [allPlaces, setAllPlaces] = useState<Place[]>([]);
     const [inputFocused, setInputFocused] = useState(false);
     const [nudgeKey, setNudgeKey] = useState(0);
+
+    // ── Zonas dinámicas desde la DB ──
+    const [zones, setZones] = useState<ZoneOption[]>([]);
+    useEffect(() => {
+        fetch('/api/zones')
+            .then(r => r.json())
+            .then((data: { zone: string; count: number }[]) => {
+                const opts: ZoneOption[] = data.map(({ zone }) => ({ label: zone, value: zone }));
+                opts.push({ label: 'En cualquier lugar', value: 'all' });
+                setZones(opts);
+            })
+            .catch(console.error);
+    }, []);
 
     useEffect(() => {
         if (searchQuery && allPlaces.length === 0) {
@@ -143,15 +146,17 @@ export function BubbleSearch() {
             return res.json();
         }
 
-        function filterByWhen(places: Place[]): Place[] {
+        function sortByWhen(places: Place[]): Place[] {
             if (selectedWhen === 'anytime') return places;
             const now = guatNow();
-            return places.filter(p => {
-                const h = normalizeHours(p.hours);
-                if (selectedWhen === 'today') return isOpenToday(h, now);
-                if (selectedWhen === 'tonight') return isOpenTonight(h, now);
-                if (selectedWhen === 'weekend') return isOpenWeekend(h);
-                return true;
+            return [...places].sort((a, b) => {
+                const aStatus = openStatusForSelection(normalizeHours(a.hours), selectedWhen, now);
+                const bStatus = openStatusForSelection(normalizeHours(b.hours), selectedWhen, now);
+                // open y unknown van primero, closed al final
+                const score = (s: OpenStatus) => s === 'open' ? 2 : s === 'unknown' ? 1 : 0;
+                const diff = score(bStatus) - score(aStatus);
+                if (diff !== 0) return diff;
+                return (b.rating ?? 0) - (a.rating ?? 0);
             });
         }
 
@@ -161,7 +166,7 @@ export function BubbleSearch() {
                 data = await fetchPlaces(false);
                 setZoneFallback(true);
             }
-            setBubbleResults(filterByWhen(data));
+            setBubbleResults(sortByWhen(data));
         } catch {
             setBubbleResults([]);
         } finally {
@@ -291,23 +296,41 @@ export function BubbleSearch() {
             {/* ── Bubble flow (solo cuando no hay búsqueda de texto) ── */}
             {showBubbleFlow && (
                 <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 24px 56px' }}>
-                    {/* Progress dots — solo en pasos 2 y 3 */}
-                    {bubbleStep > 1 && (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-                            {([1, 2, 3] as const).map(n => (
-                                <div
-                                    key={n}
-                                    style={{
-                                        height: '7px',
-                                        width: n === bubbleStep ? '28px' : '7px',
-                                        borderRadius: '4px',
-                                        backgroundColor: n <= bubbleStep ? '#0A0A0A' : '#E5E5E5',
-                                        transition: 'all 0.3s ease',
-                                    }}
-                                />
-                            ))}
+                    {/* ── Progress tracker ── */}
+                    <div style={{ marginBottom: '28px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                            {(['¿Qué?', '¿Dónde?', '¿Cuándo?'] as const).map((label, i) => {
+                                const stepNum = i + 1;
+                                const isCompleted = bubbleStep > stepNum;
+                                const isCurrent = bubbleStep === stepNum;
+                                return (
+                                    <span
+                                        key={label}
+                                        style={{
+                                            fontSize: '11px',
+                                            fontWeight: isCurrent ? 700 : 400,
+                                            color: isCompleted ? '#0A0A0A' : isCurrent ? '#E11D2E' : '#CCCCCC',
+                                            letterSpacing: '0.03em',
+                                            transition: 'color 0.3s ease',
+                                        }}
+                                    >
+                                        {label}
+                                    </span>
+                                );
+                            })}
                         </div>
-                    )}
+                        <div style={{ height: '2px', background: '#E5E5E5', borderRadius: '999px', overflow: 'hidden' }}>
+                            <div
+                                style={{
+                                    height: '100%',
+                                    width: `${(bubbleStep / 3) * 100}%`,
+                                    background: '#E11D2E',
+                                    borderRadius: '999px',
+                                    transition: 'width 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                                }}
+                            />
+                        </div>
+                    </div>
 
                     {bubbleStep > 1 && (
                         <button onClick={bubbleBack} className="bubble-back-btn">
@@ -317,7 +340,6 @@ export function BubbleSearch() {
 
                     {/* key fuerza re-animación al cambiar de paso */}
                     <div key={bubbleStep} className="bubble-step-content">
-                        {/* Título solo en pasos 2 y 3 */}
                         {bubbleStep > 1 && (
                             <h2
                                 className="font-serif"
@@ -347,7 +369,7 @@ export function BubbleSearch() {
                                 </button>
                             ))}
 
-                            {bubbleStep === 2 && ZONES.map(({ label, value }) => (
+                            {bubbleStep === 2 && zones.map(({ label, value }) => (
                                 <button key={value} onClick={() => pickZone(value)} className="bubble-btn">
                                     {label}
                                 </button>
@@ -396,18 +418,17 @@ export function BubbleSearch() {
                     {bubbleResults.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                             {bubbleResults.map(place => {
-                                const openNow: OpenStatus = getOpenStatus(
-                                    normalizeHours(place.hours),
-                                    guatNow()
-                                );
+                                const openNow: OpenStatus = when
+                                    ? openStatusForSelection(normalizeHours(place.hours), when, guatNow())
+                                    : 'unknown';
                                 return (
-                                <Link
-                                    key={place.id}
-                                    href={`/lugar/${place.slug}`}
-                                    className="block hover:opacity-90 transition-opacity"
-                                >
-                                    <PlaceCard place={place} openNow={openNow} />
-                                </Link>
+                                    <Link
+                                        key={place.id}
+                                        href={`/lugar/${place.slug}`}
+                                        className="block hover:opacity-90 transition-opacity"
+                                    >
+                                        <PlaceCard place={place} openNow={openNow} />
+                                    </Link>
                                 );
                             })}
                         </div>
