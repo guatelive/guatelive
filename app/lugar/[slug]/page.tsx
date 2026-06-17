@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
-import { getPlacePhotoUrl } from '@/lib/google-places';
 import GalleryClient from './GalleryClient';
 import { TagsBadges } from './TagsBadges';
 import { HorariosAccordion } from './HorariosAccordion';
@@ -88,11 +87,20 @@ export async function generateMetadata(props: { params: Params }) {
     const supabase = createSb();
     const { data: place } = await supabase
         .from('places')
-        .select('name, address, description, photo_reference')
+        .select('id, name, address, description')
         .eq('slug', slug)
         .single();
 
     if (!place) return { title: 'Lugar no encontrado' };
+
+    const { data: primaryPhoto } = await supabase
+        .from('place_photos')
+        .select('url, is_primary, order_index')
+        .eq('place_id', place.id)
+        .order('is_primary', { ascending: false })
+        .order('order_index', { ascending: true })
+        .limit(1)
+        .single();
 
     return {
         title: `${place.name} — GuateLive`,
@@ -100,9 +108,7 @@ export async function generateMetadata(props: { params: Params }) {
         openGraph: {
             title: place.name,
             description: place.description ?? place.address ?? '',
-            images: place.photo_reference
-                ? [{ url: getPlacePhotoUrl(place.photo_reference, 1200) }]
-                : [],
+            images: primaryPhoto?.url ? [{ url: primaryPhoto.url }] : [],
             type: 'website',
         },
     };
@@ -128,23 +134,15 @@ export default async function LugarPage(props: { params: Params }) {
         .order('order_index', { ascending: true })
         .limit(10);
 
-    const placePhotos = (placePhotosRaw ?? []) as PlacePhoto[];
-
-    // Si la URL es de Google con una key vieja, reemplazarla con la key actual del env
-    const currentKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
-    const normalizePhotoUrl = (url: string) => {
-        if (url.includes('maps.googleapis.com') && currentKey) {
-            return url.replace(/&key=[^&]+/, `&key=${currentKey}`);
-        }
-        return url;
-    };
+    const seen = new Set<string>();
+    const placePhotos = (placePhotosRaw ?? []).filter((p): p is PlacePhoto =>
+        !seen.has(p.url) && !!seen.add(p.url)
+    );
 
     const galleryPhotos: PlacePhoto[] =
         placePhotos.length > 0
-            ? placePhotos.map(p => ({ ...p, url: normalizePhotoUrl(p.url) }))
-            : place.photo_reference
-                ? [{ url: getPlacePhotoUrl(place.photo_reference, 1200), is_primary: true, order_index: 0 }]
-                : [{ url: 'https://images.unsplash.com/photo-1555939594-58d7cb561404?w=1200&h=800&fit=crop', is_primary: true, order_index: 0 }];
+            ? placePhotos
+            : [{ url: 'https://images.unsplash.com/photo-1555939594-58d7cb561404?w=1200&h=800&fit=crop', is_primary: true, order_index: 0 }];
 
     const allReviews = (place.reviews_snapshot ?? []) as Review[];
     const hours = normalizeHours(place.hours);

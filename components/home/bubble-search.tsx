@@ -19,7 +19,7 @@ type Place = {
     rating?: number | null;
     rating_count?: number | null;
     primary_category?: string | null;
-    photo_reference?: string | null;
+    primary_photo_url?: string | null;
     tags?: string[] | null;
     hours?: unknown;
 };
