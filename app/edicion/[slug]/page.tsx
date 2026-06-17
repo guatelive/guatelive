@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { SiteLayout } from '@/components/layout/site-layout';
-import { getPlacePhotoUrl } from '@/lib/google-places';
 
 function getSupabase() {
     return createClient(
@@ -76,7 +75,7 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
         .select(`
       id, mention_type, editorial_text, order_index,
       photo_url, title, badges,
-      places ( id, name, slug, zone, rating, primary_category, photo_reference, address, price_range )
+      places ( id, name, slug, zone, rating, primary_category, address, price_range, place_photos(url, is_primary, order_index) )
     `)
         .eq('edition_id', edition.id)
         .order('order_index', { ascending: true });
@@ -184,15 +183,20 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                         <div className="space-y-10">
                             {highlighted.map((ep: any) => (
                                 <div key={ep.id} className="border-b border-border pb-8 last:border-0">
-                                    {(ep.photo_url || ep.places?.photo_reference) && (
+                                    {(() => {
+                                        const photos: { url: string; is_primary: boolean; order_index: number }[] = ep.places?.place_photos ?? [];
+                                        const placeSrc = photos.find((p: { is_primary: boolean }) => p.is_primary)?.url ?? [...photos].sort((a: { order_index: number }, b: { order_index: number }) => a.order_index - b.order_index)[0]?.url ?? null;
+                                        const src = ep.photo_url || placeSrc;
+                                        return src ? (
                                         <div className="mb-4 overflow-hidden rounded-lg">
                                             <img
-                                                src={ep.photo_url || getPlacePhotoUrl(ep.places.photo_reference, 800)}
-                                                alt={ep.title || ep.places.name}
+                                                src={src}
+                                                alt={ep.title || ep.places?.name}
                                                 className="w-full h-96 object-cover"
                                             />
                                         </div>
-                                    )}
+                                        ) : null;
+                                    })()}
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
                                             <Link

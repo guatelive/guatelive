@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { zones } from "@/lib/mock-data";
+import { VisitCounter } from "@/components/home/VisitCounter";
 
 export function Footer() {
   return (
@@ -11,6 +12,9 @@ export function Footer() {
             <p className="mt-3 text-sm text-muted-foreground">
               Todo lo que pasa en Guate, en un solo lugar.
             </p>
+            <div className="mt-4">
+              <VisitCounter />
+            </div>
           </div>
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">

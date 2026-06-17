@@ -12,7 +12,7 @@ const ZONES = ['Zona 10', 'Zona 14', 'Zona 15', 'Zona 4', 'Cayalá', 'Antigua'];
 type Place = {
     id: string; slug: string; name: string; zone: string;
     address?: string; tags?: string[]; hours?: unknown;
-    rating?: number; rating_count?: number; primary_category?: string; photo_reference?: string;
+    rating?: number; rating_count?: number; primary_category?: string; primary_photo_url?: string;
 };
 
 function BuscarContent() {
