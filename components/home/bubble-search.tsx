@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
+import { VisitCounter } from '@/components/home/VisitCounter';
 import {
     normalizeHours,
     openStatusForSelection,
@@ -103,6 +104,7 @@ export function BubbleSearch() {
     }, [allPlaces, searchQuery]);
 
     // ── Bubble flow ──
+    const prefetchRef = useRef<Promise<Place[]> | null>(null);
     const [bubbleStep, setBubbleStep] = useState<1 | 2 | 3>(1);
     const [activity, setActivity] = useState<string | null>(null);
     const [isSurprise, setIsSurprise] = useState(false);
@@ -123,6 +125,17 @@ export function BubbleSearch() {
         setActivity(key);
         setIsSurprise(special);
         setBubbleStep(2);
+        if (!special) {
+            // Prefetch while user goes through steps 2 and 3 (~5–10 s)
+            const tags = TAG_MAP[key] ?? [];
+            const params = new URLSearchParams({ preload: 'true' });
+            if (tags.length > 0) params.set('tags', tags.join(','));
+            prefetchRef.current = fetch(`/api/places/bubble?${params}`)
+                .then(r => r.json() as Promise<Place[]>)
+                .catch(() => []);
+        } else {
+            prefetchRef.current = null;
+        }
     }
 
     function pickZone(value: string) {
@@ -137,7 +150,7 @@ export function BubbleSearch() {
         const tags = isSurprise ? [] : (TAG_MAP[activity ?? ''] ?? []);
         const hasZone = zone && zone !== 'all';
 
-        async function fetchPlaces(withZone: boolean): Promise<Place[]> {
+        async function fetchFresh(withZone: boolean): Promise<Place[]> {
             const params = new URLSearchParams();
             if (isSurprise) params.set('surprise', 'true');
             else params.set('tags', tags.join(','));
@@ -161,10 +174,31 @@ export function BubbleSearch() {
         }
 
         try {
-            let data = await fetchPlaces(true);
-            if (data.length === 0 && hasZone) {
-                data = await fetchPlaces(false);
-                setZoneFallback(true);
+            let data: Place[];
+            // For non-surprise: try the speculative prefetch first (likely already resolved)
+            const prefetched = !isSurprise && prefetchRef.current !== null
+                ? await prefetchRef.current
+                : null;
+
+            if (prefetched && prefetched.length > 0) {
+                if (!hasZone) {
+                    data = prefetched;
+                } else {
+                    const zoneFiltered = prefetched.filter(p => p.zone === zone);
+                    if (zoneFiltered.length === 0) {
+                        setZoneFallback(true);
+                        data = prefetched;
+                    } else {
+                        data = zoneFiltered;
+                    }
+                }
+            } else {
+                // Surprise mode or prefetch failed → regular sequential calls
+                data = await fetchFresh(true);
+                if (data.length === 0 && hasZone) {
+                    data = await fetchFresh(false);
+                    setZoneFallback(true);
+                }
             }
             setBubbleResults(sortByWhen(data));
         } catch {
@@ -188,6 +222,7 @@ export function BubbleSearch() {
         setWhen(null);
         setLoadingBubble(false);
         setZoneFallback(false);
+        prefetchRef.current = null;
     }
 
     const showBubbleFlow = !searchQuery && bubbleResults === null && !loadingBubble;
@@ -210,8 +245,11 @@ export function BubbleSearch() {
                         <em style={{ color: '#E11D2E', fontStyle: 'italic' }}>en un solo lugar.</em>
                     </h1>
                     <p style={{ fontSize: '1rem', color: '#666666', marginTop: '8px' }}>
-                        Cafés escondidos, eventos del fin de semana y las promos bancarias que sí valen la pena.
+                        Los mejores cafés y restaurantes de Guate — curados a mano, sin publicidad ni algoritmos.
                     </p>
+                    <div style={{ marginTop: '10px' }}>
+                        <VisitCounter />
+                    </div>
 
                     {/* Input */}
                     <div style={{ marginTop: '28px' }}>
@@ -387,8 +425,45 @@ export function BubbleSearch() {
 
             {/* ── Loading bubble ── */}
             {loadingBubble && (
-                <div style={{ textAlign: 'center', padding: '64px 24px', color: '#666666', fontSize: '14px' }}>
-                    Buscando lugares...
+                <div style={{ textAlign: 'center', padding: '64px 24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                        <svg
+                            className="bubble-loader-wine-glass"
+                            viewBox="0 0 24 40"
+                            width="60"
+                            height="80"
+                            fill="none"
+                            aria-hidden="true"
+                        >
+                            <defs>
+                                <clipPath id="wineBowlClip">
+                                    <path d="M5 2 C5 2 4 14 12 19 C20 14 19 2 19 2 Z" />
+                                </clipPath>
+                            </defs>
+                            <g clipPath="url(#wineBowlClip)">
+                                {/* Static wine body — fills ~65% of bowl */}
+                                <rect x="0" y="6" width="24" height="16" fill="#8B0010" />
+                                {/* Surface wave — wide path with tall crests that travel across */}
+                                <path
+                                    className="bubble-loader-wine-wave"
+                                    d="M-16 6 Q-8 2 0 6 Q8 10 16 6 Q24 2 32 6 Q40 10 48 6 L48 11 Q40 15 32 11 Q24 7 16 11 Q8 15 0 11 Q-8 7 -16 11 Z"
+                                    fill="#E11D2E"
+                                />
+                            </g>
+                            {/* Glass outline drawn on top */}
+                            <path d="M5 2 C5 2 4 14 12 19 C20 14 19 2 19 2 Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            <line x1="12" y1="19" x2="12" y2="32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            <path d="M7 32 Q7 36 12 36 Q17 36 17 32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                    <p className="font-serif" style={{ fontSize: '1.1rem', color: '#0A0A0A', marginBottom: '14px' }}>
+                        Buscando tus planes...
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '6px' }}>
+                        <span className="bubble-loader-dot" />
+                        <span className="bubble-loader-dot" />
+                        <span className="bubble-loader-dot" />
+                    </div>
                 </div>
             )}
 

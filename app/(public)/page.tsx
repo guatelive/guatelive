@@ -186,7 +186,7 @@ export default async function HomePage() {
         const translateY = [6, 0, 10];
 
         return (
-          <section className="mx-auto mt-16 max-w-6xl px-4 sm:px-6">
+          <section className="mx-auto mt-6 sm:mt-12 max-w-6xl px-4 sm:px-6">
             <div className="relative rounded-3xl bg-foreground text-background overflow-hidden">
 
               {/* Imagen de fondo en mobile */}

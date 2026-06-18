@@ -293,13 +293,14 @@ export default async function LugarPage(props: { params: Params }) {
 
                     {/* ── DERECHA: horarios + contacto, sticky (solo desktop) ── */}
                     <div className="desktop-only sticky top-6" style={{ flexDirection: 'column', gap: '12px' }}>
-                        <HorariosAccordion hours={hours} todayName={todayName} />
+                        <HorariosAccordion hours={hours} todayName={todayName} defaultOpen />
                         <ContactSidebar
                             address={place.address ?? null}
                             phone={place.phone ?? null}
                             googleMapsUrl={place.google_maps_url ?? null}
                             whatsappUrl={whatsappUrl}
                             website={place.website ?? null}
+                            defaultOpen
                         />
                     </div>
                 </div>

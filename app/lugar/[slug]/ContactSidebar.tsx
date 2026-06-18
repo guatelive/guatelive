@@ -13,8 +13,8 @@ type Props = {
     compact?: boolean; // mobile side-by-side: botones en 1 col
 };
 
-export function ContactSidebar({ address, phone, googleMapsUrl, whatsappUrl, website, compact = false }: Props) {
-    const [open, setOpen] = useState(false);
+export function ContactSidebar({ address, phone, googleMapsUrl, whatsappUrl, website, compact = false, defaultOpen = false }: Props & { defaultOpen?: boolean }) {
+    const [open, setOpen] = useState(defaultOpen);
 
     const hasContent = address || phone || googleMapsUrl || whatsappUrl;
     if (!hasContent) return null;

@@ -1,20 +1,16 @@
 import Link from "next/link";
 import { zones } from "@/lib/mock-data";
-import { VisitCounter } from "@/components/home/VisitCounter";
 
 export function Footer() {
   return (
     <footer className="mt-24 hidden border-t border-border bg-background pb-10 pt-16 md:block">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-10 md:grid-cols-4">
+        <div className="grid gap-10 md:grid-cols-2">
           <div>
             <div className="font-serif text-2xl text-primary">GuateLive</div>
             <p className="mt-3 text-sm text-muted-foreground">
               Todo lo que pasa en Guate, en un solo lugar.
             </p>
-            <div className="mt-4">
-              <VisitCounter />
-            </div>
           </div>
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -33,6 +29,7 @@ export function Footer() {
               ))}
             </ul>
           </div>
+          {/* Explorar — comentado hasta tener /promos y /eventos activos
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Explorar
@@ -42,7 +39,8 @@ export function Footer() {
               <li><Link href="/eventos" className="text-foreground/80 hover:text-primary">Eventos esta semana</Link></li>
               <li><Link href="/dashboard" className="text-foreground/80 hover:text-primary">Para negocios</Link></li>
             </ul>
-          </div>
+          </div> */}
+          {/* Legal — comentado hasta tener páginas de términos y privacidad
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Legal
@@ -52,10 +50,10 @@ export function Footer() {
               <li><a className="text-foreground/80 hover:text-primary" href="#">Privacidad</a></li>
               <li><a className="text-foreground/80 hover:text-primary" href="#">Contacto</a></li>
             </ul>
-          </div>
+          </div> */}
         </div>
         <div className="mt-10 border-t border-border pt-6 text-xs text-muted-foreground">
-          © 2025 GuateLive. Hecho en Guatemala.
+          © 2026 GuateLive. Hecho en Guatemala.
         </div>
       </div>
     </footer>
