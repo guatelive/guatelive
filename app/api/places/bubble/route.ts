@@ -21,6 +21,8 @@ export async function GET(req: NextRequest) {
     const tagsParam = searchParams.get('tags');
     const zone = searchParams.get('zone')?.slice(0, 100) ?? null;
     const surprise = searchParams.get('surprise') === 'true';
+    // preload=true: skip zone filter (client handles it) and return bigger pool
+    const preload = searchParams.get('preload') === 'true';
 
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -41,7 +43,7 @@ export async function GET(req: NextRequest) {
         }
     }
 
-    if (zone) {
+    if (zone && !preload) {
         // Exact match para evitar que "Zona 1" matchee "Zona 10", "Zona 11", etc.
         query = query.eq('zone', zone);
     }
@@ -50,7 +52,8 @@ export async function GET(req: NextRequest) {
         query = query.order('rating', { ascending: false });
     }
 
-    const { data, error } = await query.limit(surprise ? 60 : 12);
+    const limit = surprise ? 60 : preload ? 60 : 12;
+    const { data, error } = await query.limit(limit);
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

@@ -15,8 +15,8 @@ const DAY_ABBR: Record<string, string> = {
     jueves: 'Jue', viernes: 'Vie', sábado: 'Sáb', domingo: 'Dom',
 };
 
-export function HorariosAccordion({ hours, todayName, compact = false }: { hours: HoursRecord | null; todayName: string; compact?: boolean }) {
-    const [open, setOpen] = useState(false);
+export function HorariosAccordion({ hours, todayName, compact = false, defaultOpen = false }: { hours: HoursRecord | null; todayName: string; compact?: boolean; defaultOpen?: boolean }) {
+    const [open, setOpen] = useState(defaultOpen);
 
     if (!hours || Object.keys(hours).length === 0) return null;
 
