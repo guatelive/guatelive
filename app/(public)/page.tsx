@@ -4,7 +4,9 @@ import { SiteLayout } from "@/components/layout/site-layout";
 import { createClient } from "@/lib/supabase/server";
 import { BubbleSearch } from "@/components/home/bubble-search";
 import { EditionPeekTab } from "@/components/home/EditionPeekTab";
+import { EventsCarousel } from "@/components/home/EventsCarousel";
 import { normalizeHours, getOpenStatus, guatNow } from "@/lib/hours-utils";
+import type { DbEvent } from "@/lib/types";
 
 export const metadata = {
   title: "GuateLive — Cafés, restaurantes y eventos en Guate",
@@ -23,7 +25,7 @@ export const metadata = {
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: recentPlaces }, { data: latestEdition }] = await Promise.all([
+  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEvents }] = await Promise.all([
     supabase
       .from("places")
       .select("id, name, slug, zone, rating, primary_category, hours, place_photos(url, is_primary, order_index)")
@@ -38,11 +40,19 @@ export default async function HomePage() {
       .order("published_at", { ascending: false })
       .limit(1)
       .single(),
+    supabase
+      .from("events")
+      .select("id, title, slug, description, category, zone, venue_name, date_start, price, image_url, contact_link, sponsored")
+      .eq("status", "published")
+      .gte("date_start", new Date().toISOString())
+      .order("date_start", { ascending: true })
+      .limit(12),
   ]);
 
   return (
     <SiteLayout>
       <BubbleSearch />
+      <EventsCarousel events={(upcomingEvents ?? []) as DbEvent[]} />
       {/* Comentado intencionalmente: con "recién agregados" eliminado,
          la sección editorial quedó arriba y es fácil de encontrar sin este tab.
          Reactivar cuando el home crezca y la editorial vuelva a quedar
@@ -186,7 +196,13 @@ export default async function HomePage() {
         const translateY = [6, 0, 10];
 
         return (
-          <section className="mx-auto mt-16 max-w-6xl px-4 sm:px-6">
+          <section className="mx-auto mt-8 sm:mt-16 max-w-6xl px-4 sm:px-6">
+            {/* Section label */}
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 600, color: '#E11D2E', letterSpacing: '0.25em', textTransform: 'uppercase' }}>
+              EDITORIAL
+            </p>
+            <div style={{ width: 30, height: 2, backgroundColor: '#E11D2E', marginTop: 6, marginBottom: 20 }} />
+
             <div className="relative rounded-3xl bg-foreground text-background overflow-hidden">
 
               {/* Imagen de fondo en mobile */}
