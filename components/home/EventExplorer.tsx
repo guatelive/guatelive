@@ -2,48 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { X, ChevronUp, ChevronDown, ExternalLink } from 'lucide-react';
-import {
-  Mountain, Music, Palette, Trophy, UtensilsCrossed,
-  Moon, Wrench, Users, Star, type LucideIcon,
-} from 'lucide-react';
+import Link from 'next/link';
+import { X, ChevronUp, ChevronDown, ExternalLink, Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
-
-const CATEGORY_BADGE: Record<string, { bg: string; fg: string }> = {
-  'Aventura y Naturaleza': { bg: '#EFF4E8', fg: '#4A6B22' },
-  'Cultura':               { bg: '#F3ECE2', fg: '#6B4A2A' },
-  'Música':                { bg: '#E6F1FB', fg: '#185FA5' },
-  'Deportes':              { bg: '#FBEBDD', fg: '#8A4B16' },
-  'Gastronomía':           { bg: '#FBEFD8', fg: '#8A5A00' },
-  'Vida Nocturna':         { bg: '#F3ECE2', fg: '#6B4A2A' },
-  'Talleres':              { bg: '#F0EDE4', fg: '#5C5440' },
-  'Familiar':              { bg: '#FBEFD8', fg: '#854F0B' },
-  'Otros':                 { bg: '#F1EFE8', fg: '#5F5E5A' },
-};
-
-const CATEGORY_ICON: Record<string, LucideIcon> = {
-  'Aventura y Naturaleza': Mountain,
-  'Música':                Music,
-  'Cultura':               Palette,
-  'Deportes':              Trophy,
-  'Gastronomía':           UtensilsCrossed,
-  'Vida Nocturna':         Moon,
-  'Talleres':              Wrench,
-  'Familiar':              Users,
-};
-
-function formatDateLong(dateStr: string): string {
-  const [datePart, timePart = ''] = dateStr.split('T');
-  const parts = datePart.split('-');
-  const year = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1;
-  const day = parseInt(parts[2], 10);
-  const [h = '00', m = '00'] = timePart.split(':');
-  const d = new Date(year, month, day);
-  const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-  const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-  return `${days[d.getDay()]} ${day} de ${months[month]} · ${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
-}
+import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
+import { formatDateLong } from '@/lib/format-event-date';
 
 const NAV_BTN: React.CSSProperties = {
   display: 'flex',
@@ -131,8 +94,8 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
         }}
       >
         {events.map((event, i) => {
-          const colors = CATEGORY_BADGE[event.category] ?? CATEGORY_BADGE['Otros'];
-          const PlaceholderIcon = CATEGORY_ICON[event.category] ?? Star;
+          const colors = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
+          const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
 
           return (
             <div key={event.id} style={{ height: '100vh', position: 'relative', flexShrink: 0, backgroundColor: '#111' }}>
@@ -196,28 +159,76 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
                 <p style={{
                   fontFamily: 'var(--font-sans)', fontSize: 13,
                   color: 'rgba(255,255,255,0.6)', lineHeight: 1.5,
-                  marginBottom: event.contact_link ? 20 : 0,
+                  marginBottom: 8,
                 }}>
                   {event.venue_name && <>{event.venue_name} · </>}
-                  {formatDateLong(event.date_start)} · {event.zone}
+                  {formatDateLong(event.date_start, event.date_end)} · {event.zone}
                 </p>
 
-                {/* CTA */}
-                {event.contact_link && (
-                  <a
-                    href={event.contact_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {/* Descripción (truncada — la completa vive en /evento/[slug]) */}
+                {event.description && (
+                  <p
+                    className="line-clamp-2"
                     style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 6,
-                      fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600,
-                      color: '#fff', backgroundColor: '#E11D2E',
-                      padding: '11px 22px', borderRadius: 8, textDecoration: 'none',
+                      fontFamily: 'var(--font-sans)', fontSize: 13,
+                      color: 'rgba(255,255,255,0.55)', lineHeight: 1.4,
+                      marginBottom: 10,
                     }}
                   >
-                    Más info <ExternalLink style={{ width: 14, height: 14 }} />
-                  </a>
+                    {event.description}
+                  </p>
                 )}
+
+                {/* Tags */}
+                {event.tags.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
+                    {event.tags.slice(0, 4).map(tag => (
+                      <span
+                        key={tag}
+                        style={{
+                          fontFamily: 'var(--font-sans)', fontSize: 11,
+                          color: 'rgba(255,255,255,0.7)', backgroundColor: 'rgba(255,255,255,0.1)',
+                          padding: '3px 9px', borderRadius: 999,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {event.tags.length > 4 && (
+                      <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', padding: '3px 4px' }}>
+                        +{event.tags.length - 4}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* CTA + link a la página completa */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
+                  {event.contact_link && (
+                    <a
+                      href={event.contact_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6,
+                        fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600,
+                        color: '#fff', backgroundColor: '#E11D2E',
+                        padding: '11px 22px', borderRadius: 8, textDecoration: 'none',
+                      }}
+                    >
+                      Más info <ExternalLink style={{ width: 14, height: 14 }} />
+                    </a>
+                  )}
+                  <Link
+                    href={`/evento/${event.slug}`}
+                    style={{
+                      fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
+                      color: 'rgba(255,255,255,0.75)', textDecoration: 'underline',
+                    }}
+                  >
+                    Ver página completa →
+                  </Link>
+                </div>
               </div>
             </div>
           );

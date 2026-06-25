@@ -1,10 +1,12 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
-import { EventCard } from '@/components/cards/event-card';
+import { EventCardLink } from '@/components/cards/event-card-link';
 import { EventExplorer } from '@/components/home/EventExplorer';
+import { useIsMobile } from '@/hooks/use-is-mobile';
 
 const LABEL_STYLE: React.CSSProperties = {
   fontFamily: 'var(--font-sans)',
@@ -38,6 +40,7 @@ export function EventsCarousel({ events }: { events: DbEvent[] }) {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [explorerIndex, setExplorerIndex] = useState<number | null>(null);
+  const isMobile = useIsMobile();
 
   const updateArrows = useCallback(() => {
     const el = scrollRef.current;
@@ -85,7 +88,7 @@ export function EventsCarousel({ events }: { events: DbEvent[] }) {
 
   return (
     <>
-      <section className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">
+      <section className="mx-auto mt-2 max-w-6xl px-4 sm:px-6">
         {/* Header: label + "Ver todos" + arrows */}
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 16 }}>
           <div>
@@ -93,16 +96,28 @@ export function EventsCarousel({ events }: { events: DbEvent[] }) {
             <div style={{ width: 30, height: 2, backgroundColor: '#E11D2E', marginTop: 6 }} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 2 }}>
-            <button
-              onClick={() => setExplorerIndex(0)}
-              style={{
-                fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600,
-                color: '#E11D2E', background: 'none', border: 'none', cursor: 'pointer',
-                letterSpacing: '0.02em', padding: 0,
-              }}
-            >
-              Ver todos →
-            </button>
+            {isMobile ? (
+              <button
+                onClick={() => setExplorerIndex(0)}
+                style={{
+                  fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600,
+                  color: '#E11D2E', background: 'none', border: 'none', cursor: 'pointer',
+                  letterSpacing: '0.02em', padding: 0,
+                }}
+              >
+                Ver todos →
+              </button>
+            ) : (
+              <Link
+                href="/buscar"
+                style={{
+                  fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600,
+                  color: '#E11D2E', letterSpacing: '0.02em', padding: 0,
+                }}
+              >
+                Ver todos →
+              </Link>
+            )}
             <div className="hidden sm:flex" style={{ gap: 8 }}>
               <button
                 onClick={() => scroll('left')}
@@ -134,14 +149,12 @@ export function EventsCarousel({ events }: { events: DbEvent[] }) {
           style={{ scrollSnapType: 'x proximity' }}
         >
           {events.map((event, i) => (
-            <div
+            <EventCardLink
               key={event.id}
-              className="w-[78vw] shrink-0 snap-center sm:w-[280px] sm:snap-start"
-              style={{ cursor: 'pointer' }}
-              onClick={() => setExplorerIndex(i)}
-            >
-              <EventCard event={event} />
-            </div>
+              event={event}
+              onOpenExplorer={() => setExplorerIndex(i)}
+              className="block w-[78vw] shrink-0 snap-center text-left hover:opacity-90 transition-opacity sm:w-[280px] sm:snap-start"
+            />
           ))}
         </div>
 
