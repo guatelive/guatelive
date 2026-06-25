@@ -1,15 +1,19 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
+import { EventCardLink } from '@/components/cards/event-card-link';
+import { EventExplorer } from '@/components/home/EventExplorer';
 import {
     normalizeHours,
     openStatusForSelection,
     guatNow,
     type OpenStatus,
 } from '@/lib/hours-utils';
+import { eventMatchesWhen } from '@/lib/event-when';
+import type { DbEvent } from '@/lib/types';
 
 type Place = {
     id: string;
@@ -23,6 +27,8 @@ type Place = {
     tags?: string[] | null;
     hours?: unknown;
 };
+
+const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 const TAG_MAP: Record<string, string[]> = {
     Cenar: ['cena-romantica', 'date-night', 'restaurante', 'almuerzo'],
@@ -45,6 +51,18 @@ const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '✨ Sorprendeme', key: 'Sorprendeme', special: true },
 ];
 
+const EVENT_ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
+    { label: '🏃 Deportivo', key: 'Deportes' },
+    { label: '🎨 Cultural', key: 'Cultura' },
+    { label: '🎵 Concierto', key: 'Música' },
+    { label: '🌳 Aventura', key: 'Aventura y Naturaleza' },
+    { label: '🍴 Gastronomía', key: 'Gastronomía' },
+    { label: '🌙 Vida Nocturna', key: 'Vida Nocturna' },
+    { label: '🛠 Talleres', key: 'Talleres' },
+    { label: '👨‍👩‍👧 Familiar', key: 'Familiar' },
+    { label: '🎟 Cualquier evento', key: 'Otros', special: true },
+];
+
 type ZoneOption = { label: string; value: string };
 
 const WHEN: { label: string; value: string }[] = [
@@ -61,10 +79,57 @@ const STEP_TITLE: Record<1 | 2 | 3, string> = {
     3: '¿Cuándo?',
 };
 
+const TABS: { label: string; value: 'place' | 'event' }[] = [
+    { label: '🍽 Salir a comer', value: 'place' },
+    { label: '📅 Eventos', value: 'event' },
+];
+
+// Fila de burbujas con scroll horizontal (mobile) + barra de progreso chica debajo,
+// para que el usuario vea cuánto más le queda por deslizar.
+function BubbleScrollRow({ children }: { children: ReactNode }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [thumb, setThumb] = useState({ width: 100, left: 0 });
+
+    const updateThumb = useCallback(() => {
+        const el = ref.current;
+        if (!el) return;
+        const { scrollLeft, scrollWidth, clientWidth } = el;
+        if (scrollWidth <= clientWidth) {
+            setThumb({ width: 100, left: 0 });
+            return;
+        }
+        const width = (clientWidth / scrollWidth) * 100;
+        const maxScroll = scrollWidth - clientWidth;
+        const left = (scrollLeft / maxScroll) * (100 - width);
+        setThumb({ width, left });
+    }, []);
+
+    useEffect(() => {
+        updateThumb();
+        window.addEventListener('resize', updateThumb);
+        return () => window.removeEventListener('resize', updateThumb);
+    }, [updateThumb, children]);
+
+    return (
+        <>
+            <div ref={ref} onScroll={updateThumb} className="bubble-row no-scrollbar">
+                {children}
+            </div>
+            <div className="bubble-scroll-track mobile-only">
+                <div className="bubble-scroll-thumb" style={{ width: `${thumb.width}%`, left: `${thumb.left}%` }} />
+            </div>
+        </>
+    );
+}
+
 export function BubbleSearch() {
     // ── Text search ──
     const [searchQuery, setSearchQuery] = useState('');
     const [allPlaces, setAllPlaces] = useState<Place[]>([]);
+    const [allEvents, setAllEvents] = useState<DbEvent[]>([]);
+    const [showTextPlaces, setShowTextPlaces] = useState(true);
+    const [showTextEvents, setShowTextEvents] = useState(true);
+    const [textExplorerIndex, setTextExplorerIndex] = useState<number | null>(null);
     const [inputFocused, setInputFocused] = useState(false);
     const [nudgeKey, setNudgeKey] = useState(0);
 
@@ -88,12 +153,16 @@ export function BubbleSearch() {
                 .then((data: Place[]) => setAllPlaces(data))
                 .catch(console.error);
         }
-    }, [searchQuery, allPlaces.length]);
+        if (searchQuery && allEvents.length === 0) {
+            fetch('/api/events')
+                .then(r => r.json())
+                .then((data: DbEvent[]) => setAllEvents(data))
+                .catch(console.error);
+        }
+    }, [searchQuery, allPlaces.length, allEvents.length]);
 
     const textResults = useMemo<Place[] | null>(() => {
         if (!searchQuery) return null;
-        const normalize = (s: string) =>
-            s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
         const q = normalize(searchQuery);
         return allPlaces.filter(p =>
             normalize(p.name).includes(q) ||
@@ -102,15 +171,32 @@ export function BubbleSearch() {
         );
     }, [allPlaces, searchQuery]);
 
+    const eventTextResults = useMemo<DbEvent[] | null>(() => {
+        if (!searchQuery) return null;
+        const q = normalize(searchQuery);
+        return allEvents.filter(e =>
+            normalize(e.title).includes(q) ||
+            normalize(e.zone ?? '').includes(q) ||
+            normalize(e.category).includes(q) ||
+            e.tags?.some(t => normalize(t).includes(q))
+        );
+    }, [allEvents, searchQuery]);
+
     // ── Bubble flow ──
     const [bubbleStep, setBubbleStep] = useState<1 | 2 | 3>(1);
+    const [placeOrEventTab, setPlaceOrEventTab] = useState<'place' | 'event'>('place');
+    const [searchKind, setSearchKind] = useState<'place' | 'event' | null>(null);
     const [activity, setActivity] = useState<string | null>(null);
+    const [eventCategory, setEventCategory] = useState<string | null>(null);
     const [isSurprise, setIsSurprise] = useState(false);
     const [zone, setZone] = useState<string | null>(null);
     const [bubbleResults, setBubbleResults] = useState<Place[] | null>(null);
+    const [eventBubbleResults, setEventBubbleResults] = useState<DbEvent[] | null>(null);
+    const [eventExplorerIndex, setEventExplorerIndex] = useState<number | null>(null);
     const [loadingBubble, setLoadingBubble] = useState(false);
     const [zoneFallback, setZoneFallback] = useState(false);
     const [when, setWhen] = useState<string | null>(null);
+
     function handleFocus() {
         setInputFocused(true);
         if (bubbleStep === 1 && !searchQuery) {
@@ -119,8 +205,16 @@ export function BubbleSearch() {
         }
     }
 
-    function pickActivity(key: string, special = false) {
+    function pickPlaceActivity(key: string, special = false) {
+        setSearchKind('place');
         setActivity(key);
+        setIsSurprise(special);
+        setBubbleStep(2);
+    }
+
+    function pickEventActivity(category: string, special = false) {
+        setSearchKind('event');
+        setEventCategory(category);
         setIsSurprise(special);
         setBubbleStep(2);
     }
@@ -130,10 +224,7 @@ export function BubbleSearch() {
         setBubbleStep(3);
     }
 
-    async function pickWhen(selectedWhen: string) {
-        setWhen(selectedWhen);
-        setLoadingBubble(true);
-        setZoneFallback(false);
+    async function pickWhenForPlaces(selectedWhen: string) {
         const tags = isSurprise ? [] : (TAG_MAP[activity ?? ''] ?? []);
         const hasZone = zone && zone !== 'all';
 
@@ -169,20 +260,70 @@ export function BubbleSearch() {
             setBubbleResults(sortByWhen(data));
         } catch {
             setBubbleResults([]);
-        } finally {
-            setLoadingBubble(false);
         }
     }
 
+    async function pickWhenForEvents(selectedWhen: string) {
+        const hasZone = zone && zone !== 'all';
+
+        async function fetchEvents(withZone: boolean): Promise<DbEvent[]> {
+            const params = new URLSearchParams();
+            if (isSurprise) params.set('all', 'true');
+            else params.set('category', eventCategory ?? '');
+            if (withZone && hasZone) params.set('zone', zone!);
+            const res = await fetch(`/api/events/bubble?${params}`);
+            return res.json();
+        }
+
+        try {
+            let data = await fetchEvents(true);
+            if (data.length === 0 && hasZone) {
+                data = await fetchEvents(false);
+                setZoneFallback(true);
+            }
+            const now = guatNow();
+            const filtered = selectedWhen === 'anytime'
+                ? data
+                : data.filter(e => eventMatchesWhen(e.date_start, selectedWhen, now));
+            setEventBubbleResults(filtered);
+        } catch {
+            setEventBubbleResults([]);
+        }
+    }
+
+    async function pickWhen(selectedWhen: string) {
+        setWhen(selectedWhen);
+        setLoadingBubble(true);
+        setZoneFallback(false);
+
+        if (searchKind === 'event') {
+            await pickWhenForEvents(selectedWhen);
+        } else {
+            await pickWhenForPlaces(selectedWhen);
+        }
+
+        setLoadingBubble(false);
+    }
+
     function bubbleBack() {
-        if (bubbleStep === 2) { setBubbleStep(1); setActivity(null); setIsSurprise(false); }
+        if (bubbleStep === 2) {
+            setPlaceOrEventTab(searchKind === 'event' ? 'event' : 'place');
+            setBubbleStep(1);
+            setActivity(null);
+            setEventCategory(null);
+            setIsSurprise(false);
+            setSearchKind(null);
+        }
         else if (bubbleStep === 3) { setBubbleStep(2); setZone(null); }
     }
 
     function resetBubble() {
         setBubbleResults(null);
+        setEventBubbleResults(null);
         setBubbleStep(1);
+        setSearchKind(null);
         setActivity(null);
+        setEventCategory(null);
         setIsSurprise(false);
         setZone(null);
         setWhen(null);
@@ -190,31 +331,87 @@ export function BubbleSearch() {
         setZoneFallback(false);
     }
 
-    const showBubbleFlow = !searchQuery && bubbleResults === null && !loadingBubble;
+    const showBubbleFlow = !searchQuery && bubbleResults === null && eventBubbleResults === null && !loadingBubble;
 
     return (
         <div>
             {/* ── Hero + buscador ── */}
             <section style={{ padding: '56px 24px 32px', textAlign: 'center' }}>
-                <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+                    {/* Badge */}
+                    <div
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            backgroundColor: '#0A0A0A',
+                            color: '#FFFFFF',
+                            fontFamily: 'var(--font-sans)',
+                            fontSize: 'clamp(8px, 2.2vw, 10px)',
+                            fontWeight: 600,
+                            letterSpacing: '0.18em',
+                            textTransform: 'uppercase',
+                            paddingTop: '5px',
+                            paddingBottom: '5px',
+                            paddingLeft: 'clamp(10px, 3vw, 14px)',
+                            paddingRight: 'clamp(10px, 3vw, 14px)',
+                            borderRadius: '999px',
+                            marginBottom: '16px',
+                        }}
+                    >
+                        <span
+                            style={{
+                                display: 'inline-block',
+                                width: '5px',
+                                height: '5px',
+                                borderRadius: '50%',
+                                backgroundColor: '#E11D2E',
+                                flexShrink: 0,
+                            }}
+                        />
+                        Todo lo que pasa en Guate, en un solo lugar
+                    </div>
+
                     <h1
                         className="font-serif"
                         style={{
-                            fontSize: 'clamp(1.75rem, 4.5vw, 3.25rem)',
-                            lineHeight: 1.1,
+                            fontSize: 'clamp(28px, 9vw, 58px)',
+                            fontWeight: 700,
+                            lineHeight: 1.15,
                             color: '#0A0A0A',
-                            marginBottom: '12px',
                         }}
                     >
-                        Todo lo que pasa en Guate,{' '}
-                        <em style={{ color: '#E11D2E', fontStyle: 'italic' }}>en un solo lugar.</em>
+                        ¿Qué hacemos{' '}
+                        <em style={{ color: '#E11D2E', fontStyle: 'italic' }}>hoy</em>
+                        {' '}en Guate?
                     </h1>
-                    <p style={{ fontSize: '1rem', color: '#666666', marginTop: '8px' }}>
+
+                    {/* Línea decorativa */}
+                    <div
+                        style={{
+                            width: '28px',
+                            height: '2px',
+                            backgroundColor: '#E11D2E',
+                            margin: '14px auto',
+                        }}
+                    />
+
+                    <p
+                        style={{
+                            fontFamily: 'var(--font-sans)',
+                            fontSize: '16px',
+                            color: '#666666',
+                            lineHeight: 1.6,
+                            textAlign: 'center',
+                            maxWidth: '480px',
+                            margin: '0 auto',
+                        }}
+                    >
                         Cafés escondidos, eventos del fin de semana y las promos bancarias que sí valen la pena.
                     </p>
 
                     {/* Input */}
-                    <div style={{ marginTop: '28px' }}>
+                    <div style={{ marginTop: '28px', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
                         <div
                             style={{
                                 display: 'flex',
@@ -267,35 +464,81 @@ export function BubbleSearch() {
                 </div>
             </section>
 
-            {/* ── Resultados de texto ── */}
-            {textResults && (
+            {/* ── Resultados de texto: lugares + eventos ── */}
+            {searchQuery && (
                 <section style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 32px 64px' }}>
-                    <p style={{ fontSize: '13px', color: '#666666', marginBottom: '24px' }}>
-                        {textResults.length} lugar{textResults.length !== 1 ? 'es' : ''} para &ldquo;{searchQuery}&rdquo;
-                    </p>
-                    {textResults.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {textResults.map(place => (
-                                <Link
-                                    key={place.id}
-                                    href={`/lugar/${place.slug}`}
-                                    className="block hover:opacity-90 transition-opacity"
-                                >
-                                    <PlaceCard place={place} />
-                                </Link>
-                            ))}
+                    <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#0A0A0A' }}>
+                            <input type="checkbox" checked={showTextPlaces} onChange={e => setShowTextPlaces(e.target.checked)} />
+                            Lugares
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#0A0A0A' }}>
+                            <input type="checkbox" checked={showTextEvents} onChange={e => setShowTextEvents(e.target.checked)} />
+                            Eventos
+                        </label>
+                    </div>
+
+                    {showTextPlaces && (
+                        <div style={{ marginBottom: '32px' }}>
+                            <p style={{ fontSize: '13px', color: '#666666', marginBottom: '16px' }}>
+                                {textResults?.length ?? 0} lugar{(textResults?.length ?? 0) !== 1 ? 'es' : ''} para &ldquo;{searchQuery}&rdquo;
+                            </p>
+                            {textResults && textResults.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                    {textResults.map(place => (
+                                        <Link
+                                            key={place.id}
+                                            href={`/lugar/${place.slug}`}
+                                            className="block hover:opacity-90 transition-opacity"
+                                        >
+                                            <PlaceCard place={place} />
+                                        </Link>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p style={{ color: '#666666', fontSize: '14px', textAlign: 'center', paddingTop: '16px' }}>
+                                    No encontramos lugares que coincidan.
+                                </p>
+                            )}
                         </div>
-                    ) : (
-                        <p style={{ color: '#666666', fontSize: '14px', textAlign: 'center', paddingTop: '32px' }}>
-                            No encontramos lugares que coincidan.
-                        </p>
+                    )}
+
+                    {showTextEvents && (
+                        <div>
+                            <p style={{ fontSize: '13px', color: '#666666', marginBottom: '16px' }}>
+                                {eventTextResults?.length ?? 0} evento{(eventTextResults?.length ?? 0) !== 1 ? 's' : ''} para &ldquo;{searchQuery}&rdquo;
+                            </p>
+                            {eventTextResults && eventTextResults.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                    {eventTextResults.map((event, i) => (
+                                        <EventCardLink
+                                            key={event.id}
+                                            event={event}
+                                            onOpenExplorer={() => setTextExplorerIndex(i)}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <p style={{ color: '#666666', fontSize: '14px', textAlign: 'center', paddingTop: '16px' }}>
+                                    No encontramos eventos que coincidan.
+                                </p>
+                            )}
+                        </div>
                     )}
                 </section>
             )}
 
+            {textExplorerIndex !== null && eventTextResults && (
+                <EventExplorer
+                    events={eventTextResults}
+                    initialIndex={textExplorerIndex}
+                    onClose={() => setTextExplorerIndex(null)}
+                />
+            )}
+
             {/* ── Bubble flow (solo cuando no hay búsqueda de texto) ── */}
             {showBubbleFlow && (
-                <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 24px 56px' }}>
+                <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 24px 20px' }}>
                     {/* ── Progress tracker ── */}
                     <div style={{ marginBottom: '28px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
@@ -340,6 +583,32 @@ export function BubbleSearch() {
 
                     {/* key fuerza re-animación al cambiar de paso */}
                     <div key={bubbleStep} className="bubble-step-content">
+                        {bubbleStep === 1 && (
+                            <div
+                                style={{
+                                    display: 'flex', justifyContent: 'center', gap: '24px',
+                                    marginBottom: '20px', borderBottom: '1px solid #E5E5E5',
+                                }}
+                            >
+                                {TABS.map(tab => (
+                                    <button
+                                        key={tab.value}
+                                        onClick={() => setPlaceOrEventTab(tab.value)}
+                                        style={{
+                                            fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600,
+                                            padding: '0 4px 10px', marginBottom: '-1px',
+                                            background: 'none', cursor: 'pointer',
+                                            color: placeOrEventTab === tab.value ? '#E11D2E' : '#999999',
+                                            border: 'none',
+                                            borderBottom: placeOrEventTab === tab.value ? '2px solid #E11D2E' : '2px solid transparent',
+                                        }}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
                         {bubbleStep > 1 && (
                             <h2
                                 className="font-serif"
@@ -349,37 +618,45 @@ export function BubbleSearch() {
                             </h2>
                         )}
 
-                        <div
-                            key={nudgeKey}
-                            className={nudgeKey > 0 ? 'bubble-nudge' : ''}
-                            style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}
-                        >
-                            {bubbleStep === 1 && ACTIVITIES.map(({ label, key, special }) => (
-                                <button
-                                    key={key}
-                                    onClick={() => pickActivity(key, special)}
-                                    className="bubble-btn"
-                                    style={special ? {
-                                        backgroundColor: '#E11D2E',
-                                        color: '#ffffff',
-                                        borderColor: '#E11D2E',
-                                    } : undefined}
-                                >
-                                    {label}
-                                </button>
-                            ))}
+                        <div key={nudgeKey} className={nudgeKey > 0 ? 'bubble-nudge' : ''}>
+                            {bubbleStep === 1 && (
+                                <BubbleScrollRow>
+                                    {(placeOrEventTab === 'place' ? ACTIVITIES : EVENT_ACTIVITIES).map(({ label, key, special }) => (
+                                        <button
+                                            key={key}
+                                            onClick={() => placeOrEventTab === 'place' ? pickPlaceActivity(key, special) : pickEventActivity(key, special)}
+                                            className="bubble-btn"
+                                            style={special ? {
+                                                backgroundColor: '#E11D2E',
+                                                color: '#ffffff',
+                                                borderColor: '#E11D2E',
+                                            } : undefined}
+                                        >
+                                            {label}
+                                        </button>
+                                    ))}
+                                </BubbleScrollRow>
+                            )}
 
-                            {bubbleStep === 2 && zones.map(({ label, value }) => (
-                                <button key={value} onClick={() => pickZone(value)} className="bubble-btn">
-                                    {label}
-                                </button>
-                            ))}
+                            {bubbleStep === 2 && (
+                                <BubbleScrollRow>
+                                    {zones.map(({ label, value }) => (
+                                        <button key={value} onClick={() => pickZone(value)} className="bubble-btn">
+                                            {label}
+                                        </button>
+                                    ))}
+                                </BubbleScrollRow>
+                            )}
 
-                            {bubbleStep === 3 && WHEN.map(({ label, value }) => (
-                                <button key={value} onClick={() => pickWhen(value)} className="bubble-btn">
-                                    {label}
-                                </button>
-                            ))}
+                            {bubbleStep === 3 && (
+                                <BubbleScrollRow>
+                                    {WHEN.map(({ label, value }) => (
+                                        <button key={value} onClick={() => pickWhen(value)} className="bubble-btn">
+                                            {label}
+                                        </button>
+                                    ))}
+                                </BubbleScrollRow>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -388,12 +665,12 @@ export function BubbleSearch() {
             {/* ── Loading bubble ── */}
             {loadingBubble && (
                 <div style={{ textAlign: 'center', padding: '64px 24px', color: '#666666', fontSize: '14px' }}>
-                    Buscando lugares...
+                    Buscando {searchKind === 'event' ? 'eventos' : 'lugares'}...
                 </div>
             )}
 
-            {/* ── Resultados bubble ── */}
-            {!searchQuery && bubbleResults !== null && !loadingBubble && (
+            {/* ── Resultados bubble: lugares ── */}
+            {!searchQuery && searchKind === 'place' && bubbleResults !== null && !loadingBubble && (
                 <section style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 32px 64px' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
                         <div>
@@ -443,6 +720,60 @@ export function BubbleSearch() {
                         </div>
                     )}
                 </section>
+            )}
+
+            {/* ── Resultados bubble: eventos ── */}
+            {!searchQuery && searchKind === 'event' && eventBubbleResults !== null && !loadingBubble && (
+                <section style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 32px 64px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+                        <div>
+                            <p className="font-serif" style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0A0A0A', marginBottom: '4px' }}>
+                                {isSurprise ? 'Eventos para todos los gustos' : `Eventos de "${eventCategory}"`}
+                                {!zoneFallback && zone && zone !== 'all' ? ` · ${zone}` : ''}
+                            </p>
+                            <p style={{ fontSize: '13px', color: '#666666' }}>
+                                {eventBubbleResults.length} evento{eventBubbleResults.length !== 1 ? 's' : ''} encontrado{eventBubbleResults.length !== 1 ? 's' : ''}
+                                {zoneFallback && zone && zone !== 'all' && (
+                                    <span style={{ color: '#E11D2E', marginLeft: '6px' }}>
+                                        · Sin resultados en {zone}, mostrando de toda Guatemala
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                        <button onClick={resetBubble} className="bubble-reset-btn">
+                            Nueva búsqueda
+                        </button>
+                    </div>
+
+                    {eventBubbleResults.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {eventBubbleResults.map((event, i) => (
+                                <EventCardLink
+                                    key={event.id}
+                                    event={event}
+                                    onOpenExplorer={() => setEventExplorerIndex(i)}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                            <p style={{ color: '#666666', fontSize: '14px', marginBottom: '16px' }}>
+                                No encontramos eventos que coincidan. Probá con otra selección.
+                            </p>
+                            <button onClick={resetBubble} className="bubble-reset-btn">
+                                Intentar de nuevo
+                            </button>
+                        </div>
+                    )}
+                </section>
+            )}
+
+            {eventExplorerIndex !== null && eventBubbleResults && (
+                <EventExplorer
+                    events={eventBubbleResults}
+                    initialIndex={eventExplorerIndex}
+                    onClose={() => setEventExplorerIndex(null)}
+                />
             )}
         </div>
     );

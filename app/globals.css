@@ -152,10 +152,49 @@
   60%  { transform: translateY(-2px); }
   100% { transform: translateY(0); }
 }
+@keyframes bubbleSwipeHint {
+  0%   { transform: translateX(0); }
+  30%  { transform: translateX(-18px); }
+  60%  { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
 
 @layer components {
   .bubble-step-content {
     animation: bubbleFadeIn 0.25s ease forwards;
+  }
+
+  /* Fila de burbujas: 2 filas con scroll horizontal en mobile, wrap centrado en desktop */
+  .bubble-row {
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 2px;
+  }
+  .bubble-row .bubble-btn {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .bubble-scroll-track {
+    position: relative;
+    height: 3px;
+    margin-top: 10px;
+    border-radius: 999px;
+    background-color: #E5E5E5;
+    overflow: hidden;
+  }
+  .bubble-scroll-thumb {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background-color: #E11D2E;
+    border-radius: 999px;
+    transition: left 0.1s linear;
   }
 
   .bubble-btn {
@@ -215,5 +254,24 @@
   .bubble-reset-btn:hover {
     background-color: #E11D2E;
     color: #ffffff;
+  }
+}
+
+@media (max-width: 767px) {
+  .bubble-row {
+    animation: bubbleSwipeHint 1s ease 0.5s 1;
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 88%, transparent 100%);
+    mask-image: linear-gradient(to right, black 0%, black 88%, transparent 100%);
+  }
+}
+
+@media (min-width: 768px) {
+  .bubble-row {
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    justify-content: center;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
