@@ -188,13 +188,13 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                                         const placeSrc = photos.find((p: { is_primary: boolean }) => p.is_primary)?.url ?? [...photos].sort((a: { order_index: number }, b: { order_index: number }) => a.order_index - b.order_index)[0]?.url ?? null;
                                         const src = ep.photo_url || placeSrc;
                                         return src ? (
-                                        <div className="mb-4 overflow-hidden rounded-lg">
-                                            <img
-                                                src={src}
-                                                alt={ep.title || ep.places?.name}
-                                                className="w-full h-96 object-cover"
-                                            />
-                                        </div>
+                                            <div className="mb-4 overflow-hidden rounded-lg">
+                                                <img
+                                                    src={src}
+                                                    alt={ep.title || ep.places?.name}
+                                                    className="w-full h-[700px] object-cover"
+                                                />
+                                            </div>
                                         ) : null;
                                     })()}
                                     <div className="flex items-start justify-between gap-4">
@@ -213,24 +213,24 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                                                 <span
                                                     key={badge}
                                                     className={`inline-block rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ${badge.includes('LO MEJOR')
-                                                            ? 'bg-[#0A0A0A] text-white'
-                                                            : badge.includes('PEDÍ ESTO')
-                                                                ? 'bg-[#E11D2E] text-white'
-                                                                : badge.includes('ESTÁ BIEN')
-                                                                    ? 'border border-gray-300 text-gray-500'
-                                                                    : badge.includes('PICANTE')
-                                                                        ? 'bg-[#FDF0F1] text-[#A32D2D]'
-                                                                        : badge.includes('CARBÓN') || badge.includes('AHUMADO')
-                                                                            ? 'bg-[#FBEBDD] text-[#8A4B16]'
-                                                                            : badge.includes('QUESO') || badge.includes('GENEROSA')
-                                                                                ? 'bg-[#FBEFD8] text-[#8A5A00]'
-                                                                                : badge.includes('ATÚN') || badge.includes('MARISCO')
-                                                                                    ? 'bg-[#E6F1FB] text-[#185FA5]'
-                                                                                    : badge.includes('CRUJIENTE') || badge.includes('CREMOSO')
-                                                                                        ? 'bg-[#F3ECE2] text-[#6B4A2A]'
-                                                                                        : badge.includes('MARINADO')
-                                                                                            ? 'bg-[#FBEBDD] text-[#8A4B16]'
-                                                                                            : 'bg-[#F1EFE8] text-[#5F5E5A]'
+                                                        ? 'bg-[#0A0A0A] text-white'
+                                                        : badge.includes('PEDÍ ESTO')
+                                                            ? 'bg-[#E11D2E] text-white'
+                                                            : badge.includes('ESTÁ BIEN')
+                                                                ? 'border border-gray-300 text-gray-500'
+                                                                : badge.includes('PICANTE')
+                                                                    ? 'bg-[#FDF0F1] text-[#A32D2D]'
+                                                                    : badge.includes('CARBÓN') || badge.includes('AHUMADO')
+                                                                        ? 'bg-[#FBEBDD] text-[#8A4B16]'
+                                                                        : badge.includes('QUESO') || badge.includes('GENEROSA')
+                                                                            ? 'bg-[#FBEFD8] text-[#8A5A00]'
+                                                                            : badge.includes('ATÚN') || badge.includes('MARISCO')
+                                                                                ? 'bg-[#E6F1FB] text-[#185FA5]'
+                                                                                : badge.includes('CRUJIENTE') || badge.includes('CREMOSO')
+                                                                                    ? 'bg-[#F3ECE2] text-[#6B4A2A]'
+                                                                                    : badge.includes('MARINADO')
+                                                                                        ? 'bg-[#FBEBDD] text-[#8A4B16]'
+                                                                                        : 'bg-[#F1EFE8] text-[#5F5E5A]'
                                                         }`}
                                                 >
                                                     {badge}
@@ -259,7 +259,7 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                                 <div key={ep.id} className="border-b border-border pb-6 last:border-0">
                                     {ep.photo_url && (
                                         <div className="mb-4 overflow-hidden rounded-lg">
-                                            <img src={ep.photo_url} alt={ep.title || ep.places.name} className="w-full h-96 object-cover" />
+                                            <img src={ep.photo_url} alt={ep.title || ep.places.name} className="w-full h-[420px] object-cover" />
                                         </div>
                                     )}
                                     <Link
@@ -274,24 +274,24 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                                                 <span
                                                     key={badge}
                                                     className={`inline-block rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ${badge.includes('LO MEJOR')
-                                                            ? 'bg-[#0A0A0A] text-white'
-                                                            : badge.includes('PEDÍ ESTO')
-                                                                ? 'bg-[#E11D2E] text-white'
-                                                                : badge.includes('ESTÁ BIEN')
-                                                                    ? 'border border-gray-300 text-gray-500'
-                                                                    : badge.includes('PICANTE')
-                                                                        ? 'bg-[#FDF0F1] text-[#A32D2D]'
-                                                                        : badge.includes('CARBÓN') || badge.includes('AHUMADO')
-                                                                            ? 'bg-[#FBEBDD] text-[#8A4B16]'
-                                                                            : badge.includes('QUESO') || badge.includes('GENEROSA')
-                                                                                ? 'bg-[#FBEFD8] text-[#8A5A00]'
-                                                                                : badge.includes('ATÚN') || badge.includes('MARISCO')
-                                                                                    ? 'bg-[#E6F1FB] text-[#185FA5]'
-                                                                                    : badge.includes('CRUJIENTE') || badge.includes('CREMOSO')
-                                                                                        ? 'bg-[#F3ECE2] text-[#6B4A2A]'
-                                                                                        : badge.includes('MARINADO')
-                                                                                            ? 'bg-[#FBEBDD] text-[#8A4B16]'
-                                                                                            : 'bg-[#F1EFE8] text-[#5F5E5A]'
+                                                        ? 'bg-[#0A0A0A] text-white'
+                                                        : badge.includes('PEDÍ ESTO')
+                                                            ? 'bg-[#E11D2E] text-white'
+                                                            : badge.includes('ESTÁ BIEN')
+                                                                ? 'border border-gray-300 text-gray-500'
+                                                                : badge.includes('PICANTE')
+                                                                    ? 'bg-[#FDF0F1] text-[#A32D2D]'
+                                                                    : badge.includes('CARBÓN') || badge.includes('AHUMADO')
+                                                                        ? 'bg-[#FBEBDD] text-[#8A4B16]'
+                                                                        : badge.includes('QUESO') || badge.includes('GENEROSA')
+                                                                            ? 'bg-[#FBEFD8] text-[#8A5A00]'
+                                                                            : badge.includes('ATÚN') || badge.includes('MARISCO')
+                                                                                ? 'bg-[#E6F1FB] text-[#185FA5]'
+                                                                                : badge.includes('CRUJIENTE') || badge.includes('CREMOSO')
+                                                                                    ? 'bg-[#F3ECE2] text-[#6B4A2A]'
+                                                                                    : badge.includes('MARINADO')
+                                                                                        ? 'bg-[#FBEBDD] text-[#8A4B16]'
+                                                                                        : 'bg-[#F1EFE8] text-[#5F5E5A]'
                                                         }`}
                                                 >
                                                     {badge}

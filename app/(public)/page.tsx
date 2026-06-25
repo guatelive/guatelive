@@ -177,27 +177,24 @@ export default async function HomePage() {
         // Recopilar hasta 3 fotos: cover + fotos de edition_places
         type PhotoItem = { src: string; name?: string };
         type EpPhoto = { url: string; is_primary: boolean; order_index: number };
-        const epItems = ((latestEdition.edition_places as Array<{ photo_url?: string | null; places?: { name?: string | null; place_photos?: EpPhoto[] } | null }>) ?? [])
+        // Primeros 3 items en orden — el order_index en edition_places controla qué aparece aquí
+        const photos = ((latestEdition.edition_places as Array<{ photo_url?: string | null; places?: { name?: string | null; place_photos?: EpPhoto[] } | null }>) ?? [])
           .map(ep => {
-            const photos = ep.places?.place_photos ?? [];
-            const placePhoto = photos.find(p => p.is_primary)?.url ?? [...photos].sort((a, b) => a.order_index - b.order_index)[0]?.url ?? null;
+            const epPhotos = ep.places?.place_photos ?? [];
+            const placePhoto = epPhotos.find(p => p.is_primary)?.url ?? [...epPhotos].sort((a, b) => a.order_index - b.order_index)[0]?.url ?? null;
             return {
               src: ep.photo_url || placePhoto,
               name: ep.places?.name ?? undefined,
-            };
+            } as PhotoItem;
           })
           .filter(item => item.src)
-          .reverse() as PhotoItem[];
-
-        const photos: PhotoItem[] = [];
-        if (latestEdition.cover_image_url) photos.push({ src: latestEdition.cover_image_url });
-        for (const item of epItems) { if (photos.length < 3) photos.push(item); }
+          .slice(0, 3);
 
         const rotations = [-4, 2, -2];
         const translateY = [6, 0, 10];
 
         return (
-          <section className="mx-auto mt-8 sm:mt-16 max-w-6xl px-4 sm:px-6">
+          <section className="mx-auto mt-6 sm:mt-12 max-w-6xl px-4 sm:px-6">
             {/* Section label */}
             <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 600, color: '#E11D2E', letterSpacing: '0.25em', textTransform: 'uppercase' }}>
               EDITORIAL
