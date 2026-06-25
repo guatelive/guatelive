@@ -42,9 +42,10 @@ export default async function HomePage() {
       .single(),
     supabase
       .from("events")
-      .select("id, title, slug, description, category, zone, venue_name, date_start, price, image_url, contact_link, sponsored")
+      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, price, image_url, contact_link, sponsored, featured, tags, status")
       .eq("status", "published")
-      .gte("date_start", new Date().toISOString())
+      .gte("date_start", guatNow().toISOString())
+      .order("featured", { ascending: false })
       .order("date_start", { ascending: true })
       .limit(12),
   ]);

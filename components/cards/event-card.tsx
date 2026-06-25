@@ -1,32 +1,7 @@
 import Image from 'next/image';
-import {
-  Mountain, Music, Palette, Trophy, UtensilsCrossed,
-  Moon, Wrench, Users, Star, type LucideIcon,
-} from 'lucide-react';
+import { Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
-
-const CATEGORY_BADGE: Record<string, { bg: string; fg: string }> = {
-  'Aventura y Naturaleza': { bg: '#EFF4E8', fg: '#4A6B22' },
-  'Cultura':               { bg: '#F3ECE2', fg: '#6B4A2A' },
-  'Música':                { bg: '#E6F1FB', fg: '#185FA5' },
-  'Deportes':              { bg: '#FBEBDD', fg: '#8A4B16' },
-  'Gastronomía':           { bg: '#FBEFD8', fg: '#8A5A00' },
-  'Vida Nocturna':         { bg: '#F3ECE2', fg: '#6B4A2A' },
-  'Talleres':              { bg: '#F0EDE4', fg: '#5C5440' },
-  'Familiar':              { bg: '#FBEFD8', fg: '#854F0B' },
-  'Otros':                 { bg: '#F1EFE8', fg: '#5F5E5A' },
-};
-
-const CATEGORY_ICON: Record<string, LucideIcon> = {
-  'Aventura y Naturaleza': Mountain,
-  'Música':                Music,
-  'Cultura':               Palette,
-  'Deportes':              Trophy,
-  'Gastronomía':           UtensilsCrossed,
-  'Vida Nocturna':         Moon,
-  'Talleres':              Wrench,
-  'Familiar':              Users,
-};
+import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 
 const BADGE_STYLE: React.CSSProperties = {
   position: 'absolute',
@@ -54,8 +29,8 @@ function formatDate(dateStr: string): string {
 }
 
 export function EventCard({ event }: { event: DbEvent }) {
-  const colors = CATEGORY_BADGE[event.category] ?? CATEGORY_BADGE['Otros'];
-  const PlaceholderIcon = CATEGORY_ICON[event.category] ?? Star;
+  const colors = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
+  const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
 
   const rightBadge = event.sponsored
     ? { label: 'PATROCINADO', bg: '#E11D2E', fg: '#FFFFFF' }

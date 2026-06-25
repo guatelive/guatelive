@@ -6,9 +6,15 @@ export type DbEvent = {
   category: string;
   zone: string;
   venue_name: string | null;
+  place_id: string | null;
+  source: string;
   date_start: string;
+  date_end: string | null;
   price: number | null;
   image_url: string | null;
   contact_link: string | null;
   sponsored: boolean;
+  featured: boolean;
+  tags: string[];
+  status: 'pending' | 'published';
 };
