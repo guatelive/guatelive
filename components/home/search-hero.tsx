@@ -68,7 +68,7 @@ export function SearchHero() {
                         <span className="italic text-primary">en un solo lugar.</span>
                     </h1>
                     <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground md:text-lg">
-                        Cafés escondidos, eventos del fin de semana y las promos bancarias que sí valen la pena.
+                        Restaurantes, cafés y eventos en Guatemala. Curados con criterio.
                     </p>
 
                     {/* Input de búsqueda */}

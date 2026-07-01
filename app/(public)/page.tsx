@@ -1,14 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/layout/site-layout";
 import { createClient } from "@/lib/supabase/server";
 import { BubbleSearch } from "@/components/home/bubble-search";
 import { EditionPeekTab } from "@/components/home/EditionPeekTab";
-import { normalizeHours, getOpenStatus, guatNow } from "@/lib/hours-utils";
+import { EventsGrid } from "@/components/home/EventsGrid";
+import { guatNow } from "@/lib/hours-utils";
+import type { DbEvent } from "@/lib/types";
 
 export const metadata = {
   title: "GuateLive — Cafés, restaurantes y eventos en Guate",
-  description: "Descubrí los mejores lugares, eventos y promos bancarias en Guatemala City y Antigua.",
+  description: "Restaurantes, cafés y eventos en Guatemala. Curados con criterio editorial.",
   openGraph: {
     title: "GuateLive — Cafés, restaurantes y eventos en Guate",
     description: "Descubre planes en Guatemala con voz editorial",
@@ -23,7 +26,7 @@ export const metadata = {
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: recentPlaces }, { data: latestEdition }] = await Promise.all([
+  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEvents }] = await Promise.all([
     supabase
       .from("places")
       .select("id, name, slug, zone, rating, primary_category, hours, place_photos(url, is_primary, order_index)")
@@ -32,17 +35,27 @@ export default async function HomePage() {
       .limit(6),
     supabase
       .from("editions")
-      .select(`number, slug, title, subtitle, cover_image_url,
+      .select(`number, slug, title, subtitle, cover_image_url, strip_photos,
           edition_places(photo_url, order_index, places(name, place_photos(url, is_primary, order_index)))`)
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(1)
       .single(),
+    supabase
+      .from("events")
+      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, price, image_url, contact_link, sponsored, featured, tags, status")
+      .eq("status", "published")
+      .gte("date_start", guatNow().toISOString())
+      .order("featured", { ascending: false })
+      .order("date_start", { ascending: true })
+      .limit(12),
   ]);
 
   return (
     <SiteLayout>
       <BubbleSearch />
+
+      <EventsGrid events={(upcomingEvents ?? []) as DbEvent[]} />
       {/* Comentado intencionalmente: con "recién agregados" eliminado,
          la sección editorial quedó arriba y es fácil de encontrar sin este tab.
          Reactivar cuando el home crezca y la editorial vuelva a quedar
@@ -161,35 +174,54 @@ export default async function HomePage() {
         </Section>
       )} */}
 
-      {/* Strip editorial */}
+      {/* Sección editorial */}
       {latestEdition && (() => {
-        // Recopilar hasta 3 fotos: cover + fotos de edition_places
         type PhotoItem = { src: string; name?: string };
         type EpPhoto = { url: string; is_primary: boolean; order_index: number };
-        // Primeros 3 items en orden — el order_index en edition_places controla qué aparece aquí
-        const photos = ((latestEdition.edition_places as Array<{ photo_url?: string | null; places?: { name?: string | null; place_photos?: EpPhoto[] } | null }>) ?? [])
-          .map(ep => {
-            const epPhotos = ep.places?.place_photos ?? [];
-            const placePhoto = epPhotos.find(p => p.is_primary)?.url ?? [...epPhotos].sort((a, b) => a.order_index - b.order_index)[0]?.url ?? null;
-            return {
-              src: ep.photo_url || placePhoto,
-              name: ep.places?.name ?? undefined,
-            } as PhotoItem;
-          })
-          .filter(item => item.src)
-          .slice(0, 3);
+
+        // Preferir strip_photos si el editor las seleccionó; si no, fallback a edition_places
+        const stripUrls: string[] = Array.isArray(latestEdition.strip_photos)
+          ? (latestEdition.strip_photos as string[]).filter(Boolean)
+          : [];
+
+        const photos: PhotoItem[] = stripUrls.length > 0
+          ? stripUrls.slice(0, 3).map(src => ({ src }))
+          : ((latestEdition.edition_places as Array<{ photo_url?: string | null; places?: { name?: string | null; place_photos?: EpPhoto[] } | null }>) ?? [])
+            .map(ep => {
+              const epPhotos = ep.places?.place_photos ?? [];
+              const placePhoto = epPhotos.find(p => p.is_primary)?.url ?? [...epPhotos].sort((a, b) => a.order_index - b.order_index)[0]?.url ?? null;
+              return { src: ep.photo_url || placePhoto, name: ep.places?.name ?? undefined } as PhotoItem;
+            })
+            .filter(item => item.src)
+            .slice(0, 3);
 
         const rotations = [-4, 2, -2];
         const translateY = [6, 0, 10];
 
         return (
-          <section className="mx-auto mt-6 sm:mt-12 max-w-6xl px-4 sm:px-6">
+          <section className="mx-auto mt-6 max-w-6xl px-4 sm:px-6" style={{ borderTop: '0.5px solid #E5E5E5', paddingBottom: '1.5rem' }}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', paddingTop: '0.85rem', paddingBottom: '0.7rem' }}>
+              <div>
+                <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 600, color: '#E11D2E', letterSpacing: '0.25em', textTransform: 'uppercase' }}>
+                  EDITORIAL
+                </p>
+                <div style={{ width: 28, height: 2, backgroundColor: '#E11D2E', marginTop: 6 }} />
+              </div>
+              <Link
+                href="/edicion"
+                style={{ fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600, color: '#E11D2E', letterSpacing: '0.02em', textDecoration: 'none' }}
+              >
+                Ver todas las ediciones →
+              </Link>
+            </div>
+
             <div className="relative rounded-3xl bg-foreground text-background overflow-hidden">
 
               {/* Imagen de fondo en mobile */}
               {photos[0] && (
                 <div className="absolute inset-0 md:hidden">
-                  <img src={photos[0].src} alt="" className="w-full h-full object-cover" />
+                  <Image src={photos[0].src} alt="" fill sizes="100vw" className="object-cover" />
                   <div className="absolute inset-0 bg-[#0A0A0A]/75" />
                 </div>
               )}
@@ -197,12 +229,12 @@ export default async function HomePage() {
               <div className="relative flex flex-col md:flex-row md:items-center">
 
                 {/* Texto + CTA */}
-                <div className="flex-1 min-w-0 md:min-w-[320px] px-6 py-10 md:px-12 md:py-14">
+                <div className="flex-1 min-w-0 md:min-w-[420px] px-6 py-10 md:px-12 md:py-14">
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#E11D2E]">
                     Edición Nº {latestEdition.number}
                   </p>
                   <div className="mt-2 h-[2px] w-8 bg-[#E11D2E]" />
-                  <h2 className="mt-3 font-serif text-3xl leading-tight md:text-4xl">
+                  <h2 className="mt-3 font-serif leading-tight" style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>
                     {(() => {
                       const idx = latestEdition.title.indexOf('?');
                       if (idx === -1) return latestEdition.title;
@@ -210,7 +242,7 @@ export default async function HomePage() {
                       const after = latestEdition.title.slice(idx + 1).trim();
                       return (
                         <>
-                          {before}
+                          <span style={{ whiteSpace: 'nowrap' }}>{before}</span>
                           {after && (
                             <span style={{ display: 'block', marginTop: '10px' }}>
                               <span style={{
@@ -230,7 +262,7 @@ export default async function HomePage() {
                     })()}
                   </h2>
                   {latestEdition.subtitle && (
-                    <p className="mt-3 text-sm opacity-60 max-w-sm">{latestEdition.subtitle}</p>
+                    <p className="mt-3 text-base opacity-60 max-w-sm">{latestEdition.subtitle}</p>
                   )}
                   <Link
                     href={`/edicion/${latestEdition.slug}`}
@@ -260,14 +292,13 @@ export default async function HomePage() {
                         }}
                       >
                         {/* Imagen con filtro editorial */}
-                        <img
+                        <Image
                           src={photo.src}
                           alt={photo.name ?? ''}
+                          fill
+                          sizes="200px"
+                          className="object-cover"
                           style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            display: 'block',
                             transform: 'scale(1.12)',
                             transformOrigin: 'center center',
                           }}
