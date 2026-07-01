@@ -69,7 +69,7 @@ function parseEventForm(formData: FormData) {
         place_id: str(formData, 'place_id'),
         date_start: str(formData, 'date_start') ?? '',
         date_end: str(formData, 'date_end'),
-        price: priceRaw ? Number(priceRaw) : undefined,
+        price: priceRaw ? Math.round(parseFloat(priceRaw) * 100) / 100 : undefined,
         contact_link: str(formData, 'contact_link'),
         sponsored: formData.get('sponsored') === 'on',
         featured: formData.get('featured') === 'on',

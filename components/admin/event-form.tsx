@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useFormStatus } from 'react-dom';
-import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { TagPicker } from './tag-picker';
+import { ImageCropper } from './image-cropper';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
+import { EventPreview } from './event-preview';
 import type { DbEvent } from '@/lib/types';
 
 type PlaceOption = { id: string; name: string };
@@ -37,6 +38,16 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
     const [places, setPlaces] = useState<PlaceOption[]>([]);
     const [placeName, setPlaceName] = useState(initialPlaceName ?? '');
     const [imagePreview, setImagePreview] = useState<string | null>(event?.image_url ?? null);
+    const [cropFile, setCropFile] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Controlled fields for live preview
+    const [title, setTitle] = useState(event?.title ?? '');
+    const [category, setCategory] = useState(event?.category ?? 'Otros');
+    const [zone, setZone] = useState(event?.zone ?? '');
+    const [dateStart, setDateStart] = useState(event ? toDatetimeLocal(event.date_start) : '');
+    const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
+    const [venueName, setVenueName] = useState(event?.venue_name ?? '');
 
     useEffect(() => {
         fetch('/api/zones')
@@ -51,16 +62,32 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
     const matchedPlace = places.find(p => p.name === placeName);
 
-    function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
+    function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
-        if (file) setImagePreview(URL.createObjectURL(file));
+        if (file) setCropFile(file);
+        // reset input so selecting the same file again still triggers onChange
+        e.target.value = '';
     }
 
+    function handleCropDone(blob: Blob, previewUrl: string) {
+        setImagePreview(previewUrl);
+        setCropFile(null);
+        // inject cropped file into the hidden input for FormData submission
+        if (fileInputRef.current) {
+            const dt = new DataTransfer();
+            dt.items.add(new File([blob], 'event-image.jpg', { type: 'image/jpeg' }));
+            fileInputRef.current.files = dt.files;
+        }
+    }
+
+    const previewData = { title, category, zone, date_start: dateStart, price, imageUrl: imagePreview, venue_name: venueName };
+
     return (
-        <form action={action} className="max-w-2xl space-y-5">
+        <div className="flex gap-8 items-start">
+        <form action={action} className="w-full max-w-xl space-y-5">
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Título</label>
-                <Input name="title" defaultValue={event?.title} required />
+                <Input name="title" value={title} onChange={e => setTitle(e.target.value)} required />
             </div>
 
             <div>
@@ -83,7 +110,8 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                     <label className="mb-1 block text-sm text-[#666666]">Categoría</label>
                     <select
                         name="category"
-                        defaultValue={event?.category ?? 'Otros'}
+                        value={category}
+                        onChange={e => setCategory(e.target.value)}
                         className="h-10 w-full rounded-md border border-[#E5E5E5] px-3 text-sm"
                     >
                         {EVENT_CATEGORIES.map(c => (
@@ -93,7 +121,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                 </div>
                 <div>
                     <label className="mb-1 block text-sm text-[#666666]">Zona</label>
-                    <Input name="zone" list="zone-options" defaultValue={event?.zone} required />
+                    <Input name="zone" list="zone-options" value={zone} onChange={e => setZone(e.target.value)} required />
                     <datalist id="zone-options">
                         {zones.map(z => <option key={z} value={z} />)}
                     </datalist>
@@ -103,7 +131,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="mb-1 block text-sm text-[#666666]">Lugar / venue (nombre libre)</label>
-                    <Input name="venue_name" defaultValue={event?.venue_name ?? ''} />
+                    <Input name="venue_name" value={venueName} onChange={e => setVenueName(e.target.value)} />
                 </div>
                 <div>
                     <label className="mb-1 block text-sm text-[#666666]">¿Es en un lugar ya catalogado?</label>
@@ -126,7 +154,8 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                     <Input
                         type="datetime-local"
                         name="date_start"
-                        defaultValue={event ? toDatetimeLocal(event.date_start) : ''}
+                        value={dateStart}
+                        onChange={e => setDateStart(e.target.value)}
                         required
                     />
                 </div>
@@ -142,7 +171,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Precio (vacío = gratis)</label>
-                <Input type="number" name="price" min="0" step="0.01" defaultValue={event?.price ?? ''} />
+                <Input type="number" name="price" min="0" step="0.01" value={price} onChange={e => setPrice(e.target.value)} />
             </div>
 
             <div>
@@ -153,11 +182,32 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Imagen</label>
                 {imagePreview && (
-                    <div className="relative mb-2 h-32 w-48 overflow-hidden rounded-md">
-                        <Image src={imagePreview} alt="" fill className="object-cover" />
+                    <div className="mb-2 overflow-hidden rounded-md" style={{ width: 200, height: 112 }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={imagePreview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                 )}
-                <input type="file" name="image" accept="image/*" onChange={handleImageChange} className="text-sm" />
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="rounded-md border border-[#E5E5E5] px-3 py-1.5 text-xs text-[#0A0A0A] hover:border-[#0A0A0A] transition-colors"
+                    >
+                        {imagePreview ? 'Cambiar imagen…' : 'Elegir imagen…'}
+                    </button>
+                    {imagePreview && (
+                        <span className="text-[11px] text-[#999]">La imagen se recortará en 16:9</span>
+                    )}
+                </div>
+                {/* Hidden inputs — el file real lo inyecta handleCropDone via DataTransfer */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                />
             </div>
 
             <div>
@@ -191,5 +241,21 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
             <SubmitButton mode={mode} />
         </form>
+
+        {/* Cropper modal */}
+        {cropFile && (
+            <ImageCropper
+                file={cropFile}
+                aspect={16 / 9}
+                onCrop={handleCropDone}
+                onCancel={() => setCropFile(null)}
+            />
+        )}
+
+        {/* Preview panel */}
+        <div className="hidden lg:block w-[580px] shrink-0">
+            <EventPreview data={previewData} />
+        </div>
+        </div>
     );
 }

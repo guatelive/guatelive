@@ -100,12 +100,21 @@ export default async function EventoPage(props: { params: Params }) {
         <div className="min-h-screen bg-white">
             <SchemaMarkup schema={schema} />
             <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-                <Link
-                    href="/buscar"
-                    className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] mb-6 transition-colors"
-                >
-                    ← Explorar eventos
-                </Link>
+                <div className="mb-6 flex items-center gap-4">
+                    <Link
+                        href="/"
+                        className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] transition-colors"
+                    >
+                        ← Inicio
+                    </Link>
+                    <span className="text-[#D4D4D4]">/</span>
+                    <Link
+                        href="/buscar?tipo=eventos"
+                        className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] transition-colors"
+                    >
+                        Explorar eventos
+                    </Link>
+                </div>
 
                 {/* Imagen hero — una sola imagen, no la galería multi-foto de lugares */}
                 <div className="relative mb-6 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80">

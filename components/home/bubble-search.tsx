@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
 import { EventCardLink } from '@/components/cards/event-card-link';
 import { EventExplorer } from '@/components/home/EventExplorer';
-import { VisitCounter } from '@/components/home/VisitCounter';
 import {
     normalizeHours,
     openStatusForSelection,
@@ -44,11 +43,11 @@ const TAG_MAP: Record<string, string[]> = {
 const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '🍽 Cenar', key: 'Cenar' },
     { label: '☕ Tomar algo', key: 'Tomar algo' },
-    { label: '🌅 Desayuno o brunch', key: 'Desayuno o brunch' },
+    { label: '🌅 Brunch', key: 'Desayuno o brunch' },
     { label: '💻 Trabajar', key: 'Trabajar' },
-    { label: '🎉 Salir de fiesta', key: 'Salir de fiesta' },
-    { label: '🐶 Ir con mi perro', key: 'Ir con mi perro' },
+    { label: '🐶 Con mi perro', key: 'Ir con mi perro' },
     { label: '👨‍👩‍👧 Plan familiar', key: 'Plan familiar' },
+    { label: '🎉 Salir de fiesta', key: 'Salir de fiesta' },
     { label: '✨ Sorprendeme', key: 'Sorprendeme', special: true },
 ];
 
@@ -67,11 +66,11 @@ const EVENT_ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
 type ZoneOption = { label: string; value: string };
 
 const WHEN: { label: string; value: string }[] = [
-    { label: '🌞 Hoy',               value: 'today' },
-    { label: '🌙 Esta noche',        value: 'tonight' },
-    { label: '☀️ Mañana',            value: 'tomorrow' },
+    { label: '🌞 Hoy', value: 'today' },
+    { label: '🌙 Esta noche', value: 'tonight' },
+    { label: '☀️ Mañana', value: 'tomorrow' },
     { label: '📅 Este fin de semana', value: 'weekend' },
-    { label: '🕐 Cuando sea',        value: 'anytime' },
+    { label: '🕐 Cuando sea', value: 'anytime' },
 ];
 
 const STEP_TITLE: Record<1 | 2 | 3, string> = {
@@ -370,135 +369,96 @@ export function BubbleSearch() {
 
     return (
         <div>
-            {/* ── Hero + buscador ── */}
-            <section style={{ padding: '56px 24px 32px', textAlign: 'center' }}>
-                <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-                    {/* Badge */}
-                    <div
+            {/* ── Hero: centrado, compacto ── */}
+            <section
+                style={{
+                    padding: '1.1rem 1.5rem 1rem',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.65rem',
+                }}
+            >
+                {/* A) Tag superior */}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <span
+                        className="hero-live-dot"
+                        style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: '#E11D2E', display: 'inline-block', flexShrink: 0 }}
+                    />
+                    <span
                         style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            backgroundColor: '#0A0A0A',
-                            color: '#FFFFFF',
                             fontFamily: 'var(--font-sans)',
-                            fontSize: 'clamp(8px, 2.2vw, 10px)',
+                            fontSize: 'clamp(9px, 2.4vw, 13px)',
                             fontWeight: 600,
-                            letterSpacing: '0.18em',
+                            letterSpacing: '0.14em',
+                            color: '#E11D2E',
                             textTransform: 'uppercase',
-                            paddingTop: '5px',
-                            paddingBottom: '5px',
-                            paddingLeft: 'clamp(10px, 3vw, 14px)',
-                            paddingRight: 'clamp(10px, 3vw, 14px)',
-                            borderRadius: '999px',
-                            marginBottom: '16px',
                         }}
                     >
-                        <span
-                            style={{
-                                display: 'inline-block',
-                                width: '5px',
-                                height: '5px',
-                                borderRadius: '50%',
-                                backgroundColor: '#E11D2E',
-                                flexShrink: 0,
-                            }}
-                        />
                         Todo lo que pasa en Guate, en un solo lugar
-                    </div>
+                    </span>
+                </div>
 
-                    <h1
-                        className="font-serif"
+                {/* B) Título */}
+                <h1
+                    className="font-serif"
+                    style={{ fontSize: 'clamp(32px, 8.5vw, 64px)', fontWeight: 700, lineHeight: 1.1, color: '#0A0A0A' }}
+                >
+                    ¿Qué hacemos <em style={{ color: '#E11D2E', fontStyle: 'italic' }}>hoy</em> en Guate?
+                </h1>
+
+                <p
+                    style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 'clamp(13px, 3.8vw, 20px)',
+                        color: '#666666',
+                        lineHeight: 1.5,
+                    }}
+                >
+                    Encuentra cafés, restaurantes y cosas que hacer.
+                </p>
+
+                {/* C) Search bar */}
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        border: `0.5px solid ${inputFocused ? '#0A0A0A' : '#D4D4D4'}`,
+                        borderRadius: '100px',
+                        padding: 'clamp(8px, 1.6vw, 11px) clamp(16px, 3vw, 26px)',
+                        backgroundColor: '#FAFAFA',
+                        width: '100%',
+                        maxWidth: '760px',
+                        transition: 'border-color 0.2s ease',
+                    }}
+                >
+                    <Search style={{ width: 'clamp(15px, 3vw, 18px)', height: 'clamp(15px, 3vw, 18px)', color: '#999999', flexShrink: 0 }} />
+                    <input
+                        type="text"
+                        placeholder="Busca cafés, restaurantes, eventos…"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        onFocus={handleFocus}
+                        onBlur={() => setInputFocused(false)}
                         style={{
-                            fontSize: 'clamp(28px, 9vw, 58px)',
-                            fontWeight: 700,
-                            lineHeight: 1.15,
+                            flex: 1,
+                            border: 'none',
+                            outline: 'none',
+                            fontSize: 'clamp(13px, 3vw, 16px)',
                             color: '#0A0A0A',
-                        }}
-                    >
-                        ¿Qué hacemos{' '}
-                        <em style={{ color: '#E11D2E', fontStyle: 'italic' }}>hoy</em>
-                        {' '}en Guate?
-                    </h1>
-
-                    {/* Línea decorativa */}
-                    <div
-                        style={{
-                            width: '28px',
-                            height: '2px',
-                            backgroundColor: '#E11D2E',
-                            margin: '14px auto',
+                            backgroundColor: 'transparent',
                         }}
                     />
-
-                    <p
-                        style={{
-                            fontFamily: 'var(--font-sans)',
-                            fontSize: '16px',
-                            color: '#666666',
-                            lineHeight: 1.6,
-                            textAlign: 'center',
-                            maxWidth: '480px',
-                            margin: '0 auto',
-                        }}
-                    >
-                        Cafés escondidos, eventos del fin de semana y las promos bancarias que sí valen la pena.
-                    </p>
-                    <div style={{ marginTop: '10px' }}>
-                        <VisitCounter />
-                    </div>
-
-                    {/* Input */}
-                    <div style={{ marginTop: '28px', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px',
-                                borderRadius: '999px',
-                                border: `1.5px solid ${inputFocused ? '#0A0A0A' : '#E5E5E5'}`,
-                                backgroundColor: '#ffffff',
-                                padding: '14px 24px',
-                                boxShadow: inputFocused ? '0 0 0 3px rgba(10,10,10,0.06)' : '0 1px 4px rgba(0,0,0,0.06)',
-                                transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-                            }}
+                    {searchQuery && (
+                        <button
+                            onClick={() => setSearchQuery('')}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999999', fontSize: 'clamp(16px, 3vw, 19px)', lineHeight: 1, padding: 0, flexShrink: 0 }}
                         >
-                            <Search style={{ width: '18px', height: '18px', color: '#999999', flexShrink: 0 }} />
-                            <input
-                                type="text"
-                                placeholder="Busca cafés, restaurantes, eventos…"
-                                value={searchQuery}
-                                onChange={e => setSearchQuery(e.target.value)}
-                                onFocus={handleFocus}
-                                onBlur={() => setInputFocused(false)}
-                                style={{
-                                    flex: 1,
-                                    border: 'none',
-                                    outline: 'none',
-                                    fontSize: '14px',
-                                    color: '#0A0A0A',
-                                    backgroundColor: 'transparent',
-                                }}
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery('')}
-                                    style={{
-                                        background: 'none',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                        color: '#999999',
-                                        fontSize: '20px',
-                                        lineHeight: 1,
-                                        padding: '0',
-                                        flexShrink: 0,
-                                    }}
-                                >
-                                    ×
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                            ×
+                        </button>
+                    )}
                 </div>
             </section>
 
@@ -576,7 +536,7 @@ export function BubbleSearch() {
 
             {/* ── Bubble flow (solo cuando no hay búsqueda de texto) ── */}
             {showBubbleFlow && (
-                <section style={{ maxWidth: '680px', margin: '0 auto', padding: '0 24px 20px' }}>
+                <section style={{ maxWidth: '860px', margin: '0 auto', padding: '18px 24px 20px' }}>
                     {/* ── Progress tracker ── */}
                     <div style={{ marginBottom: '28px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
@@ -588,7 +548,7 @@ export function BubbleSearch() {
                                     <span
                                         key={label}
                                         style={{
-                                            fontSize: '11px',
+                                            fontSize: 'clamp(11px, 2.8vw, 14px)',
                                             fontWeight: isCurrent ? 700 : 400,
                                             color: isCompleted ? '#0A0A0A' : isCurrent ? '#E11D2E' : '#CCCCCC',
                                             letterSpacing: '0.03em',
@@ -633,7 +593,7 @@ export function BubbleSearch() {
                                         key={tab.value}
                                         onClick={() => setPlaceOrEventTab(tab.value)}
                                         style={{
-                                            fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600,
+                                            fontFamily: 'var(--font-sans)', fontSize: 'clamp(13px, 3.4vw, 17px)', fontWeight: 600,
                                             padding: '0 4px 10px', marginBottom: '-1px',
                                             background: 'none', cursor: 'pointer',
                                             color: placeOrEventTab === tab.value ? '#E11D2E' : '#999999',
@@ -650,7 +610,7 @@ export function BubbleSearch() {
                         {bubbleStep > 1 && (
                             <h2
                                 className="font-serif"
-                                style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0A0A0A', marginBottom: '20px', textAlign: 'center' }}
+                                style={{ fontSize: 'clamp(1.1rem, 4.5vw, 1.6rem)', fontWeight: 700, color: '#0A0A0A', marginBottom: '20px', textAlign: 'center' }}
                             >
                                 {STEP_TITLE[bubbleStep]}
                             </h2>

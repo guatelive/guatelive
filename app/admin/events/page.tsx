@@ -5,12 +5,34 @@ import { deleteEvent } from './actions';
 
 export const metadata = { title: 'Eventos — Admin' };
 
-export default async function AdminEventsPage() {
+type SortKey = 'date_asc' | 'date_desc' | 'created_desc';
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: 'date_desc', label: 'Fecha ↓ (más recientes)' },
+    { key: 'date_asc',  label: 'Fecha ↑ (más antiguos)' },
+    { key: 'created_desc', label: 'Recién creados' },
+];
+
+function sortParams(key: SortKey): { column: string; ascending: boolean } {
+    if (key === 'date_asc')     return { column: 'date_start',  ascending: true  };
+    if (key === 'created_desc') return { column: 'created_at',  ascending: false };
+    return                             { column: 'date_start',  ascending: false };
+}
+
+export default async function AdminEventsPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ sort?: string }>;
+}) {
+    const { sort = 'date_desc' } = await searchParams;
+    const activeSort = (SORT_OPTIONS.some(o => o.key === sort) ? sort : 'date_desc') as SortKey;
+    const { column, ascending } = sortParams(activeSort);
+
     const supabase = await createClient();
     const { data: events } = await supabase
         .from('events')
         .select('id, title, category, zone, date_start, status, sponsored')
-        .order('date_start', { ascending: false });
+        .order(column, { ascending });
 
     const rows = events ?? [];
 
@@ -23,6 +45,24 @@ export default async function AdminEventsPage() {
                 </Link>
             </div>
 
+            {/* Sort controls */}
+            <div className="mb-4 flex items-center gap-2">
+                <span className="text-xs text-[#666666] mr-1">Ordenar:</span>
+                {SORT_OPTIONS.map(opt => (
+                    <Link
+                        key={opt.key}
+                        href={`?sort=${opt.key}`}
+                        className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                            activeSort === opt.key
+                                ? 'border-[#0A0A0A] bg-[#0A0A0A] text-white'
+                                : 'border-[#E5E5E5] text-[#666666] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'
+                        }`}
+                    >
+                        {opt.label}
+                    </Link>
+                ))}
+            </div>
+
             <div className="overflow-hidden rounded-lg border border-[#E5E5E5] bg-white">
                 <table className="w-full text-sm">
                     <thead className="border-b border-[#E5E5E5] bg-[#FAFAFA] text-left text-xs uppercase text-[#666666]">
@@ -30,7 +70,11 @@ export default async function AdminEventsPage() {
                             <th className="px-4 py-3">Título</th>
                             <th className="px-4 py-3">Categoría</th>
                             <th className="px-4 py-3">Zona</th>
-                            <th className="px-4 py-3">Fecha</th>
+                            <th className="px-4 py-3">
+                                Fecha
+                                {activeSort === 'date_desc' && ' ↓'}
+                                {activeSort === 'date_asc'  && ' ↑'}
+                            </th>
                             <th className="px-4 py-3">Estado</th>
                             <th className="px-4 py-3" />
                         </tr>

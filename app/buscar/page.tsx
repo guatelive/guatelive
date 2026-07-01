@@ -33,8 +33,11 @@ function BuscarContent() {
     useEffect(() => {
         const zone = searchParams.get('zone');
         const q = searchParams.get('q');
+        const tipo = searchParams.get('tipo');
         if (zone) setSelectedZone(zone);
         if (q) setSearchQuery(q);
+        if (tipo === 'eventos') { setShowEvents(true); setShowPlaces(false); }
+        if (tipo === 'lugares') { setShowPlaces(true); setShowEvents(false); }
     }, [searchParams]);
 
     useEffect(() => {
