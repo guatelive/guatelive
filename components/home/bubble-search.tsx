@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
 import { EventCardLink } from '@/components/cards/event-card-link';
 import { EventExplorer } from '@/components/home/EventExplorer';
+import { VisitCounter } from '@/components/home/VisitCounter';
 import {
     normalizeHours,
     openStatusForSelection,
@@ -418,6 +419,8 @@ export function BubbleSearch() {
                 >
                     Encuentra cafés, restaurantes y cosas que hacer.
                 </p>
+
+                <VisitCounter />
 
                 {/* C) Search bar */}
                 <div
