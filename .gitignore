@@ -42,6 +42,9 @@ next-env.d.ts
 
 /docs
 CLAUDE.md
+0-EMPEZAR-AQUI.md
+.claude/skills/plan-cambio/
+.claude/skills/fix-rapido/
 
 # GuateLive — scripts privados (lógica de negocio)
 scripts/

@@ -48,26 +48,27 @@ function MainCard({ event }: { event: DbEvent | null }) {
     const location = eventLocation(event);
     return (
         <Link href={`/evento/${event.slug}`} style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            display: 'flex', flexDirection: 'column',
             position: 'relative', overflow: 'hidden', cursor: 'pointer',
-            borderRadius: 10, background: '#111',
+            borderRadius: 10, background: '#1A1A1A',
             width: '100%', height: '100%', minHeight: 370, textDecoration: 'none',
         }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: style.bar, zIndex: 3 }} />
-            {event.image_url && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-            )}
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.05) 55%)', zIndex: 1 }} />
-            <span style={{
-                position: 'absolute', top: '0.75rem', left: '0.75rem', zIndex: 3,
-                background: style.pillBg, color: style.pillText,
-                fontSize: 12, fontWeight: 600, borderRadius: 999, padding: '4px 11px',
-                textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: 'var(--font-sans)',
-            }}>
-                {event.category}
-            </span>
-            <div style={{ position: 'relative', zIndex: 2, padding: '1.25rem' }}>
+            <div style={{ position: 'relative', overflow: 'hidden', height: 320, background: '#242424', flexShrink: 0 }}>
+                {event.image_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                )}
+                <span style={{
+                    position: 'absolute', top: '0.75rem', left: '0.75rem', zIndex: 3,
+                    background: style.pillBg, color: style.pillText,
+                    fontSize: 12, fontWeight: 600, borderRadius: 999, padding: '4px 11px',
+                    textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: 'var(--font-sans)',
+                }}>
+                    {event.category}
+                </span>
+            </div>
+            <div style={{ padding: '1.25rem' }}>
                 <h3 style={{
                     fontFamily: 'var(--font-serif)', fontSize: 30, color: '#fff', lineHeight: 1.2,
                     marginBottom: '0.4rem',
@@ -100,38 +101,42 @@ function MediaCard({ event }: { event: DbEvent | null }) {
     const location = eventLocation(event);
     return (
         <Link href={`/evento/${event.slug}`} style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            display: 'flex', flexDirection: 'column',
             position: 'relative', overflow: 'hidden', cursor: 'pointer',
-            borderRadius: 8, background: '#111',
+            borderRadius: 8, background: '#1A1A1A',
             width: '100%', height: '100%', minHeight: 180, textDecoration: 'none',
         }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: style.bar, zIndex: 3 }} />
-            {event.image_url && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-            )}
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.05) 60%)', zIndex: 1 }} />
-            <span style={{
-                position: 'absolute', top: '0.55rem', left: '0.55rem', zIndex: 3,
-                background: style.pillBg, color: style.pillText,
-                fontSize: 10, fontWeight: 600, borderRadius: 999, padding: '3px 9px',
-                textTransform: 'uppercase', fontFamily: 'var(--font-sans)',
-            }}>
-                {event.category}
-            </span>
-            {event.price === null && (
-                <span style={{ position: 'absolute', top: '0.55rem', right: '0.55rem', zIndex: 3 }}>
-                    <GratisBadge dark size={10} />
+            <div style={{ position: 'relative', overflow: 'hidden', flex: '1 1 0%', minHeight: 90, background: '#242424' }}>
+                {event.image_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                )}
+                <span style={{
+                    position: 'absolute', top: '0.55rem', left: '0.55rem', zIndex: 3,
+                    background: style.pillBg, color: style.pillText,
+                    fontSize: 10, fontWeight: 600, borderRadius: 999, padding: '3px 9px',
+                    textTransform: 'uppercase', fontFamily: 'var(--font-sans)',
+                }}>
+                    {event.category}
                 </span>
-            )}
-            <div style={{ position: 'relative', zIndex: 2, padding: '0.85rem 0.95rem' }}>
+                {event.price === null && (
+                    <span style={{ position: 'absolute', top: '0.55rem', right: '0.55rem', zIndex: 3 }}>
+                        <GratisBadge dark size={10} />
+                    </span>
+                )}
+            </div>
+            <div style={{ padding: '0.85rem 0.95rem', flexShrink: 0 }}>
                 <h3 style={{
                     fontFamily: 'var(--font-serif)', fontSize: 18, color: '#fff', lineHeight: 1.2, marginBottom: 4,
                     display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                 }}>
                     {event.title}
                 </h3>
-                <p style={{ fontFamily: 'var(--font-sans)', fontSize: 12, color: '#aaa' }}>
+                <p style={{
+                    fontFamily: 'var(--font-sans)', fontSize: 12, color: '#aaa', lineHeight: 1.35,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                }}>
                     {formatEventDateTime(event.date_start)}{location ? ` · 📍 ${location}` : ''}
                 </p>
                 {event.price !== null && (
@@ -300,6 +305,7 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     const start = activePage * PER_PAGE;
     const pageEvents = events.slice(start, start + PER_PAGE);
     const [main, media1, media2, small1, small2] = pageEvents;
+    const hasSmallColumn = Boolean(small1 || small2);
 
     if (events.length === 0) return null;
 
@@ -377,7 +383,7 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
                 {isDesktop ? (
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: '1.5fr 1fr 1fr',
+                        gridTemplateColumns: hasSmallColumn ? '1.5fr 1fr 1fr' : '1.5fr 1fr',
                         gridTemplateRows: 'auto auto',
                         gap: '0.65rem',
                     }}>
@@ -387,15 +393,19 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
                         <div style={{ gridColumn: 2, gridRow: 1 }}>
                             <MediaCard event={media1 ?? null} />
                         </div>
-                        <div style={{ gridColumn: 3, gridRow: 1 }}>
-                            <SmallCard event={small1 ?? null} />
-                        </div>
+                        {hasSmallColumn && (
+                            <div style={{ gridColumn: 3, gridRow: 1 }}>
+                                <SmallCard event={small1 ?? null} />
+                            </div>
+                        )}
                         <div style={{ gridColumn: 2, gridRow: 2 }}>
                             <MediaCard event={media2 ?? null} />
                         </div>
-                        <div style={{ gridColumn: 3, gridRow: 2 }}>
-                            <SmallCard event={small2 ?? null} />
-                        </div>
+                        {hasSmallColumn && (
+                            <div style={{ gridColumn: 3, gridRow: 2 }}>
+                                <SmallCard event={small2 ?? null} />
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div
@@ -406,7 +416,7 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
                         {events.map(ev => (
                             <div
                                 key={ev.id}
-                                style={{ width: '78vw', maxWidth: 320, height: 220, flexShrink: 0, scrollSnapAlign: 'start' }}
+                                style={{ width: '78vw', maxWidth: 320, height: 280, flexShrink: 0, scrollSnapAlign: 'start' }}
                             >
                                 <MediaCard event={ev} />
                             </div>
