@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { TagPicker } from './tag-picker';
 import { ImageCropper } from './image-cropper';
@@ -97,11 +98,10 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Descripción</label>
-                <textarea
+                <Textarea
                     name="description"
                     defaultValue={event?.description ?? ''}
-                    rows={3}
-                    className="w-full rounded-md border border-[#E5E5E5] px-3 py-2 text-sm outline-none focus:border-[#0A0A0A]"
+                    rows={5}
                 />
             </div>
 
