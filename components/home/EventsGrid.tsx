@@ -207,7 +207,6 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     const navIndex = isDesktop ? activePage : activeMobileIndex;
     const [visible, setVisible] = useState(true);
 
-    const topProgressRef = useRef<HTMLDivElement>(null);
     const footerProgressRef = useRef<HTMLDivElement>(null);
     const carouselRef = useRef<HTMLDivElement>(null);
     const rafRef = useRef<number | null>(null);
@@ -216,13 +215,12 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     const pauseStartRef = useRef<number | null>(null);
     const isPausedRef = useRef(false);
 
-    // RAF — actualiza ambas barras de progreso directamente (sin React state)
+    // RAF — actualiza la barra de progreso directamente (sin React state)
     useEffect(() => {
         function tick() {
             if (!isPausedRef.current && pageStartRef.current > 0) {
                 const elapsed = performance.now() - pageStartRef.current;
                 const pct = Math.min((elapsed / DURATION) * 100, 100);
-                if (topProgressRef.current) topProgressRef.current.style.width = `${pct}%`;
                 if (footerProgressRef.current) footerProgressRef.current.style.width = `${pct}%`;
             }
             rafRef.current = requestAnimationFrame(tick);
@@ -232,9 +230,13 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     }, []);
 
     // Desliza el carrousel mobile para que la card en `index` quede al inicio (mueve a la derecha)
+    // Usa scrollTo sobre el contenedor (no scrollIntoView) para nunca afectar el scroll vertical
+    // de la página cuando el carrousel está fuera del viewport.
     const scrollToCard = useCallback((index: number) => {
-        const card = carouselRef.current?.children[index] as HTMLElement | undefined;
-        card?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+        const container = carouselRef.current;
+        const card = container?.children[index] as HTMLElement | undefined;
+        if (!container || !card) return;
+        container.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
     }, []);
 
     const doAdvance = useCallback(() => {
@@ -258,7 +260,6 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
         if (timerRef.current) clearTimeout(timerRef.current);
         pageStartRef.current = performance.now() - (DURATION - remaining);
         if (remaining === DURATION) {
-            if (topProgressRef.current) topProgressRef.current.style.width = '0%';
             if (footerProgressRef.current) footerProgressRef.current.style.width = '0%';
         }
         timerRef.current = setTimeout(() => doAdvance(), remaining);
@@ -310,12 +311,7 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     if (events.length === 0) return null;
 
     return (
-        <section className="mx-auto mt-6 max-w-6xl px-4 sm:px-6">
-            {/* ── Barra de progreso global ── */}
-            <div style={{ height: 2, background: '#E5E5E5', borderRadius: 2, overflow: 'hidden' }}>
-                <div ref={topProgressRef} style={{ height: '100%', background: '#E11D2E', width: '0%', borderRadius: 2 }} />
-            </div>
-
+        <section className="mx-auto mt-2 max-w-6xl px-4 sm:px-6">
             {/* ── Header ── */}
             <div style={{
                 display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',

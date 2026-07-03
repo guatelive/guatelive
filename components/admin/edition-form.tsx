@@ -4,6 +4,7 @@ import { useState, useRef, type ChangeEvent } from 'react';
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ChipInput } from './chip-input';
 import { SummaryItemsEditor, type SummaryItem } from './summary-items-editor';
@@ -245,12 +246,11 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
 
                     <section className="space-y-2 border-t border-[#E5E5E5] pt-6">
                         <h2 className="font-serif text-lg text-[#0A0A0A]">Intro</h2>
-                        <textarea
+                        <Textarea
                             name="intro_text"
                             value={introText}
                             onChange={e => setIntroText(e.target.value)}
-                            rows={4}
-                            className="w-full rounded-md border border-[#E5E5E5] px-3 py-2 text-sm"
+                            rows={6}
                         />
                     </section>
 
@@ -281,12 +281,11 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
                                 onChange={e => setFoodRating(e.target.value)}
                             />
                             <label className="mb-1 block text-sm text-[#666666]">Veredicto</label>
-                            <textarea
+                            <Textarea
                                 name="food_verdict"
                                 value={foodVerdict}
                                 onChange={e => setFoodVerdict(e.target.value)}
-                                rows={3}
-                                className="w-full rounded-md border border-[#E5E5E5] px-3 py-2 text-sm"
+                                rows={5}
                             />
                         </div>
                         <div className="space-y-2">
@@ -298,24 +297,22 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
                                 onChange={e => setPlaceRating(e.target.value)}
                             />
                             <label className="mb-1 block text-sm text-[#666666]">Veredicto</label>
-                            <textarea
+                            <Textarea
                                 name="place_verdict"
                                 value={placeVerdict}
                                 onChange={e => setPlaceVerdict(e.target.value)}
-                                rows={3}
-                                className="w-full rounded-md border border-[#E5E5E5] px-3 py-2 text-sm"
+                                rows={5}
                             />
                         </div>
                     </section>
 
                     <section className="space-y-2 border-t border-[#E5E5E5] pt-6">
                         <h2 className="font-serif text-lg text-[#0A0A0A]">Cierre</h2>
-                        <textarea
+                        <Textarea
                             name="closing_text"
                             value={closingText}
                             onChange={e => setClosingText(e.target.value)}
-                            rows={3}
-                            className="w-full rounded-md border border-[#E5E5E5] px-3 py-2 text-sm"
+                            rows={5}
                         />
                     </section>
 

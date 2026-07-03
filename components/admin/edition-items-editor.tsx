@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ChipInput } from './chip-input';
 import { ImageCropper } from './image-cropper';
 import { getBadgeStyle, getBadgeStyleStatic, saveCustomBadgeColor, dismissBadgeSuggestion, getDismissedBadges, contrastColor, BADGE_PRESETS } from '@/lib/badge-colors';
@@ -420,11 +421,10 @@ export function EditionItemsEditor({ defaultValue = [], onItemsChange }: Props) 
 
                         <div>
                             <label className="mb-1 block text-xs text-[#666666]">Texto editorial (opcional)</label>
-                            <textarea
+                            <Textarea
                                 value={item.editorial_text ?? ''}
                                 onChange={e => update(i, { editorial_text: e.target.value })}
-                                rows={2}
-                                className="w-full rounded-md border border-[#E5E5E5] px-3 py-2 text-sm"
+                                rows={4}
                             />
                         </div>
                     </div>

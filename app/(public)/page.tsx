@@ -242,17 +242,17 @@ export default async function HomePage() {
                       const after = latestEdition.title.slice(idx + 1).trim();
                       return (
                         <>
-                          <span style={{ whiteSpace: 'nowrap' }}>{before}</span>
+                          <span>{before}</span>
                           {after && (
                             <span style={{ display: 'block', marginTop: '10px' }}>
-                              <span style={{
-                                background: '#fff',
-                                color: '#0A0A0A',
-                                padding: '2px 8px',
-                                whiteSpace: 'nowrap',
-                                boxDecorationBreak: 'clone',
-                                WebkitBoxDecorationBreak: 'clone',
-                              }}>
+                              <span
+                                style={{
+                                  background: '#fff',
+                                  color: '#0A0A0A',
+                                  padding: '2px 8px',
+                                  boxDecorationBreak: 'clone',
+                                  WebkitBoxDecorationBreak: 'clone',
+                                }}>
                                 {after}
                               </span>
                             </span>

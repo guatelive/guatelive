@@ -169,10 +169,10 @@ export default async function LugarPage(props: { params: Params }) {
             <div className="mx-auto px-8 py-8" style={{ maxWidth: '1150px' }}>
 
                 <Link
-                    href="/buscar"
+                    href="/"
                     className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] mb-8 transition-colors"
                 >
-                    ← Explorar lugares
+                    ← Seguir explorando
                 </Link>
 
                 {/* GALERÍA — full width, collage */}
