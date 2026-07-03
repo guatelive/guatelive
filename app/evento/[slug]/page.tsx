@@ -105,14 +105,7 @@ export default async function EventoPage(props: { params: Params }) {
                         href="/"
                         className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] transition-colors"
                     >
-                        ← Inicio
-                    </Link>
-                    <span className="text-[#D4D4D4]">/</span>
-                    <Link
-                        href="/buscar?tipo=eventos"
-                        className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] transition-colors"
-                    >
-                        Explorar eventos
+                        ← Seguir explorando
                     </Link>
                 </div>
 
