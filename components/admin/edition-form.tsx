@@ -66,6 +66,7 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
 
     // --- foto de portada ---
     const [coverPreview, setCoverPreview] = useState<string | null>(edition?.cover_image_url ?? null);
+    const [coverRemoved, setCoverRemoved] = useState(false);
     const [coverCropFile, setCoverCropFile] = useState<File | null>(null);
     const coverInputRef = useRef<HTMLInputElement>(null);
 
@@ -76,11 +77,18 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
 
     function handleCoverCrop(blob: Blob, previewUrl: string) {
         setCoverPreview(previewUrl);
+        setCoverRemoved(false);
         const croppedFile = new File([blob], coverCropFile?.name ?? 'cover.jpg', { type: 'image/jpeg' });
         const dt = new DataTransfer();
         dt.items.add(croppedFile);
         if (coverInputRef.current) coverInputRef.current.files = dt.files;
         setCoverCropFile(null);
+    }
+
+    function handleRemoveCover() {
+        setCoverPreview(null);
+        setCoverRemoved(true);
+        if (coverInputRef.current) coverInputRef.current.value = '';
     }
 
     // --- fotos del strip editorial (hasta 3) ---
@@ -89,6 +97,7 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
         edition?.strip_photos?.[1] ?? null,
         edition?.strip_photos?.[2] ?? null,
     ]);
+    const [stripRemoved, setStripRemoved] = useState<boolean[]>([false, false, false]);
     const [stripCropTarget, setStripCropTarget] = useState<{ index: number; file: File } | null>(null);
     const stripInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -105,11 +114,13 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
         dt.items.add(croppedFile);
         if (stripInputRefs.current[i]) stripInputRefs.current[i]!.files = dt.files;
         setStripPhotos(prev => prev.map((p, idx) => (idx === i ? previewUrl : p)));
+        setStripRemoved(prev => prev.map((r, idx) => (idx === i ? false : r)));
         setStripCropTarget(null);
     }
 
     function clearStripPhoto(i: number) {
         setStripPhotos(prev => prev.map((p, idx) => (idx === i ? null : p)));
+        setStripRemoved(prev => prev.map((r, idx) => (idx === i ? true : r)));
         if (stripInputRefs.current[i]) stripInputRefs.current[i]!.value = '';
     }
 
@@ -192,6 +203,13 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
                         {coverPreview && (
                             <div className="relative h-40 w-64 overflow-hidden rounded-md">
                                 <Image src={coverPreview} alt="" fill className="object-cover" />
+                                <button
+                                    type="button"
+                                    onClick={handleRemoveCover}
+                                    className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-xs text-white hover:bg-black/80"
+                                >
+                                    ×
+                                </button>
                             </div>
                         )}
                         <input
@@ -200,8 +218,9 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
                             name="cover_image"
                             accept="image/*"
                             onChange={handleCoverChange}
-                            className="text-sm"
+                            className="text-sm text-[#666666] file:mr-3 file:cursor-pointer file:rounded-md file:border file:border-[#E5E5E5] file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-[#0A0A0A] file:transition-colors hover:file:border-[#0A0A0A]"
                         />
+                        <input type="hidden" name="remove_cover_image" value={coverRemoved ? '1' : ''} />
                         <p className="text-xs text-[#666666]">Se abrirá un recortador para ajustar el encuadre.</p>
                     </section>
 
@@ -237,8 +256,9 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
                                         name={`strip_photo_${i}`}
                                         accept="image/*"
                                         onChange={e => handleStripImageChange(i, e)}
-                                        className="w-full text-xs"
+                                        className="w-full text-xs text-[#666666] file:mr-2 file:cursor-pointer file:rounded file:border file:border-[#E5E5E5] file:bg-white file:px-2 file:py-1 file:text-[10px] file:font-medium file:text-[#0A0A0A] file:transition-colors hover:file:border-[#0A0A0A]"
                                     />
+                                    <input type="hidden" name={`remove_strip_photo_${i}`} value={stripRemoved[i] ? '1' : ''} />
                                 </div>
                             ))}
                         </div>

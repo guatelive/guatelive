@@ -19,7 +19,7 @@ export default async function EventosHoyPage() {
         .from('events')
         .select(`
             id, title, slug, description, category, zone, venue_name,
-            place_id, date_start, date_end, price, image_url, contact_link,
+            place_id, date_start, date_end, price, is_free, image_url, contact_link,
             sponsored, featured, tags, status
         `)
         .eq('status', 'published')
@@ -36,30 +36,36 @@ export default async function EventosHoyPage() {
     const itemListSchema = {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
-        itemListElement: events.map((event, i) => ({
-            '@type': 'ListItem',
-            position: i + 1,
-            item: {
-                '@type': 'Event',
-                name: event.title,
-                startDate: event.date_start,
-                ...(event.date_end ? { endDate: event.date_end } : {}),
-                eventStatus: 'https://schema.org/EventScheduled',
-                location: {
-                    '@type': 'Place',
-                    name: event.venue_name || event.zone,
-                    address: event.zone,
+        itemListElement: events.map((event, i) => {
+            const priceUnknown = !event.is_free && event.price === null;
+            return {
+                '@type': 'ListItem',
+                position: i + 1,
+                item: {
+                    '@type': 'Event',
+                    name: event.title,
+                    startDate: event.date_start,
+                    ...(event.date_end ? { endDate: event.date_end } : {}),
+                    eventStatus: 'https://schema.org/EventScheduled',
+                    location: {
+                        '@type': 'Place',
+                        name: event.venue_name || event.zone,
+                        address: event.zone,
+                    },
+                    ...(event.image_url ? { image: event.image_url } : {}),
+                    ...(event.description ? { description: event.description } : {}),
+                    // Si no sabemos el precio, no inventamos un 0 — se omite offers.
+                    ...(priceUnknown ? {} : {
+                        offers: {
+                            '@type': 'Offer',
+                            price: event.is_free ? 0 : event.price,
+                            priceCurrency: 'GTQ',
+                            ...(event.contact_link ? { url: event.contact_link } : {}),
+                        },
+                    }),
                 },
-                ...(event.image_url ? { image: event.image_url } : {}),
-                ...(event.description ? { description: event.description } : {}),
-                offers: {
-                    '@type': 'Offer',
-                    price: event.price ?? 0,
-                    priceCurrency: 'GTQ',
-                    ...(event.contact_link ? { url: event.contact_link } : {}),
-                },
-            },
-        })),
+            };
+        }),
     };
 
     return (

@@ -11,6 +11,7 @@ export type DbEvent = {
   date_start: string;
   date_end: string | null;
   price: number | null;
+  is_free: boolean;
   image_url: string | null;
   contact_link: string | null;
   sponsored: boolean;

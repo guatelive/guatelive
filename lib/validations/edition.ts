@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const editionItemSchema = z.object({
     place_id: z.string().uuid().optional(),
     title: z.string().trim().optional(),
-    mention_type: z.enum(['highlighted', 'mentioned', 'drinks', 'desserts', 'not_recommended']),
+    mention_type: z.enum(['highlighted', 'mentioned', 'drinks', 'desserts', 'not_recommended', 'place_note']),
     badges: z.array(z.string()),
     editorial_text: z.string().trim().optional(),
     photo_url: z.string().url().optional(),

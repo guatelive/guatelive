@@ -58,6 +58,7 @@ async function uploadEventImage(supabase: SupabaseClient, file: File, slug: stri
 function parseEventForm(formData: FormData) {
     const priceRaw = str(formData, 'price');
     const tagsRaw = str(formData, 'tags');
+    const isFree = formData.get('is_free') === 'on';
 
     return eventSchema.parse({
         title: str(formData, 'title') ?? '',
@@ -69,7 +70,8 @@ function parseEventForm(formData: FormData) {
         place_id: str(formData, 'place_id'),
         date_start: str(formData, 'date_start') ?? '',
         date_end: str(formData, 'date_end'),
-        price: priceRaw ? Math.round(parseFloat(priceRaw) * 100) / 100 : undefined,
+        price: !isFree && priceRaw ? Math.round(parseFloat(priceRaw) * 100) / 100 : undefined,
+        is_free: isFree,
         contact_link: str(formData, 'contact_link'),
         sponsored: formData.get('sponsored') === 'on',
         featured: formData.get('featured') === 'on',
@@ -133,6 +135,9 @@ export async function updateEvent(id: string, formData: FormData) {
     if (imageFile instanceof File && imageFile.size > 0) {
         imageUrl = await uploadEventImage(supabase, imageFile, slug);
         await deleteEventImage(supabase, existing?.image_url ?? null);
+    } else if (str(formData, 'remove_image') === '1') {
+        await deleteEventImage(supabase, existing?.image_url ?? null);
+        imageUrl = null;
     }
 
     const { error } = await supabase

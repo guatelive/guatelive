@@ -8,7 +8,8 @@ export type EventPreviewData = {
     category: string;
     zone: string;
     date_start: string;
-    price: string; // string from input, empty = gratis
+    price: string; // string from input, empty = no sé el precio (a menos que isFree)
+    isFree: boolean;
     imageUrl: string | null;
     venue_name: string;
 };
@@ -25,8 +26,10 @@ function PreviewCard({
     const color = getCategoryColor(data.category);
     const isBig = size === 'big';
     const isMsm = size === 'mobile-small';
-    const priceNum = data.price !== '' ? parseFloat(data.price) : null;
-    const isGratis = priceNum === null || isNaN(priceNum);
+    const parsed = data.price !== '' ? parseFloat(data.price) : NaN;
+    const priceNum = isNaN(parsed) ? null : parsed;
+    const isGratis = data.isFree;
+    const priceUnknown = !isGratis && priceNum === null;
 
     return (
         <div style={{
@@ -92,12 +95,20 @@ function PreviewCard({
                 padding: isBig ? '18px 20px' : isMsm ? '6px 8px' : '10px 12px',
                 zIndex: 3,
             }}>
-                {!isGratis && !isMsm && (
+                {!isGratis && !isMsm && priceNum !== null && (
                     <p style={{
                         color: '#fff', fontSize: isBig ? 12 : 11, fontWeight: 700,
                         fontFamily: 'var(--font-sans)', marginBottom: isBig ? 4 : 2,
                     }}>
                         Q{priceNum}
+                    </p>
+                )}
+                {priceUnknown && !isMsm && (
+                    <p style={{
+                        color: '#888', fontSize: isBig ? 11 : 10, fontWeight: 600,
+                        fontFamily: 'var(--font-sans)', marginBottom: isBig ? 4 : 2,
+                    }}>
+                        Precio no disponible
                     </p>
                 )}
                 <h3 style={{

@@ -42,6 +42,7 @@ export default async function EditEditionPage({ params }: { params: Promise<{ id
         subtitle: edition.subtitle,
         intro_text: edition.intro_text,
         cover_image_url: edition.cover_image_url,
+        strip_photos: edition.strip_photos ?? [],
         summary_items: edition.summary_items ?? [],
         food_rating: edition.food_rating,
         food_verdict: edition.food_verdict,

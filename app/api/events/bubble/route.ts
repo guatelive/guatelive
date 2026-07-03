@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     let query = supabase
         .from('events')
-        .select('id, title, slug, description, category, zone, venue_name, place_id, date_start, date_end, price, image_url, contact_link, sponsored, featured, tags')
+        .select('id, title, slug, description, category, zone, venue_name, place_id, date_start, date_end, price, is_free, image_url, contact_link, sponsored, featured, tags')
         .eq('status', 'published')
         .gte('date_start', guatNow().toISOString());
 

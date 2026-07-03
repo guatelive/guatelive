@@ -109,6 +109,7 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
 
     const highlighted = (editionPlaces || []).filter((ep: any) => ep.mention_type === 'highlighted');
     const mentioned = (editionPlaces || []).filter((ep: any) => ep.mention_type === 'mentioned');
+    const placeNotes = (editionPlaces || []).filter((ep: any) => ep.mention_type === 'place_note');
     const drinks = (editionPlaces || []).filter((ep: any) => ep.mention_type === 'drinks');
     const desserts = (editionPlaces || []).filter((ep: any) => ep.mention_type === 'desserts');
     const notRecommended = (editionPlaces || []).filter((ep: any) => ep.mention_type === 'not_recommended');
@@ -174,6 +175,11 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                                 {mentioned.length > 0 && (
                                     <a href="#tambien-vale" className="block text-sm text-foreground/80 hover:text-[#E11D2E] transition-colors">
                                         → También vale la pena
+                                    </a>
+                                )}
+                                {placeNotes.length > 0 && (
+                                    <a href="#el-lugar-notas" className="block text-sm text-foreground/80 hover:text-[#E11D2E] transition-colors">
+                                        → El lugar (menciones)
                                     </a>
                                 )}
                                 {drinks.length > 0 && (
@@ -288,6 +294,19 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                     </section>
                 )}
 
+                {/* ── 3b. EL LUGAR (menciones) — calcado de "también vale la pena" ── */}
+                {placeNotes.length > 0 && (
+                    <section id="el-lugar-notas" className="mb-12 scroll-mt-24">
+                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#E11D2E] mb-2">El lugar</p>
+                        <div className="h-[2px] w-8 bg-[#E11D2E] mb-2" />
+                        <div>
+                            {placeNotes.map((ep: any, i: number) => (
+                                <AdaptivePhotoCard key={ep.id} ep={ep} index={highlighted.length + mentioned.length + i} />
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* ── 4a. BEBIDAS — alternating global ── */}
                 {drinks.length > 0 && (
                     <section id="bebidas" className="mb-12 scroll-mt-24">
@@ -295,7 +314,7 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                         <div className="h-[2px] w-8 bg-[#E11D2E] mb-2" />
                         <div>
                             {drinks.map((ep: any, i: number) => (
-                                <AdaptivePhotoCard key={ep.id} ep={ep} index={highlighted.length + mentioned.length + i} />
+                                <AdaptivePhotoCard key={ep.id} ep={ep} index={highlighted.length + mentioned.length + placeNotes.length + i} />
                             ))}
                         </div>
                     </section>
@@ -308,7 +327,7 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
                         <div className="h-[2px] w-8 bg-[#E11D2E] mb-2" />
                         <div>
                             {desserts.map((ep: any, i: number) => (
-                                <AdaptivePhotoCard key={ep.id} ep={ep} index={highlighted.length + mentioned.length + drinks.length + i} />
+                                <AdaptivePhotoCard key={ep.id} ep={ep} index={highlighted.length + mentioned.length + placeNotes.length + drinks.length + i} />
                             ))}
                         </div>
                     </section>

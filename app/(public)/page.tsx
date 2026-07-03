@@ -43,7 +43,7 @@ export default async function HomePage() {
       .single(),
     supabase
       .from("events")
-      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, price, image_url, contact_link, sponsored, featured, tags, status")
+      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, price, is_free, image_url, contact_link, sponsored, featured, tags, status")
       .eq("status", "published")
       .gte("date_start", guatNow().toISOString())
       .order("featured", { ascending: false })
@@ -291,7 +291,6 @@ export default async function HomePage() {
                           border: '3px solid rgba(255,255,255,0.09)',
                         }}
                       >
-                        {/* Imagen con filtro editorial */}
                         <Image
                           src={photo.src}
                           alt={photo.name ?? ''}
@@ -303,18 +302,6 @@ export default async function HomePage() {
                             transformOrigin: 'center center',
                           }}
                         />
-                        {/* Viñeta */}
-                        <div style={{
-                          position: 'absolute', inset: 0,
-                          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%)',
-                          pointerEvents: 'none',
-                        }} />
-                        {/* Tinte cálido */}
-                        <div style={{
-                          position: 'absolute', inset: 0,
-                          background: 'rgba(20,10,0,0.12)',
-                          pointerEvents: 'none',
-                        }} />
                       </div>
                     ))}
                   </div>
