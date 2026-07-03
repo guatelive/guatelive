@@ -10,7 +10,7 @@ import { getBadgeStyle, getBadgeStyleStatic, saveCustomBadgeColor, dismissBadgeS
 
 type PlaceOption = { id: string; name: string };
 
-export type MentionType = 'highlighted' | 'mentioned' | 'drinks' | 'desserts' | 'not_recommended';
+export type MentionType = 'highlighted' | 'mentioned' | 'drinks' | 'desserts' | 'not_recommended' | 'place_note';
 
 export type EditionItem = {
     place_id?: string;
@@ -32,6 +32,7 @@ interface Props {
 const MENTION_LABELS: Record<MentionType, string> = {
     highlighted: 'La selección',
     mentioned: 'También vale la pena',
+    place_note: 'El lugar',
     drinks: 'Bebidas',
     desserts: 'Postres',
     not_recommended: 'No recomendamos',
@@ -116,6 +117,12 @@ export function EditionItemsEditor({ defaultValue = [], onItemsChange }: Props) 
         if (ref) ref.files = dt.files;
         update(i, { photo_preview: previewUrl });
         setCropTarget(null);
+    }
+
+    function removeItemPhoto(i: number) {
+        update(i, { photo_url: undefined, photo_preview: undefined });
+        const ref = fileInputRefs.current[i];
+        if (ref) ref.value = '';
     }
 
     // photo_preview y place_name son solo client — no van al servidor
@@ -217,6 +224,13 @@ export function EditionItemsEditor({ defaultValue = [], onItemsChange }: Props) 
                                     }`}
                                 >
                                     <Image src={item.photo_preview ?? item.photo_url!} alt="" fill className="object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeItemPhoto(i)}
+                                        className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-xs text-white hover:bg-black/80"
+                                    >
+                                        ×
+                                    </button>
                                 </div>
                             )}
                             <input
@@ -225,7 +239,7 @@ export function EditionItemsEditor({ defaultValue = [], onItemsChange }: Props) 
                                 name={`item_image_${i}`}
                                 accept="image/*"
                                 onChange={e => handleImageChange(i, e)}
-                                className="text-sm"
+                                className="text-sm text-[#666666] file:mr-3 file:cursor-pointer file:rounded-md file:border file:border-[#E5E5E5] file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-[#0A0A0A] file:transition-colors hover:file:border-[#0A0A0A]"
                             />
                             <p className="mt-1 text-[10px] text-[#666666] opacity-70">
                                 Al subir la foto se abre el recortador con proporción {item.photo_orientation === 'landscape' ? '4:3' : '2:3'}

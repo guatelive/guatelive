@@ -113,15 +113,19 @@ async function uploadStripPhotos(
     const results: string[] = [];
     for (let i = 0; i < 3; i++) {
         const file = formData.get(`strip_photo_${i}`);
+        const removed = formData.get(`remove_strip_photo_${i}`) === '1';
         if (file instanceof File && file.size > 0) {
             const url = await uploadEditionImage(supabase, file, `${slug}-strip-${i}`);
             // Borrar la imagen anterior de ese slot si existía
             if (existing[i]) await deleteEditionImage(supabase, existing[i]);
             results.push(url);
+        } else if (removed) {
+            if (existing[i]) await deleteEditionImage(supabase, existing[i]);
         } else if (existing[i]) {
             results.push(existing[i] as string);
         }
-        // Si no hay archivo nuevo ni existente, no se agrega nada (el slot queda vacío)
+        // Si no hay archivo nuevo, no se removió y tampoco había foto existente,
+        // no se agrega nada (el slot queda vacío)
     }
     return results;
 }
@@ -240,6 +244,9 @@ export async function updateEdition(id: string, formData: FormData) {
     if (coverFile instanceof File && coverFile.size > 0) {
         coverImageUrl = await uploadEditionImage(supabase, coverFile, `${slug}-cover`);
         await deleteEditionImage(supabase, existing?.cover_image_url);
+    } else if (formData.get('remove_cover_image') === '1') {
+        await deleteEditionImage(supabase, existing?.cover_image_url);
+        coverImageUrl = null;
     }
 
     const itemsWithImages = await uploadItemImages(supabase, parsed.items, formData, slug);

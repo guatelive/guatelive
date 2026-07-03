@@ -144,13 +144,17 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
 
                 {/* Price */}
                 <div style={{ marginBottom: 10 }}>
-                  {!event.price || event.price === 0 ? (
+                  {event.is_free ? (
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 700, color: '#6EC44A' }}>
                       Gratis
                     </span>
-                  ) : (
+                  ) : event.price !== null ? (
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: 22, fontWeight: 700, color: '#fff' }}>
                       Q{event.price}
+                    </span>
+                  ) : (
+                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 600, color: '#888' }}>
+                      Precio no disponible
                     </span>
                   )}
                 </div>

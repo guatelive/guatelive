@@ -39,6 +39,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
     const [places, setPlaces] = useState<PlaceOption[]>([]);
     const [placeName, setPlaceName] = useState(initialPlaceName ?? '');
     const [imagePreview, setImagePreview] = useState<string | null>(event?.image_url ?? null);
+    const [imageRemoved, setImageRemoved] = useState(false);
     const [cropFile, setCropFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -48,6 +49,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
     const [zone, setZone] = useState(event?.zone ?? '');
     const [dateStart, setDateStart] = useState(event ? toDatetimeLocal(event.date_start) : '');
     const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
+    const [isFree, setIsFree] = useState(event?.is_free ?? false);
     const [venueName, setVenueName] = useState(event?.venue_name ?? '');
 
     useEffect(() => {
@@ -72,6 +74,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
     function handleCropDone(blob: Blob, previewUrl: string) {
         setImagePreview(previewUrl);
+        setImageRemoved(false);
         setCropFile(null);
         // inject cropped file into the hidden input for FormData submission
         if (fileInputRef.current) {
@@ -81,7 +84,13 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
         }
     }
 
-    const previewData = { title, category, zone, date_start: dateStart, price, imageUrl: imagePreview, venue_name: venueName };
+    function handleRemoveImage() {
+        setImagePreview(null);
+        setImageRemoved(true);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+
+    const previewData = { title, category, zone, date_start: dateStart, price, isFree, imageUrl: imagePreview, venue_name: venueName };
 
     return (
         <div className="flex gap-8 items-start">
@@ -170,8 +179,30 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
             </div>
 
             <div>
-                <label className="mb-1 block text-sm text-[#666666]">Precio (vacío = gratis)</label>
-                <Input type="number" name="price" min="0" step="0.01" value={price} onChange={e => setPrice(e.target.value)} />
+                <label className="mb-1 flex items-center gap-2 text-sm text-[#666666]">
+                    <input
+                        type="checkbox"
+                        name="is_free"
+                        checked={isFree}
+                        onChange={e => {
+                            setIsFree(e.target.checked);
+                            if (e.target.checked) setPrice('');
+                        }}
+                    />
+                    Este evento es gratis
+                </label>
+                <label className="mb-1 mt-2 block text-sm text-[#666666]">
+                    Precio {isFree ? '' : '(dejar vacío si no sabés el precio)'}
+                </label>
+                <Input
+                    type="number"
+                    name="price"
+                    min="0"
+                    step="0.01"
+                    value={price}
+                    disabled={isFree}
+                    onChange={e => setPrice(e.target.value)}
+                />
             </div>
 
             <div>
@@ -182,9 +213,16 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Imagen</label>
                 {imagePreview && (
-                    <div className="mb-2 overflow-hidden rounded-md" style={{ width: 200, height: 112 }}>
+                    <div className="relative mb-2 overflow-hidden rounded-md" style={{ width: 200, height: 112 }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={imagePreview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button
+                            type="button"
+                            onClick={handleRemoveImage}
+                            className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-xs text-white hover:bg-black/80"
+                        >
+                            ×
+                        </button>
                     </div>
                 )}
                 <div className="flex items-center gap-3">
@@ -208,6 +246,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                     onChange={handleFileSelect}
                     className="hidden"
                 />
+                <input type="hidden" name="remove_image" value={imageRemoved ? '1' : ''} />
             </div>
 
             <div>

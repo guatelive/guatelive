@@ -12,6 +12,7 @@ export const eventSchema = z.object({
     date_start: z.string().min(1, 'La fecha es obligatoria'),
     date_end: z.string().optional(),
     price: z.number().nonnegative().optional(),
+    is_free: z.boolean(),
     image_url: z.string().url().optional(),
     contact_link: z.string().url().optional(),
     sponsored: z.boolean(),

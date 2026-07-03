@@ -71,7 +71,8 @@ export default async function EventoPage(props: { params: Params }) {
     const event = data as EventWithPlace;
     const colors = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
     const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
-    const isFree = !event.price || event.price === 0;
+    const isFree = event.is_free;
+    const priceUnknown = !isFree && event.price === null;
     const url = `https://guatelive.com/evento/${event.slug}`;
 
     const schema = {
@@ -88,12 +89,15 @@ export default async function EventoPage(props: { params: Params }) {
         },
         ...(event.image_url ? { image: event.image_url } : {}),
         ...(event.description ? { description: event.description } : {}),
-        offers: {
-            '@type': 'Offer',
-            price: event.price ?? 0,
-            priceCurrency: 'GTQ',
-            ...(event.contact_link ? { url: event.contact_link } : {}),
-        },
+        // Si no sabemos el precio, no inventamos un 0 — se omite el bloque offers.
+        ...(priceUnknown ? {} : {
+            offers: {
+                '@type': 'Offer',
+                price: isFree ? 0 : event.price,
+                priceCurrency: 'GTQ',
+                ...(event.contact_link ? { url: event.contact_link } : {}),
+            },
+        }),
     };
 
     return (
@@ -160,6 +164,8 @@ export default async function EventoPage(props: { params: Params }) {
                         <span className="inline-block rounded bg-[#EFF4E8] px-2.5 py-1 text-sm font-semibold text-[#3B6D11]">
                             Gratis
                         </span>
+                    ) : priceUnknown ? (
+                        <span className="text-sm font-semibold text-[#999999]">Precio no disponible</span>
                     ) : (
                         <span className="text-xl font-bold text-[#0A0A0A]">Q{event.price}</span>
                     )}
