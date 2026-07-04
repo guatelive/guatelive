@@ -30,3 +30,78 @@ export function buildBreadcrumbSchema(items: { name: string; url: string }[]) {
         })),
     };
 }
+
+export function schemaTypeForCategory(primaryCategory: string | null, category: string | null): string {
+    const text = `${primaryCategory ?? ''} ${category ?? ''}`.toLowerCase();
+    if (text.includes('bar')) return 'BarOrPub';
+    if (text.includes('café') || text.includes('cafe') || text.includes('coffee')) return 'CafeOrCoffeeShop';
+    return 'Restaurant';
+}
+
+type EditionPlaceRef = {
+    name: string;
+    slug: string;
+    primary_category?: string | null;
+} | null | undefined;
+
+function placeToSchemaNode(place: EditionPlaceRef): { '@type': string; url: string } | null {
+    if (!place) return null;
+    return {
+        '@type': schemaTypeForCategory(place.primary_category ?? null, null),
+        url: `${SITE_URL}/lugar/${place.slug}`,
+    };
+}
+
+export function buildEditionReviewSchema(
+    edition: { place_rating: number | null; place_verdict: string | null },
+    highlightedPlace: EditionPlaceRef
+) {
+    const placeNode = placeToSchemaNode(highlightedPlace);
+    if (!placeNode || typeof edition.place_rating !== 'number') return null;
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'Review',
+        itemReviewed: { ...placeNode, name: highlightedPlace?.name },
+        reviewRating: {
+            '@type': 'Rating',
+            ratingValue: edition.place_rating,
+            bestRating: 5,
+        },
+        ...(edition.place_verdict ? { reviewBody: edition.place_verdict } : {}),
+        author: {
+            '@type': 'Organization',
+            name: 'GuateLive',
+        },
+    };
+}
+
+type EditionPlaceEntry = {
+    mention_type: string;
+    editorial_text: string | null;
+    title: string | null;
+    places?: EditionPlaceRef;
+};
+
+export function buildEditionItemListSchema(entries: EditionPlaceEntry[]) {
+    const items = entries.filter((ep) => ep.mention_type !== 'not_recommended');
+    if (items.length === 0) return null;
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: items.map((ep, index) => {
+            const placeNode = placeToSchemaNode(ep.places);
+            const name = ep.title || ep.places?.name || 'Sin título';
+            return {
+                '@type': 'ListItem',
+                position: index + 1,
+                item: {
+                    ...(placeNode ?? { '@type': 'Thing' }),
+                    name,
+                    ...(ep.editorial_text ? { description: ep.editorial_text } : {}),
+                },
+            };
+        }),
+    };
+}
