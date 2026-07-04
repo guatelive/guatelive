@@ -7,6 +7,7 @@ import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@
 import { formatDateLong } from '@/lib/format-event-date';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { ShareButton } from '@/components/evento/share-button';
+import { SITE_URL } from '@/lib/site-config';
 import type { DbEvent } from '@/lib/types';
 
 export const revalidate = 3600;
@@ -45,7 +46,7 @@ export async function generateMetadata(props: { params: Params }) {
     return {
         title: `${event.title} — GuateLive`,
         description,
-        alternates: { canonical: `https://guatelive.com/evento/${slug}` },
+        alternates: { canonical: `${SITE_URL}/evento/${slug}` },
         openGraph: {
             title: event.title,
             description,
@@ -73,7 +74,7 @@ export default async function EventoPage(props: { params: Params }) {
     const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
     const isFree = event.is_free;
     const priceUnknown = !isFree && event.price === null;
-    const url = `https://guatelive.com/evento/${event.slug}`;
+    const url = `${SITE_URL}/evento/${event.slug}`;
 
     const schema = {
         '@context': 'https://schema.org',
@@ -164,9 +165,7 @@ export default async function EventoPage(props: { params: Params }) {
                         <span className="inline-block rounded bg-[#EFF4E8] px-2.5 py-1 text-sm font-semibold text-[#3B6D11]">
                             Gratis
                         </span>
-                    ) : priceUnknown ? (
-                        <span className="text-sm font-semibold text-[#999999]">Precio no disponible</span>
-                    ) : (
+                    ) : priceUnknown ? null : (
                         <span className="text-xl font-bold text-[#0A0A0A]">Q{event.price}</span>
                     )}
                 </div>

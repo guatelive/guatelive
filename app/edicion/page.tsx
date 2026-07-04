@@ -2,12 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { SiteLayout } from '@/components/layout/site-layout';
+import { SITE_URL } from '@/lib/site-config';
 
 export const revalidate = 3600;
 
 export const metadata = {
     title: 'Ediciones — GuateLive',
     description: 'Todas las ediciones editoriales de GuateLive. Curaduría semanal de los mejores planes en Guatemala.',
+    alternates: { canonical: `${SITE_URL}/edicion` },
 };
 
 function getSupabase() {

@@ -42,8 +42,15 @@ async function deleteEventImage(supabase: SupabaseClient, imageUrl: string | nul
     if (!imageUrl) return;
     const path = extractStoragePath(imageUrl);
     if (!path) return;
-    const { error } = await supabase.storage.from('images').remove([path]);
-    if (error) console.error('No se pudo borrar la imagen huérfana:', error.message);
+    const { data, error } = await supabase.storage.from('images').remove([path]);
+    if (error) {
+        console.error('No se pudo borrar la imagen huérfana:', error.message);
+    } else if (!data || data.length === 0) {
+        // Supabase Storage no tira error si RLS filtra el archivo silenciosamente
+        // (ej. falta política de SELECT) — sin este check, la imagen queda huérfana
+        // sin ninguna señal de que algo salió mal.
+        console.error(`No se pudo borrar la imagen huérfana (0 archivos removidos, ¿falta política RLS de SELECT?): ${path}`);
+    }
 }
 
 async function uploadEventImage(supabase: SupabaseClient, file: File, slug: string): Promise<string> {

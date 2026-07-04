@@ -49,6 +49,49 @@ export function guatNow(): Date {
     return new Date(Date.now() - 6 * 60 * 60 * 1000);
 }
 
+function minutesToHHMM(min: number): string {
+    const h = Math.floor(min / 60) % 24;
+    const m = min % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+// Google a veces omite AM/PM en el primer horario cuando coincide con el del segundo
+// (ej: "2:00 – 9:00 PM" = 2:00 PM – 9:00 PM, no 2:00 AM). Sin esto, parseMinutes asume AM.
+function inheritMeridiem(openStr: string, closeStr: string): [string, string] {
+    const openHasMeridiem = /AM|PM/i.test(openStr);
+    const closeHasMeridiem = /AM|PM/i.test(closeStr);
+    if (!openHasMeridiem && closeHasMeridiem) {
+        const meridiem = closeStr.match(/AM|PM/i)![0];
+        return [`${openStr} ${meridiem}`, closeStr];
+    }
+    if (openHasMeridiem && !closeHasMeridiem) {
+        const meridiem = openStr.match(/AM|PM/i)![0];
+        return [openStr, `${closeStr} ${meridiem}`];
+    }
+    return [openStr, closeStr];
+}
+
+// Parsea un rango tipo "8:00 AM – 10:00 PM" a minutos desde medianoche. Retorna null para
+// formatos que no calzan (24 horas, Cerrado, rangos múltiples) — nunca inventa un horario.
+function parseTimeRangeMinutes(hoursStr: string): { openMin: number; closeMin: number } | null {
+    const range = hoursStr.match(/(.+?)\s*[–\-]\s*(.+)/);
+    if (!range) return null;
+
+    const [openStr, closeStr] = inheritMeridiem(range[1].trim(), range[2].trim());
+    const openMin = parseMinutes(openStr);
+    const closeMin = parseMinutes(closeStr);
+    if (openMin === -1 || closeMin === -1) return null;
+
+    return { openMin, closeMin };
+}
+
+// Best-effort: convierte "8:00 AM – 10:00 PM" a {opens: "08:00", closes: "22:00"} para JSON-LD.
+export function parseHoursRange(hoursStr: string): { opens: string; closes: string } | null {
+    const parsed = parseTimeRangeMinutes(hoursStr);
+    if (!parsed) return null;
+    return { opens: minutesToHHMM(parsed.openMin), closes: minutesToHHMM(parsed.closeMin) };
+}
+
 export type OpenStatus = 'open' | 'closed' | 'unknown';
 
 export function getOpenStatus(hours: HoursRecord | null, at: Date): OpenStatus {
@@ -61,12 +104,9 @@ export function getOpenStatus(hours: HoursRecord | null, at: Date): OpenStatus {
     if (lower.includes('cerrado') || lower.includes('closed')) return 'closed';
     if (lower.includes('24 horas') || lower.includes('24 hours') || lower.includes('open 24')) return 'open';
 
-    const range = hoursStr.match(/(.+?)\s*[–\-]\s*(.+)/);
-    if (!range) return 'unknown';
-
-    const openMin = parseMinutes(range[1].trim());
-    const closeMin = parseMinutes(range[2].trim());
-    if (openMin === -1 || closeMin === -1) return 'unknown';
+    const parsed = parseTimeRangeMinutes(hoursStr);
+    if (!parsed) return 'unknown';
+    const { openMin, closeMin } = parsed;
 
     const nowMin = at.getUTCHours() * 60 + at.getUTCMinutes();
 

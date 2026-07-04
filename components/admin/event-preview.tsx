@@ -29,7 +29,6 @@ function PreviewCard({
     const parsed = data.price !== '' ? parseFloat(data.price) : NaN;
     const priceNum = isNaN(parsed) ? null : parsed;
     const isGratis = data.isFree;
-    const priceUnknown = !isGratis && priceNum === null;
 
     return (
         <div style={{
@@ -101,14 +100,6 @@ function PreviewCard({
                         fontFamily: 'var(--font-sans)', marginBottom: isBig ? 4 : 2,
                     }}>
                         Q{priceNum}
-                    </p>
-                )}
-                {priceUnknown && !isMsm && (
-                    <p style={{
-                        color: '#888', fontSize: isBig ? 11 : 10, fontWeight: 600,
-                        fontFamily: 'var(--font-sans)', marginBottom: isBig ? 4 : 2,
-                    }}>
-                        Precio no disponible
                     </p>
                 )}
                 <h3 style={{

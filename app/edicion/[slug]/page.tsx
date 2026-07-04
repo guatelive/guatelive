@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { SiteLayout } from '@/components/layout/site-layout';
 import { AdaptivePhotoCard } from '@/components/editorial/adaptive-photo-card';
+import { SITE_URL } from '@/lib/site-config';
 
 function getSupabase() {
     return createClient(
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title: edition.meta_title || `${edition.title} — GuateLive Edición Nº ${edition.number}`,
         description: edition.meta_description || edition.subtitle,
+        alternates: { canonical: `${SITE_URL}/edicion/${slug}` },
     };
 }
 

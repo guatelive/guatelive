@@ -152,11 +152,7 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: 22, fontWeight: 700, color: '#fff' }}>
                       Q{event.price}
                     </span>
-                  ) : (
-                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 600, color: '#888' }}>
-                      Precio no disponible
-                    </span>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* Venue · date · zone */}

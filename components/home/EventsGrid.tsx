@@ -42,19 +42,6 @@ function GratisBadge({ dark, size }: { dark: boolean; size: number }) {
     );
 }
 
-function UnknownPriceLabel({ dark, size }: { dark: boolean; size: number }) {
-    return (
-        <p style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: size,
-            fontWeight: 600,
-            color: dark ? '#888' : '#999',
-        }}>
-            Precio no disponible
-        </p>
-    );
-}
-
 function MainCard({ event }: { event: DbEvent | null }) {
     if (!event) return <div />;
     const style = getCategoryStyle(event.category);
@@ -99,9 +86,7 @@ function MainCard({ event }: { event: DbEvent | null }) {
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 600, color: '#fff' }}>
                         Q{event.price}
                     </p>
-                ) : (
-                    <UnknownPriceLabel dark size={12} />
-                )}
+                ) : null}
                 <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, color: '#E11D2E', marginTop: '0.5rem' }}>
                     Ver detalles →
                 </p>
@@ -159,9 +144,6 @@ function MediaCard({ event }: { event: DbEvent | null }) {
                         Q{event.price}
                     </p>
                 )}
-                {!event.is_free && event.price === null && (
-                    <UnknownPriceLabel dark size={11} />
-                )}
             </div>
         </Link>
     );
@@ -203,9 +185,7 @@ function SmallCard({ event }: { event: DbEvent | null }) {
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#0A0A0A' }}>
                         Q{event.price}
                     </p>
-                ) : (
-                    <UnknownPriceLabel dark={false} size={11} />
-                )}
+                ) : null}
             </div>
         </Link>
     );

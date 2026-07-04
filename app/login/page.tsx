@@ -4,6 +4,7 @@ import { signIn } from './actions';
 
 export const metadata = {
     title: 'Login — GuateLive Admin',
+    robots: { index: false, follow: false },
 };
 
 export default async function LoginPage({

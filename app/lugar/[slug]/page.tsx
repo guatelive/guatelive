@@ -7,6 +7,9 @@ import { TagsBadges } from './TagsBadges';
 import { HorariosAccordion } from './HorariosAccordion';
 import { ContactSidebar } from './ContactSidebar';
 import { ReviewCard } from './ReviewCard';
+import { SchemaMarkup } from '@/components/seo/schema-markup';
+import { parseHoursRange } from '@/lib/hours-utils';
+import { SITE_URL } from '@/lib/site-config';
 
 export const revalidate = 3600;
 
@@ -24,6 +27,21 @@ type PlacePhoto = {
     url: string;
     is_primary: boolean;
     order_index: number;
+};
+
+type PlaceSchemaFields = {
+    name: string;
+    slug: string;
+    description: string | null;
+    address: string | null;
+    zone: string | null;
+    phone: string | null;
+    price_range: string | null;
+    primary_category: string | null;
+    category: string | null;
+    rating: number | null;
+    rating_count: number | null;
+    hours: unknown;
 };
 
 type HoursRecord = Record<string, string>;
@@ -105,12 +123,73 @@ export async function generateMetadata(props: { params: Params }) {
     return {
         title: `${place.name} — GuateLive`,
         description: place.description ?? `Descubre ${place.name} en GuateLive`,
+        alternates: { canonical: `${SITE_URL}/lugar/${slug}` },
         openGraph: {
             title: place.name,
             description: place.description ?? place.address ?? '',
             images: primaryPhoto?.url ? [{ url: primaryPhoto.url }] : [],
             type: 'website',
         },
+    };
+}
+
+const DAY_TO_SCHEMA: Record<string, string> = {
+    lunes: 'Monday', martes: 'Tuesday', miércoles: 'Wednesday',
+    jueves: 'Thursday', viernes: 'Friday', sábado: 'Saturday', domingo: 'Sunday',
+};
+
+function schemaTypeForCategory(primaryCategory: string | null, category: string | null): string {
+    const text = `${primaryCategory ?? ''} ${category ?? ''}`.toLowerCase();
+    if (text.includes('bar')) return 'BarOrPub';
+    if (text.includes('café') || text.includes('cafe') || text.includes('coffee')) return 'CafeOrCoffeeShop';
+    return 'Restaurant';
+}
+
+function buildPlaceSchema(place: PlaceSchemaFields, imageUrl: string | null) {
+    const hours = normalizeHours(place.hours);
+    const openingHoursSpecification = hours
+        ? Object.entries(hours)
+            .map(([day, hoursStr]) => {
+                const dayOfWeek = DAY_TO_SCHEMA[day];
+                const range = dayOfWeek ? parseHoursRange(hoursStr) : null;
+                if (!dayOfWeek || !range) return null;
+                return {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: `https://schema.org/${dayOfWeek}`,
+                    opens: range.opens,
+                    closes: range.closes,
+                };
+            })
+            .filter((spec): spec is NonNullable<typeof spec> => spec !== null)
+        : [];
+
+    const hasRating = typeof place.rating === 'number' && typeof place.rating_count === 'number' && place.rating_count > 0;
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': schemaTypeForCategory(place.primary_category, place.category),
+        name: place.name,
+        url: `${SITE_URL}/lugar/${place.slug}`,
+        ...(imageUrl ? { image: imageUrl } : {}),
+        ...(place.description ? { description: place.description } : {}),
+        ...(place.address ? {
+            address: {
+                '@type': 'PostalAddress',
+                streetAddress: place.address,
+                addressLocality: place.zone ? `${place.zone}, Ciudad de Guatemala` : 'Ciudad de Guatemala',
+                addressCountry: 'GT',
+            },
+        } : {}),
+        ...(place.phone ? { telephone: place.phone } : {}),
+        ...(place.price_range ? { priceRange: place.price_range } : {}),
+        ...(hasRating ? {
+            aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: place.rating,
+                reviewCount: place.rating_count,
+            },
+        } : {}),
+        ...(openingHoursSpecification.length > 0 ? { openingHoursSpecification } : {}),
     };
 }
 
@@ -163,9 +242,11 @@ export default async function LugarPage(props: { params: Params }) {
     const whatsappUrl = whatsappNumber ? `https://wa.me/502${whatsappNumber}` : null;
 
     const tags = (place.tags ?? []) as string[];
+    const schema = buildPlaceSchema(place, galleryPhotos[0]?.url ?? null);
 
     return (
         <div className="min-h-screen bg-white">
+            <SchemaMarkup schema={schema} />
             <div className="mx-auto px-8 py-8" style={{ maxWidth: '1150px' }}>
 
                 <Link
