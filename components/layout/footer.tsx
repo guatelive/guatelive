@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { zones } from "@/lib/mock-data";
+import { getPublishedPlaceZones } from "@/lib/zones";
 
-export function Footer() {
+export async function Footer() {
+  const zones = await getPublishedPlaceZones();
+
   return (
     <footer className="mt-24 hidden border-t border-border bg-background pb-10 pt-16 md:block">
       <div className="mx-auto max-w-6xl px-6">
@@ -18,13 +20,13 @@ export function Footer() {
             </div>
             <ul className="space-y-2 text-sm">
               {zones.slice(0, 6).map((z) => (
-                <li key={z}>
-                  <a
-                    href={`/buscar?q=${encodeURIComponent(z)}`}
+                <li key={z.slug}>
+                  <Link
+                    href={`/zona/${z.slug}/restaurantes`}
                     className="text-foreground/80 hover:text-primary"
                   >
-                    Cafeterías en {z}
-                  </a>
+                    Lugares en {z.zone}
+                  </Link>
                 </li>
               ))}
             </ul>
