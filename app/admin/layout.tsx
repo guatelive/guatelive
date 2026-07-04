@@ -1,6 +1,11 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { signOut } from '@/app/login/actions';
 import { Button } from '@/components/ui/button';
+
+export const metadata: Metadata = {
+    robots: { index: false, follow: false },
+};
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     return (

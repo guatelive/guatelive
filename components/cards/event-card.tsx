@@ -34,7 +34,7 @@ export function EventCard({ event }: { event: DbEvent }) {
 
   const rightBadge = event.sponsored
     ? { label: 'PATROCINADO', bg: '#E11D2E', fg: '#FFFFFF' }
-    : !event.price || event.price === 0
+    : event.is_free
       ? { label: 'GRATIS', bg: '#EFF4E8', fg: '#3B6D11' }
       : null;
 
@@ -85,7 +85,7 @@ export function EventCard({ event }: { event: DbEvent }) {
 
         {/* Price — prominent, decision-critical */}
         <div style={{ marginBottom: 8 }}>
-          {!event.price || event.price === 0 ? (
+          {event.is_free ? (
             <span style={{
               display: 'inline-block',
               fontFamily: 'var(--font-sans)',
@@ -101,7 +101,7 @@ export function EventCard({ event }: { event: DbEvent }) {
             }}>
               Gratis
             </span>
-          ) : (
+          ) : event.price !== null ? (
             <span style={{
               fontFamily: 'var(--font-sans)',
               fontSize: 16,
@@ -111,7 +111,7 @@ export function EventCard({ event }: { event: DbEvent }) {
             }}>
               Q{event.price}
             </span>
-          )}
+          ) : null}
         </div>
 
         <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: '#888888', lineHeight: 1.4 }}>

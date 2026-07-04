@@ -3,6 +3,7 @@ import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { EventGridClient } from '@/components/eventos-hoy/event-grid-client';
 import { eventMatchesWhen } from '@/lib/event-when';
 import { guatNow } from '@/lib/hours-utils';
+import { SITE_URL } from '@/lib/site-config';
 import type { DbEvent } from '@/lib/types';
 
 export const revalidate = 3600;
@@ -10,7 +11,7 @@ export const revalidate = 3600;
 export const metadata = {
     title: 'Eventos hoy en Guatemala | GuateLive',
     description: 'Qué hacer hoy en Guatemala: conciertos, talleres, ferias y planes del día, actualizados a diario.',
-    alternates: { canonical: 'https://guatelive.com/eventos/hoy' },
+    alternates: { canonical: `${SITE_URL}/eventos/hoy` },
 };
 
 export default async function EventosHoyPage() {
