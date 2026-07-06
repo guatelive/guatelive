@@ -5,6 +5,8 @@ import { ArrowLeft } from 'lucide-react';
 import { SiteLayout } from '@/components/layout/site-layout';
 import { AdaptivePhotoCard } from '@/components/editorial/adaptive-photo-card';
 import { SITE_URL } from '@/lib/site-config';
+import { SchemaMarkup } from '@/components/seo/schema-markup';
+import { buildBreadcrumbSchema, buildEditionReviewSchema, buildEditionItemListSchema } from '@/lib/schema-builders';
 
 function getSupabase() {
     return createClient(
@@ -122,8 +124,20 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
         })
         : null;
 
+    const breadcrumbSchema = buildBreadcrumbSchema([
+        { name: 'Inicio', url: SITE_URL },
+        { name: 'Ediciones', url: `${SITE_URL}/edicion` },
+        { name: edition.title, url: `${SITE_URL}/edicion/${slug}` },
+    ]);
+    const reviewSchema = buildEditionReviewSchema(edition, highlighted[0]?.places as any);
+    const itemListSchema = buildEditionItemListSchema((editionPlaces || []) as any);
+    const editionSchemas = [breadcrumbSchema, reviewSchema, itemListSchema].filter(
+        (schema): schema is NonNullable<typeof schema> => schema !== null
+    );
+
     return (
         <SiteLayout>
+            <SchemaMarkup schema={editionSchemas} />
             <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
                 <Link
                     href="/"

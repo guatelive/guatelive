@@ -10,6 +10,7 @@ import { ReviewCard } from './ReviewCard';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { parseHoursRange } from '@/lib/hours-utils';
 import { SITE_URL } from '@/lib/site-config';
+import { buildBreadcrumbSchema, schemaTypeForCategory } from '@/lib/schema-builders';
 
 export const revalidate = 3600;
 
@@ -138,13 +139,6 @@ const DAY_TO_SCHEMA: Record<string, string> = {
     jueves: 'Thursday', viernes: 'Friday', sábado: 'Saturday', domingo: 'Sunday',
 };
 
-function schemaTypeForCategory(primaryCategory: string | null, category: string | null): string {
-    const text = `${primaryCategory ?? ''} ${category ?? ''}`.toLowerCase();
-    if (text.includes('bar')) return 'BarOrPub';
-    if (text.includes('café') || text.includes('cafe') || text.includes('coffee')) return 'CafeOrCoffeeShop';
-    return 'Restaurant';
-}
-
 function buildPlaceSchema(place: PlaceSchemaFields, imageUrl: string | null) {
     const hours = normalizeHours(place.hours);
     const openingHoursSpecification = hours
@@ -243,10 +237,14 @@ export default async function LugarPage(props: { params: Params }) {
 
     const tags = (place.tags ?? []) as string[];
     const schema = buildPlaceSchema(place, galleryPhotos[0]?.url ?? null);
+    const breadcrumbSchema = buildBreadcrumbSchema([
+        { name: 'Inicio', url: SITE_URL },
+        { name: place.name, url: `${SITE_URL}/lugar/${slug}` },
+    ]);
 
     return (
         <div className="min-h-screen bg-white">
-            <SchemaMarkup schema={schema} />
+            <SchemaMarkup schema={[schema, breadcrumbSchema]} />
             <div className="mx-auto px-8 py-8" style={{ maxWidth: '1150px' }}>
 
                 <Link

@@ -1,57 +1,66 @@
-import { PlaceCard } from '@/components/cards/place-card';
-import { createClient } from '@/lib/supabase/server';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
-
+import { PlaceCard } from '@/components/cards/place-card';
+import { createBuildTimeClient } from '@/lib/supabase/server';
+import { getPublishedPlaceZones } from '@/lib/zones';
 
 type Params = Promise<{ zone: string }>;
+type PhotoRow = { url: string; is_primary: boolean; order_index: number };
 
-const ZONE_MAP: Record<string, string> = {
-    'zona-10': 'Zona 10',
-    'zona-4': 'Zona 4',
-    'zona-14': 'Zona 14',
-    'zona-15': 'Zona 15',
-    'cayala': 'Cayalá',
-    'antigua': 'Antigua',
-};
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+    const zones = await getPublishedPlaceZones();
+    return zones.map((z) => ({ zone: z.slug }));
+}
 
 export async function generateMetadata(props: { params: Params }) {
     const params = await props.params;
-    const zoneName = ZONE_MAP[params.zone] || params.zone;
+    const zones = await getPublishedPlaceZones();
+    const zoneName = zones.find((z) => z.slug === params.zone)?.zone ?? params.zone;
 
     return {
-        title: `Restaurantes en ${zoneName} - GuateLive`,
-        description: `Descubre los mejores restaurantes en ${zoneName}, Guatemala.`,
+        title: `Restaurantes, cafés y bares en ${zoneName} - GuateLive`,
+        description: `Descubre los mejores restaurantes, cafés y bares en ${zoneName}, Guatemala.`,
     };
 }
 
 export default async function ZonaRestaurantesPage(props: { params: Params }) {
     const params = await props.params;
-    const zone = params.zone;
-    const zoneName = ZONE_MAP[zone];
+    const zones = await getPublishedPlaceZones();
+    const zoneInfo = zones.find((z) => z.slug === params.zone);
 
-    if (!zoneName) {
-        return (
-            <div className="container mx-auto px-4 py-12">
-                <h1 className="text-4xl font-bold">Zona no encontrada</h1>
-                <p className="text-muted-foreground mt-4">La zona "{zone}" no existe.</p>
-            </div>
-        );
+    if (!zoneInfo) {
+        notFound();
     }
 
-    const supabase = await createClient();
-    const { data: places, error } = await supabase
+    const supabase = createBuildTimeClient();
+    const { data: placesRaw, error } = await supabase
         .from('places')
-        .select('*')
-        .eq('zone', zoneName)
-        .order('rating', { ascending: false });
+        .select('*, place_photos(url, is_primary, order_index)')
+        .eq('zone', zoneInfo.zone)
+        .eq('is_published', true)
+        .order('rating', { ascending: false })
+        .limit(60);
+
+    const places = (placesRaw ?? []).map((p: any) => {
+        const { place_photos, ...rest } = p;
+        const photos = (place_photos ?? []) as PhotoRow[];
+        return {
+            ...rest,
+            primary_photo_url: photos.find((ph) => ph.is_primary)?.url
+                ?? [...photos].sort((a, b) => a.order_index - b.order_index)[0]?.url
+                ?? null,
+        };
+    });
 
     return (
         <div className="container mx-auto px-4 py-12">
             <h1 className="text-4xl font-bold mb-2">
-                Restaurantes en {zoneName}
+                Restaurantes, cafés y bares en {zoneInfo.zone}
             </h1>
             <p className="text-muted-foreground mb-8">
-                {places?.length || 0} lugares encontrados
+                {places.length} lugares encontrados
             </p>
 
             {error && (
@@ -60,7 +69,7 @@ export default async function ZonaRestaurantesPage(props: { params: Params }) {
                 </div>
             )}
 
-            {places && places.length > 0 ? (
+            {places.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {places.map(place => (
                         <Link
@@ -74,7 +83,7 @@ export default async function ZonaRestaurantesPage(props: { params: Params }) {
                 </div>
             ) : (
                 <p className="text-muted-foreground">
-                    No hay restaurantes en {zoneName}
+                    No hay lugares en {zoneInfo.zone}
                 </p>
             )}
         </div>

@@ -8,6 +8,8 @@ import { EditionPeekTab } from "@/components/home/EditionPeekTab";
 import { EventsGrid } from "@/components/home/EventsGrid";
 import { guatNow } from "@/lib/hours-utils";
 import type { DbEvent } from "@/lib/types";
+import { SchemaMarkup } from "@/components/seo/schema-markup";
+import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/schema-builders";
 
 export const metadata = {
   title: "GuateLive — Cafés, restaurantes y eventos en Guate",
@@ -53,6 +55,7 @@ export default async function HomePage() {
 
   return (
     <SiteLayout>
+      <SchemaMarkup schema={[buildOrganizationSchema(), buildWebSiteSchema()]} />
       <BubbleSearch />
 
       <EventsGrid events={(upcomingEvents ?? []) as DbEvent[]} />
