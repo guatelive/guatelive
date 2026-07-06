@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   title: 'GuateLive',
   description: 'Descubrí los mejores planes en Guatemala',
   alternates: { canonical: SITE_URL },
+  verification: { google: 'Rw4muM7Z1ReeAaA841zXB3kpCAGWdSfkiKaRZ3E5hSU' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
