@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
     const tagsParam = searchParams.get('tags');
     const zone = searchParams.get('zone')?.slice(0, 100) ?? null;
-    const surprise = searchParams.get('surprise') === 'true';
+    // 'surprise' desactivado a propósito (era random shuffle sin IA real, ver CLAUDE.md
+    // sesión 2026-07-05) — pendiente de rehacer con Claude API cuando haya presupuesto.
     // preload=true: skip zone filter (client handles it) and return bigger pool
     const preload = searchParams.get('preload') === 'true';
 
@@ -34,9 +35,7 @@ export async function GET(req: NextRequest) {
         .select('id, slug, name, zone, rating, rating_count, primary_category, tags, hours, place_photos(url, is_primary, order_index)')
         .eq('is_published', true);
 
-    if (surprise) {
-        query = query.gte('rating', 4.3);
-    } else if (tagsParam) {
+    if (tagsParam) {
         const tags = tagsParam.split(',').filter(Boolean);
         if (tags.length > 0) {
             query = query.overlaps('tags', tags);
@@ -48,22 +47,16 @@ export async function GET(req: NextRequest) {
         query = query.eq('zone', zone);
     }
 
-    if (!surprise) {
-        query = query.order('rating', { ascending: false });
-    }
+    query = query.order('rating', { ascending: false });
 
-    const limit = surprise ? 60 : preload ? 60 : 12;
+    const limit = preload ? 60 : 12;
     const { data, error } = await query.limit(limit);
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    let rows = (data ?? []) as PlaceRow[];
-
-    if (surprise) {
-        rows = rows.sort(() => Math.random() - 0.5).slice(0, 12);
-    }
+    const rows = (data ?? []) as PlaceRow[];
 
     const result = rows.map(({ place_photos, ...rest }) => ({
         ...rest,
