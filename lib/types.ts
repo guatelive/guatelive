@@ -19,3 +19,24 @@ export type DbEvent = {
   tags: string[];
   status: 'pending' | 'published';
 };
+
+export type DbBankPromotion = {
+  id: string;
+  bank: string;
+  external_id: string;
+  merchant_name: string;
+  place_id: string | null;
+  title: string;
+  discount_label: string;
+  discount_pct: number | null;
+  category: string | null;
+  terms: string | null;
+  image_url: string | null;
+  source_url: string;
+  valid_from: string | null;
+  valid_until: string | null;
+  is_active: boolean;
+  last_seen_at: string;
+  created_at: string;
+  updated_at: string;
+};

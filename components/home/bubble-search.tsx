@@ -49,7 +49,10 @@ const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '🐶 Con mi perro', key: 'Ir con mi perro' },
     { label: '👨‍👩‍👧 Plan familiar', key: 'Plan familiar' },
     { label: '🎉 Salir de fiesta', key: 'Salir de fiesta' },
-    { label: '✨ Sorprendeme', key: 'Sorprendeme', special: true },
+    // '✨ Sorprendeme' escondido a propósito hasta tener presupuesto para hacerlo bien
+    // (auto-tagging + selección real vía Claude API, no random shuffle). Ver ticket en
+    // Notion. La lógica (isSurprise, pickPlaceActivity special) queda intacta para
+    // reactivar agregando de nuevo esta entrada.
 ];
 
 const EVENT_ACTIVITIES: { label: string; key: string; special?: boolean }[] = [

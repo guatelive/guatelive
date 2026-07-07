@@ -1,4 +1,5 @@
 import { SITE_URL } from '@/lib/site-config';
+import type { DbBankPromotion } from '@/lib/types';
 
 export function buildOrganizationSchema() {
     return {
@@ -82,6 +83,34 @@ type EditionPlaceEntry = {
     title: string | null;
     places?: EditionPlaceRef;
 };
+
+const BANK_DISPLAY_NAMES: Record<string, string> = {
+    bac: 'BAC Credomatic',
+};
+
+function bankDisplayName(bank: string): string {
+    return BANK_DISPLAY_NAMES[bank] ?? bank.toUpperCase();
+}
+
+export function buildOfferSchema(promo: DbBankPromotion, place?: EditionPlaceRef) {
+    const placeNode = placeToSchemaNode(place);
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'Offer',
+        name: promo.title,
+        description: promo.discount_label,
+        url: promo.source_url,
+        ...(promo.image_url ? { image: promo.image_url } : {}),
+        ...(promo.valid_from ? { validFrom: promo.valid_from } : {}),
+        ...(promo.valid_until ? { validThrough: promo.valid_until } : {}),
+        offeredBy: {
+            '@type': 'BankOrCreditUnion',
+            name: bankDisplayName(promo.bank),
+        },
+        ...(placeNode ? { itemOffered: { ...placeNode, name: place?.name } } : {}),
+    };
+}
 
 export function buildEditionItemListSchema(entries: EditionPlaceEntry[]) {
     const items = entries.filter((ep) => ep.mention_type !== 'not_recommended');

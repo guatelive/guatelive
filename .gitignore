@@ -47,9 +47,19 @@ CLAUDE.md
 .claude/skills/fix-rapido/
 
 # GuateLive — scripts privados (lógica de negocio)
-scripts/
+scripts/*
 scripts/data/
 scripts/output/
+
+# Excepción: el scraper de promos bancarias corre vía GitHub Actions y necesita
+# estar versionado para que el cron tenga el archivo — el resto de scripts/
+# (auto-tag, importers, etc.) sigue privado.
+!scripts/scrape-bank-promos.ts
+!scripts/bank-sources/
+!scripts/bank-sources/**
+# Volcados de HTML de debug (bac.ts los genera cuando el selector no matchea nada) —
+# son snapshots temporales para depurar, no código, nunca se versionan.
+scripts/bank-sources/.debug/
 
 # GuateLive — SQL sueltas de mantenimiento, corridas a mano, no versionadas como migración
 supabase/scripts/
