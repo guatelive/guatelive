@@ -149,48 +149,6 @@ function MediaCard({ event }: { event: DbEvent | null }) {
     );
 }
 
-function SmallCard({ event }: { event: DbEvent | null }) {
-    if (!event) return <div />;
-    const style = getCategoryStyle(event.category);
-    const location = eventLocation(event);
-    return (
-        <Link href={`/evento/${event.slug}`} className="event-small-card" style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            borderRadius: 8, border: '0.5px solid #E5E5E5', background: '#FAFAFA',
-            padding: '0.85rem 0.95rem', width: '100%', height: '100%', minHeight: 180,
-            textDecoration: 'none', cursor: 'pointer', transition: 'background 0.15s ease',
-        }}>
-            <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 7 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: style.dot, flexShrink: 0, display: 'inline-block' }} />
-                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 600, color: '#666666', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        {event.category}
-                    </span>
-                </div>
-                <h3 style={{
-                    fontFamily: 'var(--font-serif)', fontSize: 18, color: '#0A0A0A', lineHeight: 1.25,
-                    display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                }}>
-                    {event.title}
-                </h3>
-            </div>
-            <div style={{ marginTop: 'auto' }}>
-                <p style={{ fontFamily: 'var(--font-sans)', fontSize: 12, color: '#666666', lineHeight: 1.5, marginBottom: 4 }}>
-                    {formatEventDateTime(event.date_start)}
-                    {location && <><br />📍 {location}</>}
-                </p>
-                {event.is_free ? (
-                    <GratisBadge dark={false} size={10} />
-                ) : event.price !== null ? (
-                    <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#0A0A0A' }}>
-                        Q{event.price}
-                    </p>
-                ) : null}
-            </div>
-        </Link>
-    );
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function EventsGrid({ events }: { events: DbEvent[] }) {
@@ -391,7 +349,7 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
                         </div>
                         {hasSmallColumn && (
                             <div style={{ gridColumn: 3, gridRow: 1 }}>
-                                <SmallCard event={small1 ?? null} />
+                                <MediaCard event={small1 ?? null} />
                             </div>
                         )}
                         <div style={{ gridColumn: 2, gridRow: 2 }}>
@@ -399,7 +357,7 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
                         </div>
                         {hasSmallColumn && (
                             <div style={{ gridColumn: 3, gridRow: 2 }}>
-                                <SmallCard event={small2 ?? null} />
+                                <MediaCard event={small2 ?? null} />
                             </div>
                         )}
                     </div>
