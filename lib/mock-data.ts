@@ -31,16 +31,6 @@ export type EventItem = {
   description?: string;
 };
 
-export type Promo = {
-  id: string;
-  bank: "BAC" | "BI" | "Industrial" | "Promerica" | "G&T";
-  discount: number;
-  placeName: string;
-  placeImage: string;
-  days: string;
-  expires: string;
-};
-
 export type Featured = {
   id: string;
   kicker: string;
@@ -298,45 +288,6 @@ export const events: EventItem[] = [
     time: "18:00",
     price: "Gratis",
     image: img("photo-1531058020387-3be344556be6"),
-  },
-];
-
-export const promos: Promo[] = [
-  {
-    id: "p1",
-    bank: "BAC",
-    discount: 20,
-    placeName: "Cadejo Brewing Co.",
-    placeImage: img("photo-1436076863939-06870fe779c2", 600, 400),
-    days: "Miércoles",
-    expires: "31 dic 2025",
-  },
-  {
-    id: "p2",
-    bank: "BI",
-    discount: 25,
-    placeName: "Hacienda Real",
-    placeImage: img("photo-1414235077428-338989a2e8c0", 600, 400),
-    days: "Lun a Jue",
-    expires: "30 jun 2025",
-  },
-  {
-    id: "p3",
-    bank: "Industrial",
-    discount: 15,
-    placeName: "Saúl Coffee",
-    placeImage: img("photo-1497935586351-b67a49e012bf", 600, 400),
-    days: "Todos los días",
-    expires: "31 dic 2025",
-  },
-  {
-    id: "p4",
-    bank: "Promerica",
-    discount: 30,
-    placeName: "Antigua Brewing Co.",
-    placeImage: img("photo-1572116469696-31de0f17cc34", 600, 400),
-    days: "Domingos",
-    expires: "31 ago 2025",
   },
 ];
 

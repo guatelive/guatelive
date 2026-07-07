@@ -7,7 +7,8 @@ import { BubbleSearch } from "@/components/home/bubble-search";
 import { EditionPeekTab } from "@/components/home/EditionPeekTab";
 import { EventsGrid } from "@/components/home/EventsGrid";
 import { guatNow } from "@/lib/hours-utils";
-import type { DbEvent } from "@/lib/types";
+import type { DbEvent, DbBankPromotion } from "@/lib/types";
+import { PromoCard } from "@/components/cards/promo-card";
 import { SchemaMarkup } from "@/components/seo/schema-markup";
 import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/schema-builders";
 
@@ -28,7 +29,7 @@ export const metadata = {
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEvents }] = await Promise.all([
+  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEvents }, { data: activePromos }] = await Promise.all([
     supabase
       .from("places")
       .select("id, name, slug, zone, rating, primary_category, hours, place_photos(url, is_primary, order_index)")
@@ -51,6 +52,12 @@ export default async function HomePage() {
       .order("featured", { ascending: false })
       .order("date_start", { ascending: true })
       .limit(12),
+    supabase
+      .from("bank_promotions")
+      .select("*")
+      .eq("is_active", true)
+      .order("discount_pct", { ascending: false, nullsFirst: false })
+      .limit(4),
   ]);
 
   return (
@@ -100,14 +107,15 @@ export default async function HomePage() {
         </div>
       </Section> */}
 
-      {/* TODO: Uncomment when real promos data is available */}
-      {/* <Section title="Promos del día" link="/promos" linkLabel="Ver todas">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {promos.slice(0, 4).map((p) => (
-            <PromoCard key={p.id} promo={p} />
-          ))}
-        </div>
-      </Section> */}
+      {activePromos && activePromos.length > 0 && (
+        <Section title="Promos del día" link="/promos" linkLabel="Ver todas">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {(activePromos as DbBankPromotion[]).map((promo) => (
+              <PromoCard key={promo.id} promo={promo} />
+            ))}
+          </div>
+        </Section>
+      )}
 
       {/* DEBUG: Remove when home is production-ready */}
       {/* <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">

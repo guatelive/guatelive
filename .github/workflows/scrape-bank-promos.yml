@@ -1,0 +1,24 @@
+name: Scrape bank promotions
+
+on:
+  schedule:
+    # 12:00 UTC = 6:00 AM hora de Guatemala (UTC-6, sin horario de verano)
+    - cron: '0 12 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  scrape-bac:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - run: npx tsx scripts/scrape-bank-promos.ts --bank=bac
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
