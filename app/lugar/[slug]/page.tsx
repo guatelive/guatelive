@@ -7,8 +7,10 @@ import { TagsBadges } from './TagsBadges';
 import { HorariosAccordion } from './HorariosAccordion';
 import { ContactSidebar } from './ContactSidebar';
 import { ReviewCard } from './ReviewCard';
+import { PromoBadge } from '@/components/lugar/promo-badge';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { parseHoursRange } from '@/lib/hours-utils';
+import { matchesBrand } from '@/lib/promo-place-match';
 import { SITE_URL } from '@/lib/site-config';
 import { buildBreadcrumbSchema, buildOfferSchema, schemaTypeForCategory } from '@/lib/schema-builders';
 import type { DbBankPromotion } from '@/lib/types';
@@ -213,15 +215,18 @@ export default async function LugarPage(props: { params: Params }) {
         !seen.has(p.url) && !!seen.add(p.url)
     );
 
-    const { data: activePromoRaw } = await supabase
+    // El nombre del comercio scrapeado no siempre matchea el slug completo del
+    // lugar (algunas sucursales concatenan la sucursal sin "•", ej. "Tre
+    // Fratelli Zona 14") — matchesBrand() cubre slug completo o prefijo. Como
+    // ese matching ya no es un solo .eq() de columna, se trae el set (chico)
+    // de promos activas y se filtra en memoria, igual que en /promos y el home.
+    const { data: activePromosRaw } = await supabase
         .from('bank_promotions')
         .select('*')
-        .eq('place_id', place.id)
         .eq('is_active', true)
-        .order('discount_pct', { ascending: false, nullsFirst: false })
-        .limit(1)
-        .maybeSingle();
-    const activePromo = activePromoRaw as DbBankPromotion | null;
+        .order('discount_pct', { ascending: false, nullsFirst: false });
+    const activePromo = ((activePromosRaw ?? []) as DbBankPromotion[])
+        .find((promo) => promo.merchant_slug && matchesBrand(place.name, promo.merchant_slug)) ?? null;
 
     const galleryPhotos: PlacePhoto[] =
         placePhotos.length > 0
@@ -315,21 +320,7 @@ export default async function LugarPage(props: { params: Params }) {
 
                 {tags.length > 0 && <TagsBadges tags={tags} />}
 
-                {activePromo && (
-                    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-[#E11D2E]/30 bg-[#E11D2E]/5 px-4 py-2.5">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#E11D2E]">
-                            {activePromo.bank}
-                        </span>
-                        <span className="text-sm font-medium text-[#0A0A0A]">
-                            {activePromo.discount_label}
-                        </span>
-                        {activePromo.valid_until && (
-                            <span className="ml-auto text-xs text-[#666666]">
-                                Vence {new Date(activePromo.valid_until).toLocaleDateString('es-GT', { day: 'numeric', month: 'short' })}
-                            </span>
-                        )}
-                    </div>
-                )}
+                {activePromo && <PromoBadge promo={activePromo} />}
 
                 {/* Mobile: cards lado a lado debajo de tags */}
                 <div

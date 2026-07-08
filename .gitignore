@@ -45,6 +45,7 @@ CLAUDE.md
 0-EMPEZAR-AQUI.md
 .claude/skills/plan-cambio/
 .claude/skills/fix-rapido/
+.claude/skills/triage-tareas/
 
 # GuateLive — scripts privados (lógica de negocio)
 scripts/*

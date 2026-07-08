@@ -12,16 +12,16 @@ export function Header() {
                 </Link>
                 <nav className="flex items-center gap-2">
                     <Link
-                        href="/"
-                        className="text-sm font-medium text-[#0A0A0A] border border-[#E5E5E5] rounded-full px-4 py-1.5 hover:bg-[#F5F5F5] transition-colors"
-                    >
-                        Inicio
-                    </Link>
-                    <Link
                         href="/edicion"
                         className="text-sm font-medium text-[#0A0A0A] border border-[#E5E5E5] rounded-full px-4 py-1.5 hover:bg-[#F5F5F5] transition-colors"
                     >
                         Ediciones
+                    </Link>
+                    <Link
+                        href="/promos"
+                        className="text-sm font-medium text-[#0A0A0A] border border-[#E5E5E5] rounded-full px-4 py-1.5 hover:bg-[#F5F5F5] transition-colors"
+                    >
+                        Promos
                     </Link>
                 </nav>
             </div>

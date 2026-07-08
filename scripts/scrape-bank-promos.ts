@@ -18,6 +18,7 @@
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
+import { slugify } from '@/lib/slug';
 import { BANK_SOURCES } from './bank-sources/index';
 import { buildPlaceMatchIndex, matchPlaceByName } from './bank-sources/match-place';
 import type { RawBankPromo } from './bank-sources/types';
@@ -72,15 +73,15 @@ async function run(bank: string, isDry: boolean) {
     const runStartedAt = new Date().toISOString();
 
     for (const promo of raw) {
-        const placeId = matchPlaceByName(promo.merchantName, placeIndex);
-        if (placeId) matched++;
+        const hasPlaceMatch = matchPlaceByName(promo.merchantName, placeIndex);
+        if (hasPlaceMatch) matched++;
 
         const discountPct = parseDiscountPct(promo.discountText);
         const row = {
             bank,
             external_id: promo.externalId,
             merchant_name: promo.merchantName,
-            place_id: placeId,
+            merchant_slug: slugify(promo.merchantName),
             title: promo.title,
             discount_label: buildDiscountLabel(promo.discountText, discountPct),
             discount_pct: discountPct,
@@ -96,7 +97,7 @@ async function run(bank: string, isDry: boolean) {
         };
 
         if (isDry) {
-            console.log(`   [dry] ${promo.merchantName} — ${row.discount_label}${placeId ? ' (match ✅)' : ' (sin match)'}`);
+            console.log(`   [dry] ${promo.merchantName} — ${row.discount_label}${hasPlaceMatch ? ' (match ✅)' : ' (sin match)'}`);
             upserted++;
             continue;
         }
@@ -113,7 +114,12 @@ async function run(bank: string, isDry: boolean) {
         }
     }
 
-    if (!isDry) {
+    // Si hubo errores de DB en el loop de arriba (ej. un upsert que falló por un
+    // problema de schema), "no visto en este run" no significa "ya no existe en
+    // BAC" — significa que no se pudo escribir. Desactivar en ese caso apagaría
+    // promos que siguen vigentes. Solo se desactiva lo no visto cuando el run
+    // completo de upserts salió limpio.
+    if (!isDry && errors === 0) {
         const { error: deactivateError } = await sb
             .from('bank_promotions')
             .update({ is_active: false })
@@ -123,6 +129,8 @@ async function run(bank: string, isDry: boolean) {
         if (deactivateError) {
             console.error('   ❌ Error marcando promos no vistas como inactivas:', deactivateError.message);
         }
+    } else if (!isDry && errors > 0) {
+        console.error(`   ⚠️  ${errors} error(es) de DB — se omite el paso de desactivar promos no vistas para no apagar promos vigentes por un fallo parcial.`);
     }
 
     console.log(`\n✅ Procesadas: ${upserted} | 🔗 Con match a lugar: ${matched} | ❌ Errores: ${errors}`);
