@@ -4,6 +4,7 @@ import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { buildBreadcrumbSchema, buildOfferSchema } from '@/lib/schema-builders';
 import { createBuildTimeClient } from '@/lib/supabase/server';
 import { SITE_URL } from '@/lib/site-config';
+import { resolvePromoPlaces } from '@/lib/promo-place-match';
 import type { DbBankPromotion } from '@/lib/types';
 
 export const revalidate = 3600;
@@ -16,14 +17,18 @@ export const metadata = {
 
 export default async function PromosPage() {
     const supabase = createBuildTimeClient();
-    const { data } = await supabase
-        .from('bank_promotions')
-        .select('*')
-        .eq('is_active', true)
-        .order('discount_pct', { ascending: false, nullsFirst: false })
-        .order('valid_until', { ascending: true, nullsFirst: false });
+    const [{ data }, { data: placesData }] = await Promise.all([
+        supabase
+            .from('bank_promotions')
+            .select('*')
+            .eq('is_active', true)
+            .order('discount_pct', { ascending: false, nullsFirst: false })
+            .order('valid_until', { ascending: true, nullsFirst: false }),
+        supabase.from('places').select('name, slug, zone').eq('is_published', true),
+    ]);
 
     const promos = (data ?? []) as DbBankPromotion[];
+    const promoPlaces = resolvePromoPlaces(promos, placesData ?? []);
 
     const breadcrumbSchema = buildBreadcrumbSchema([
         { name: 'Inicio', url: SITE_URL },
@@ -62,7 +67,7 @@ export default async function PromosPage() {
                 ) : (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {promos.map((promo) => (
-                            <PromoCard key={promo.id} promo={promo} />
+                            <PromoCard key={promo.id} promo={promo} places={promoPlaces.get(promo.id) ?? []} />
                         ))}
                     </div>
                 )}

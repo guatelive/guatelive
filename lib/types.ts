@@ -25,7 +25,7 @@ export type DbBankPromotion = {
   bank: string;
   external_id: string;
   merchant_name: string;
-  place_id: string | null;
+  merchant_slug: string | null;
   title: string;
   discount_label: string;
   discount_pct: number | null;

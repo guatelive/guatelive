@@ -10,11 +10,21 @@
 //   - <h3 class="h3--subtitle"> → lista de categorías separadas por coma, ej.
 //     "Descuentos, promociones y ofertas, Restaurantes, Comida Rápida, ..." — ACÁ
 //     es donde se filtra por "Restaurantes", no en el texto completo de la tarjeta.
-//   - <div class="real-estate-card__description"> → texto libre con "Vigencia: ..."
-//     y condiciones — se guarda tal cual, no se intenta parsear a fechas (formato
-//     de fecha en español libre, "Del 17 al 19 de julio de 2026", poco confiable
-//     de parsear sin arriesgar fechas incorrectas — mismo criterio "best-effort,
-//     nunca fabricar" que ya se usa en el resto del proyecto).
+//   - <div class="real-estate-card__description"> → texto libre corto de la card
+//     ("Vigencia: ..."), usado solo para el parseo de % y el discount_label corto.
+//   - <div id="modal-<ID>"> ... <div class="real_estate_modal-description"> →
+//     el detalle COMPLETO de la promo (qué incluye, productos participantes,
+//     horarios, condiciones y restricciones) — confirmado que ya viene en el HTML
+//     de la página de catálogo (SSR, oculto por CSS hasta que se abre el modal por
+//     JS), no requiere una request aparte. `#modal-<ID>` NO está anidado dentro de
+//     `.item-<ID>` (es un hermano en el DOM), así que se busca por ID global, no
+//     con `$card.find(...)`. Esto es lo que se guarda en `terms` — antes solo se
+//     guardaba el resumen corto de la card, perdiendo la info que el usuario
+//     realmente busca (fechas exactas, productos, horarios, restricciones). No se
+//     intenta parsear a fechas estructuradas (formato de fecha en español libre,
+//     "Del 17 al 19 de julio de 2026", poco confiable sin arriesgar fechas
+//     incorrectas — mismo criterio "best-effort, nunca fabricar" del resto del
+//     proyecto).
 // No hay página de detalle por promo (el modal vive en la misma página) — se usa
 // la URL de catálogo + `#modal-<ID>` como source_url.
 //
@@ -44,6 +54,23 @@ function normalize(text: string): string {
         .normalize('NFD')
         .replace(/[̀-ͯ]/g, '')
         .trim();
+}
+
+// Convierte el HTML del detalle del modal (<p>, <strong>, <ul><li>, <br>) a texto
+// plano legible en varias líneas — un bullet por <li>, un salto de línea por
+// <p>/<div>/<br>. No se intenta preservar ningún otro formato.
+function modalHtmlToText(html: string): string {
+    return html
+        .replace(/<li[^>]*>/gi, '\n• ')
+        .replace(/<\/(p|div)>/gi, '\n')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/&amp;/gi, '&')
+        .split('\n')
+        .map((line) => line.replace(/\s+/g, ' ').trim())
+        .filter(Boolean)
+        .join('\n');
 }
 
 async function dumpDebugHtml(page: number, html: string, reason: string) {
@@ -90,6 +117,11 @@ function extractCards(html: string, pageUrl: string): RawBankPromo[] {
         const category = $card.find('h3.h3--subtitle').first().text().replace(/\s+/g, ' ').trim() || null;
         const description = $card.find('.real-estate-card__description').first().text().replace(/\s+/g, ' ').trim();
 
+        // El modal no está anidado dentro de .item-<ID> — es un hermano en el DOM,
+        // por eso se busca por ID global ($, no $card).
+        const modalDescriptionHtml = $(`#modal-${externalId}`).find('.real_estate_modal-description').first().html();
+        const fullDescription = modalDescriptionHtml ? modalHtmlToText(modalDescriptionHtml) : '';
+
         const $img = $card.find('picture img').first();
         // El alt de la imagen a veces es el nombre del plato/foto (ej. "Carpaccio de
         // Lomito"), no el comercio — pero cuando el título trae "... - COMERCIO" al
@@ -106,7 +138,7 @@ function extractCards(html: string, pageUrl: string): RawBankPromo[] {
             merchantName,
             title,
             discountText: `${title} ${description}`.trim(),
-            termsText: description || null,
+            termsText: fullDescription || description || null,
             imageUrl,
             category,
             sourceUrl: `${pageUrl.split('?')[0]}#modal-${externalId}`,
