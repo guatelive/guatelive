@@ -134,3 +134,45 @@ export function buildEditionItemListSchema(entries: EditionPlaceEntry[]) {
         }),
     };
 }
+
+export function buildFAQSchema(faqs: { question: string; answer: string }[]) {
+    if (faqs.length === 0) return null;
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+            '@type': 'Question',
+            name: faq.question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: faq.answer,
+            },
+        })),
+    };
+}
+
+type ZonePlaceRef = {
+    name: string;
+    slug: string;
+    primary_category?: string | null;
+    category?: string | null;
+};
+
+export function buildPlaceListSchema(places: ZonePlaceRef[]) {
+    if (places.length === 0) return null;
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: places.map((place, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            item: {
+                '@type': schemaTypeForCategory(place.primary_category ?? null, place.category ?? null),
+                name: place.name,
+                url: `${SITE_URL}/lugar/${place.slug}`,
+            },
+        })),
+    };
+}
