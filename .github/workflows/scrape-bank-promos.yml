@@ -9,6 +9,14 @@ on:
 jobs:
   scrape-bac:
     runs-on: ubuntu-latest
+    # Los secrets NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY están
+    # configurados como "Environment secrets" bajo el ambiente "Production"
+    # (no como Repository secrets) — sin declarar el ambiente acá, el job no
+    # tiene acceso a ellos y llegan vacíos (createClient('', '') falla casi
+    # instantáneo). Confirmado con 2 corridas fallidas del cron (~1s cada
+    # una, antes y después de mergear los cambios del scraper de esta
+    # sesión — mismo fallo en ambas, no relacionado al código del scraper).
+    environment: Production
     steps:
       - uses: actions/checkout@v4
 
