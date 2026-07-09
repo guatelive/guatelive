@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
 import { createBuildTimeClient } from '@/lib/supabase/server';
 import { getPublishedPlaceZones } from '@/lib/zones';
+import { SchemaMarkup } from '@/components/seo/schema-markup';
+import { buildBreadcrumbSchema, buildFAQSchema, buildPlaceListSchema } from '@/lib/schema-builders';
+import { SITE_URL } from '@/lib/site-config';
 
 type Params = Promise<{ zone: string }>;
 type PhotoRow = { url: string; is_primary: boolean; order_index: number };
@@ -54,8 +57,44 @@ export default async function ZonaRestaurantesPage(props: { params: Params }) {
         };
     });
 
+    const faqs: { question: string; answer: string }[] = [];
+
+    if (places.length > 0) {
+        faqs.push({
+            question: `¿Cuántos restaurantes, cafés y bares hay en ${zoneInfo.zone}?`,
+            answer: `${places.length} lugares verificados en GuateLive en ${zoneInfo.zone}.`,
+        });
+    }
+
+    const topRated = places.find((p) => typeof p.rating === 'number');
+    if (topRated) {
+        faqs.push({
+            question: `¿Cuál es el lugar mejor calificado en ${zoneInfo.zone}?`,
+            answer: `${topRated.name}, con ${topRated.rating} de calificación según reseñas de Google.`,
+        });
+    }
+
+    const priceRanges = new Set(places.map((p) => p.price_range).filter(Boolean));
+    if (priceRanges.size > 0) {
+        const hasEconomico = priceRanges.has('$') || priceRanges.has('$$');
+        faqs.push({
+            question: `¿Hay opciones económicas en ${zoneInfo.zone}?`,
+            answer: hasEconomico
+                ? `Sí, hay opciones económicas en ${zoneInfo.zone}.`
+                : `La mayoría de lugares en ${zoneInfo.zone} son de precio medio-alto a alto.`,
+        });
+    }
+
+    const breadcrumbSchema = buildBreadcrumbSchema([
+        { name: 'Inicio', url: SITE_URL },
+        { name: zoneInfo.zone, url: `${SITE_URL}/zona/${zoneInfo.slug}/restaurantes` },
+    ]);
+    const faqSchema = buildFAQSchema(faqs);
+    const placeListSchema = buildPlaceListSchema(places);
+
     return (
         <div className="container mx-auto px-4 py-12">
+            <SchemaMarkup schema={[breadcrumbSchema, ...(faqSchema ? [faqSchema] : []), ...(placeListSchema ? [placeListSchema] : [])]} />
             <h1 className="text-4xl font-bold mb-2">
                 Restaurantes, cafés y bares en {zoneInfo.zone}
             </h1>
