@@ -21,7 +21,7 @@ export function PromoCard({ promo, places = [] }: { promo: DbBankPromotion; plac
   return (
     <div className="group flex h-full flex-col overflow-hidden rounded-xl bg-[#1A1A1A] transition-transform hover:-translate-y-0.5">
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-[#242424]">
-        <div className="absolute inset-x-0 top-0 z-10 h-1 bg-[#E11D2E]" />
+        <div className="absolute inset-x-0 top-0 z-10 h-1" style={{ backgroundColor: brand.accent }} />
         {promo.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element -- dominio del CDN de BAC no está en next.config images.remotePatterns, mismo criterio que edition.cover_image_url en app/edicion/page.tsx
           <img
@@ -42,7 +42,7 @@ export function PromoCard({ promo, places = [] }: { promo: DbBankPromotion; plac
         </div>
         {promo.discount_pct !== null && (
           <div
-            className="absolute bottom-3 left-3 max-w-[80%] rounded-xl px-3 py-1.5 text-white"
+            className="absolute left-3 top-3 max-w-[45%] rounded-xl px-3 py-1.5 text-white"
             style={{ backgroundColor: brand.accent }}
           >
             <span className="font-serif text-2xl font-semibold leading-none">{promo.discount_pct}%</span>
