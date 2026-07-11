@@ -6,9 +6,11 @@
 
 import { bacSource } from './bac';
 import { promericaSource } from './promerica';
+import { gtcSource } from './gtc';
 import type { BankPromoSource } from './types';
 
 export const BANK_SOURCES: Record<string, BankPromoSource> = {
     bac: bacSource,
     promerica: promericaSource,
+    gtc: gtcSource,
 };

@@ -10,6 +10,7 @@ export type BankBrand = {
 const BANK_BRANDS: Record<string, BankBrand> = {
     bac: { label: 'BAC', accent: '#E11D2E' },
     promerica: { label: 'Promerica', accent: '#0D703A' },
+    gtc: { label: 'G&T', accent: '#0058A4' },
 };
 
 export function getBankBrand(bank: string): BankBrand {
