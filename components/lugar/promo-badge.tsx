@@ -3,15 +3,12 @@
 import { useState } from 'react';
 import { PromoDetailModal } from '@/components/cards/promo-detail-modal';
 import { promoDescription } from '@/lib/promo-title';
+import { getBankBrand } from '@/lib/bank-brand';
 import type { DbBankPromotion } from '@/lib/types';
-
-const BANK_LABELS: Record<string, string> = {
-    bac: 'BAC',
-};
 
 export function PromoBadge({ promo }: { promo: DbBankPromotion }) {
     const [open, setOpen] = useState(false);
-    const bankLabel = BANK_LABELS[promo.bank] ?? promo.bank.toUpperCase();
+    const brand = getBankBrand(promo.bank);
     const description = promoDescription(promo.title);
     const validUntilLabel = promo.valid_until
         ? new Date(promo.valid_until).toLocaleDateString('es-GT', { day: 'numeric', month: 'short' })
@@ -33,15 +30,15 @@ export function PromoBadge({ promo }: { promo: DbBankPromotion }) {
                         />
                     ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-center text-[10px] text-white/40">
-                            {bankLabel}
+                            {brand.label}
                         </div>
                     )}
                 </div>
 
                 <div className="flex flex-1 flex-col justify-center gap-0.5 py-2.5 pr-4">
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#E11D2E]">
-                            {bankLabel}
+                        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: brand.accent }}>
+                            {brand.label}
                         </span>
                         {promo.discount_pct !== null && (
                             <span className="text-xs font-semibold text-white">{promo.discount_pct}% OFF</span>

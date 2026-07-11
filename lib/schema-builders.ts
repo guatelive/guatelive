@@ -86,6 +86,8 @@ type EditionPlaceEntry = {
 
 const BANK_DISPLAY_NAMES: Record<string, string> = {
     bac: 'BAC Credomatic',
+    promerica: 'Promerica',
+    gtc: 'G&T Continental',
 };
 
 function bankDisplayName(bank: string): string {

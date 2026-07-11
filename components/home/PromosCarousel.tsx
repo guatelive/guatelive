@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { DbBankPromotion } from '@/lib/types';
 import type { PromoPlaceLink } from '@/lib/promo-place-match';
 import { PromoCard } from '@/components/cards/promo-card';
+import { interleaveByBank } from '@/lib/promo-order';
 
 const DURATION = 4000;
 
@@ -17,7 +18,10 @@ const arrowButtonStyle: CSSProperties = {
     border: '1.5px solid #D4D4D4', background: '#fff', cursor: 'pointer',
 };
 
-export function PromosCarousel({ promos }: { promos: PromoWithPlaces[] }) {
+export function PromosCarousel({ promos: promosProp }: { promos: PromoWithPlaces[] }) {
+    // Reordenado solo para display — evita que el orden real (discount_pct
+    // desc) deje varias promos del mismo banco consecutivas.
+    const promos = interleaveByBank(promosProp);
     const [index, setIndex] = useState(0);
     const activeIndex = promos.length > 0 ? Math.min(index, promos.length - 1) : 0;
 
