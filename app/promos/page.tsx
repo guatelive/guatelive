@@ -11,7 +11,7 @@ export const revalidate = 3600;
 
 export const metadata = {
     title: 'Promos bancarias — GuateLive',
-    description: 'Descuentos vigentes en restaurantes, cafés y bares de Guatemala con tarjetas BAC Credomatic.',
+    description: 'Descuentos vigentes en restaurantes, cafés y bares de Guatemala con tarjetas BAC Credomatic y Promerica.',
     alternates: { canonical: `${SITE_URL}/promos` },
 };
 
@@ -58,7 +58,7 @@ export default async function PromosPage() {
                         Promos bancarias
                     </h1>
                     <p className="mt-3 text-lg text-muted-foreground">
-                        Descuentos vigentes con BAC Credomatic en restaurantes, cafés y bares de Guatemala.
+                        Descuentos vigentes con BAC Credomatic y Promerica en restaurantes, cafés y bares de Guatemala.
                     </p>
                 </div>
 

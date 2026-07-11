@@ -7,10 +7,7 @@ import { X, MapPin, Clock, UtensilsCrossed, ShieldCheck, CalendarDays, Tag, type
 import type { DbBankPromotion } from '@/lib/types';
 import type { PromoPlaceLink } from '@/lib/promo-place-match';
 import { parseTermsBlocks } from '@/lib/promo-terms';
-
-const BANK_LABELS: Record<string, string> = {
-    bac: 'BAC',
-};
+import { getBankBrand } from '@/lib/bank-brand';
 
 function headingIcon(text: string): LucideIcon {
     const t = text.toLowerCase();
@@ -34,7 +31,7 @@ export function PromoDetailModal({
     validUntilLabel: string | null;
     onClose: () => void;
 }) {
-    const bankLabel = BANK_LABELS[promo.bank] ?? promo.bank.toUpperCase();
+    const brand = getBankBrand(promo.bank);
 
     useEffect(() => {
         function onKeyDown(e: KeyboardEvent) {
@@ -66,11 +63,17 @@ export function PromoDetailModal({
                     >
                         <X size={16} />
                     </button>
-                    <div className="absolute right-3 bottom-3 rounded-lg bg-white px-2 py-1 text-[10px] font-bold tracking-wider text-[#E11D2E]">
-                        {bankLabel}
+                    <div
+                        className="absolute right-3 bottom-3 rounded-lg bg-white px-2 py-1 text-[10px] font-bold tracking-wider"
+                        style={{ color: brand.accent }}
+                    >
+                        {brand.label}
                     </div>
                     {promo.discount_pct !== null && (
-                        <div className="absolute bottom-3 left-3 max-w-[80%] rounded-xl bg-[#E11D2E] px-3 py-1.5 text-white">
+                        <div
+                            className="absolute bottom-3 left-3 max-w-[80%] rounded-xl px-3 py-1.5 text-white"
+                            style={{ backgroundColor: brand.accent }}
+                        >
                             <span className="font-serif text-2xl font-semibold leading-none">{promo.discount_pct}%</span>
                             <span className="ml-1 text-xs font-medium">OFF</span>
                         </div>
@@ -141,7 +144,7 @@ export function PromoDetailModal({
                             rel="noopener noreferrer"
                             className="text-xs text-white/40 hover:text-white/70"
                         >
-                            Ver promoción en {bankLabel} →
+                            Ver promoción en {brand.label} →
                         </a>
                     </div>
                 </div>
