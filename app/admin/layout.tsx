@@ -22,6 +22,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <Link href="/admin/ediciones" className="text-sm text-[#666666] hover:text-[#0A0A0A]">
                             Ediciones
                         </Link>
+                        <Link href="/admin/places" className="text-sm text-[#666666] hover:text-[#0A0A0A]">
+                            Lugares
+                        </Link>
                     </nav>
                 </div>
                 <div className="flex items-center gap-4">
