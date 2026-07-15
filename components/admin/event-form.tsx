@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { TagPicker } from './tag-picker';
 import { ImageCropper } from './image-cropper';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
+import { EVENT_TAG_GROUPS } from '@/lib/event-tags';
 import { EventPreview } from './event-preview';
 import type { DbEvent } from '@/lib/types';
 
@@ -207,7 +208,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Tags</label>
-                <TagPicker name="tags" defaultValue={event?.tags ?? []} />
+                <TagPicker name="tags" groups={EVENT_TAG_GROUPS} defaultValue={event?.tags ?? []} />
             </div>
 
             <div>

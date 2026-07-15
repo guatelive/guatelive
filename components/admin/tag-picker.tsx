@@ -1,18 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { EVENT_TAG_GROUPS } from '@/lib/event-tags';
+
+export type TagGroup = { label: string; tags: string[] };
 
 interface Props {
     name: string;
+    groups: TagGroup[];
     defaultValue?: string[];
 }
 
-export function TagPicker({ name, defaultValue = [] }: Props) {
+export function TagPicker({ name, groups, defaultValue = [] }: Props) {
     const [selected, setSelected] = useState<string[]>(defaultValue);
     const [customTag, setCustomTag] = useState('');
 
-    const allKnownTags = new Set(EVENT_TAG_GROUPS.flatMap(g => g.tags));
+    const allKnownTags = new Set(groups.flatMap(g => g.tags));
     const extraTags = selected.filter(t => !allKnownTags.has(t));
 
     function toggle(tag: string) {
@@ -42,7 +44,7 @@ export function TagPicker({ name, defaultValue = [] }: Props) {
                 </div>
             )}
 
-            {EVENT_TAG_GROUPS.map(group => (
+            {groups.map(group => (
                 <div key={group.label} className="mb-3">
                     <p className="mb-1 text-xs text-[#666666]">{group.label}</p>
                     <div className="flex flex-wrap gap-2">

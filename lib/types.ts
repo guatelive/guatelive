@@ -20,6 +20,46 @@ export type DbEvent = {
   status: 'pending' | 'published';
 };
 
+export type PlacePhoto = {
+  id: string;
+  place_id: string;
+  url: string;
+  is_primary: boolean;
+  order_index: number;
+};
+
+export type Place = {
+  id: string;
+  slug: string;
+  name: string;
+  primary_category: string | null;
+  category: string | null;
+  zone: string | null;
+  city: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  rating: number | null;
+  rating_count: number | null;
+  price_range: string | null;
+  price_level: number | null;
+  hours: Record<string, string> | null;
+  phone: string | null;
+  whatsapp: string | null;
+  website: string | null;
+  instagram_handle: string | null;
+  google_maps_url: string | null;
+  google_place_id: string | null;
+  description: string | null;
+  tags: string[];
+  is_published: boolean;
+  is_featured: boolean;
+  is_verified: boolean;
+  is_active: boolean;
+  editorial_notes: string | null;
+  source: string | null;
+};
+
 export type DbBankPromotion = {
   id: string;
   bank: string;
