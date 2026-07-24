@@ -69,6 +69,25 @@ const EVENT_ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
 
 type ZoneOption = { label: string; value: string };
 
+const STORAGE_KEY = 'guatelive:home-search-state';
+const STORAGE_VERSION = 1;
+
+type PersistedSearchState = {
+    v: number;
+    searchQuery: string;
+    bubbleStep: 1 | 2 | 3;
+    placeOrEventTab: 'place' | 'event';
+    searchKind: 'place' | 'event' | null;
+    activity: string | null;
+    eventCategory: string | null;
+    isSurprise: boolean;
+    zone: string | null;
+    when: string | null;
+    zoneFallback: boolean;
+    bubbleResults: Place[] | null;
+    eventBubbleResults: DbEvent[] | null;
+};
+
 const WHEN: { label: string; value: string }[] = [
     { label: '🌞 Hoy', value: 'today' },
     { label: '🌙 Esta noche', value: 'tonight' },
@@ -201,6 +220,62 @@ export function BubbleSearch() {
     const [loadingBubble, setLoadingBubble] = useState(false);
     const [zoneFallback, setZoneFallback] = useState(false);
     const [when, setWhen] = useState<string | null>(null);
+
+    // Restaura búsqueda anterior al volver con el botón del navegador (Next.js remonta
+    // el componente en soft-navigation; sessionStorage sobrevive ese remount).
+    useEffect(() => {
+        try {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const saved = JSON.parse(raw) as PersistedSearchState;
+            if (saved.v !== STORAGE_VERSION) return;
+
+            setSearchQuery(saved.searchQuery);
+            setBubbleStep(saved.bubbleStep);
+            setPlaceOrEventTab(saved.placeOrEventTab);
+            setSearchKind(saved.searchKind);
+            setActivity(saved.activity);
+            setEventCategory(saved.eventCategory);
+            setIsSurprise(saved.isSurprise);
+            setZone(saved.zone);
+            setWhen(saved.when);
+            setZoneFallback(saved.zoneFallback);
+            setBubbleResults(saved.bubbleResults);
+            setEventBubbleResults(saved.eventBubbleResults);
+        } catch {
+            // sessionStorage no disponible o JSON corrupto — arranca limpio.
+        }
+    }, []);
+
+    // Persiste la búsqueda actual en cada cambio. Salta el primer disparo (que todavía
+    // trae los valores por defecto de antes de que el efecto de restauración corra).
+    const hasSavedOnceRef = useRef(false);
+    useEffect(() => {
+        if (!hasSavedOnceRef.current) {
+            hasSavedOnceRef.current = true;
+            return;
+        }
+        try {
+            const toSave: PersistedSearchState = {
+                v: STORAGE_VERSION,
+                searchQuery,
+                bubbleStep,
+                placeOrEventTab,
+                searchKind,
+                activity,
+                eventCategory,
+                isSurprise,
+                zone,
+                when,
+                zoneFallback,
+                bubbleResults,
+                eventBubbleResults,
+            };
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+        } catch {
+            // sessionStorage no disponible — no persiste, no rompe el componente.
+        }
+    }, [searchQuery, bubbleStep, placeOrEventTab, searchKind, activity, eventCategory, isSurprise, zone, when, zoneFallback, bubbleResults, eventBubbleResults]);
 
     function handleFocus() {
         setInputFocused(true);
