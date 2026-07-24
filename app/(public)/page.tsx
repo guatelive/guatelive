@@ -12,6 +12,7 @@ import { PromosCarousel } from "@/components/home/PromosCarousel";
 import { resolvePromoPlaces } from "@/lib/promo-place-match";
 import { SchemaMarkup } from "@/components/seo/schema-markup";
 import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/schema-builders";
+import { NewsletterSignup } from "@/components/home/newsletter-signup";
 
 export const metadata = {
   title: "GuateLive — Cafés, restaurantes y eventos en Guate",
@@ -322,6 +323,8 @@ export default async function HomePage() {
           </section>
         );
       })()}
+
+      <NewsletterSignup />
 
     </SiteLayout>
   );
