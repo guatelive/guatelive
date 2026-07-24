@@ -340,3 +340,20 @@
     mask-image: none;
   }
 }
+
+/* ── Skeleton de imágenes (fix/skeleton) ── */
+/* Shimmer en vez de pulse de opacidad — un pulse entre dos grises casi
+   idénticos (gray-100/gray-200) es casi imperceptible; el shimmer se lee
+   como "cargando" sin depender de contraste de color. */
+@keyframes skeletonShimmer {
+  0%   { background-position: -150% 0; }
+  100% { background-position: 150% 0; }
+}
+
+@layer components {
+  .skeleton-shimmer {
+    background-image: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.4s ease-in-out infinite;
+  }
+}

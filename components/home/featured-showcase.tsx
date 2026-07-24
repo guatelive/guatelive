@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { ImageWithSkeleton } from "@/components/ui/image-with-skeleton";
 import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
 import { featured, type Featured } from "@/lib/mock-data";
 
@@ -57,7 +57,7 @@ export function FeaturedShowcase() {
           className="group relative col-span-1 overflow-hidden rounded-3xl lg:col-span-2"
         >
           <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/10] lg:aspect-[5/4]">
-            <Image
+            <ImageWithSkeleton
               src={current.image}
               alt={current.title}
               fill
@@ -109,7 +109,7 @@ export function FeaturedShowcase() {
               className="group relative flex-1 overflow-hidden rounded-3xl"
             >
               <div className="relative h-full min-h-[180px] w-full overflow-hidden">
-                <Image
+                <ImageWithSkeleton
                   src={f.image}
                   alt={f.title}
                   fill

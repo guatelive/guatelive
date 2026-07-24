@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import Link from 'next/link';
 import { X, ChevronUp, ChevronDown, ExternalLink, Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
@@ -101,7 +101,7 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
             <div key={event.id} style={{ height: '100vh', position: 'relative', flexShrink: 0, backgroundColor: '#111' }}>
               {/* Image or placeholder */}
               {event.image_url ? (
-                <Image
+                <ImageWithSkeleton
                   src={event.image_url}
                   alt={event.title}
                   fill
