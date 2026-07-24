@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import { MapPin, ExternalLink, Star } from 'lucide-react';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 import { formatDateLong } from '@/lib/format-event-date';
@@ -117,7 +117,7 @@ export default async function EventoPage(props: { params: Params }) {
                 {/* Imagen hero — una sola imagen, no la galería multi-foto de lugares */}
                 <div className="relative mb-6 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80">
                     {event.image_url ? (
-                        <Image
+                        <ImageWithSkeleton
                             src={event.image_url}
                             alt={event.title}
                             fill

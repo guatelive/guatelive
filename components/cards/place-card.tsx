@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import type { OpenStatus } from '@/lib/hours-utils';
 
 type PlaceCardProps = {
@@ -27,9 +27,9 @@ export function PlaceCard({ place, openNow }: PlaceCardProps) {
     return (
         <div className="rounded-lg overflow-hidden bg-white border border-border hover:shadow-lg transition-shadow cursor-pointer">
             {/* Imagen */}
-            <div className="relative h-48 w-full bg-[#F0F0F0]">
+            <div className="relative h-48 w-full bg-[#E5E5E5]">
                 {imageUrl && (
-                    <Image
+                    <ImageWithSkeleton
                         src={imageUrl}
                         alt={place.name}
                         fill

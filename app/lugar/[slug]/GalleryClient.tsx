@@ -11,6 +11,8 @@ const AUTO_MS   = 3500;
 export default function GalleryClient({ photos }: { photos: Photo[] }) {
     const [mobileActive,  setMobileActive]  = useState(0);
     const [desktopActive, setDesktopActive] = useState(0);
+    const [mobileLoaded,  setMobileLoaded]  = useState(false);
+    const [desktopLoaded, setDesktopLoaded] = useState(false);
 
     // Auto-avance mobile con crossfade
     useEffect(() => {
@@ -37,7 +39,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
         <>
             {/* ── MOBILE: full-bleed crossfade carousel ── */}
             <div
-                className="md:hidden"
+                className={`md:hidden${mobileLoaded ? '' : ' skeleton-shimmer'}`}
                 style={{
                     position: 'relative',
                     left: '50%',
@@ -46,7 +48,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                     height: `${MOBILE_H}px`,
                     marginBottom: '24px',
                     overflow: 'hidden',
-                    background: '#F0F0F0',
+                    background: mobileLoaded ? '#E5E5E5' : undefined,
                 }}
             >
                 {photos.map((photo, i) => (
@@ -64,6 +66,8 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                             transition: 'opacity 300ms ease-in-out',
                         }}
                         fetchPriority={i === 0 ? 'high' : 'low'}
+                        onLoad={i === 0 ? () => setMobileLoaded(true) : undefined}
+                        onError={i === 0 ? () => setMobileLoaded(true) : undefined}
                     />
                 ))}
                 {n > 1 && (
@@ -90,10 +94,12 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
 
             {/* ── DESKTOP: 1 foto ── */}
             {n === 1 && (
-                <div className="hidden md:block" style={{ height: `${DESKTOP_H}px`, borderRadius: '16px', overflow: 'hidden', marginBottom: '32px', background: '#F0F0F0' }}>
+                <div className={`hidden md:block${desktopLoaded ? '' : ' skeleton-shimmer'}`} style={{ height: `${DESKTOP_H}px`, borderRadius: '16px', overflow: 'hidden', marginBottom: '32px', background: desktopLoaded ? '#E5E5E5' : undefined }}>
                     <img src={big.url} alt="Foto del lugar"
                         style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
                         fetchPriority="high"
+                        onLoad={() => setDesktopLoaded(true)}
+                        onError={() => setDesktopLoaded(true)}
                     />
                 </div>
             )}
@@ -102,7 +108,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
             {n === 2 && (
                 <div className="hidden md:block" style={{ marginBottom: '32px' }}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', height: `${DESKTOP_H}px` }}>
-                        <div style={{ flex: '0 0 60%', borderRadius: '16px', overflow: 'hidden', background: '#F0F0F0', position: 'relative' }}>
+                        <div className={desktopLoaded ? '' : 'skeleton-shimmer'} style={{ flex: '0 0 60%', borderRadius: '16px', overflow: 'hidden', background: desktopLoaded ? '#E5E5E5' : undefined, position: 'relative' }}>
                             {photos.slice(0, 2).map((photo, i) => (
                                 <img key={`${i}-${photo.url}`} src={i === 0 ? big.url : top.url} alt="Foto del lugar"
                                     style={{
@@ -112,12 +118,14 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                                         transition: 'opacity 300ms ease-in-out',
                                     }}
                                     fetchPriority={i === 0 ? 'high' : 'low'}
+                                    onLoad={i === 0 ? () => setDesktopLoaded(true) : undefined}
+                                    onError={i === 0 ? () => setDesktopLoaded(true) : undefined}
                                 />
                             ))}
                         </div>
                         <div
                             onClick={() => advanceDesktop(1)}
-                            style={{ flex: '1 1 0', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer', background: '#F0F0F0' }}
+                            style={{ flex: '1 1 0', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer', background: '#E5E5E5' }}
                         >
                             <img src={top.url} alt=""
                                 style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -131,7 +139,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                 <div className="hidden md:block" style={{ marginBottom: '32px' }}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', height: `${DESKTOP_H}px` }}>
                         {/* Foto grande con crossfade */}
-                        <div style={{ flex: '0 0 60%', borderRadius: '16px', overflow: 'hidden', position: 'relative', background: '#F0F0F0' }}>
+                        <div className={desktopLoaded ? '' : 'skeleton-shimmer'} style={{ flex: '0 0 60%', borderRadius: '16px', overflow: 'hidden', position: 'relative', background: desktopLoaded ? '#E5E5E5' : undefined }}>
                             {photos.map((photo, i) => (
                                 <img
                                     key={`${i}-${photo.url}`}
@@ -148,6 +156,8 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                                         transition: 'opacity 300ms ease-in-out',
                                     }}
                                     fetchPriority={i === 0 ? 'high' : 'low'}
+                                    onLoad={i === 0 ? () => setDesktopLoaded(true) : undefined}
+                                    onError={i === 0 ? () => setDesktopLoaded(true) : undefined}
                                 />
                             ))}
                         </div>
@@ -155,7 +165,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                         <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             <div
                                 onClick={() => advanceDesktop(1)}
-                                style={{ flex: 1, borderRadius: '16px', overflow: 'hidden', cursor: 'pointer', background: '#F0F0F0' }}
+                                style={{ flex: 1, borderRadius: '16px', overflow: 'hidden', cursor: 'pointer', background: '#E5E5E5' }}
                             >
                                 <img src={top.url} alt=""
                                     style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.2s' }}
@@ -165,7 +175,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                             </div>
                             <div
                                 onClick={() => advanceDesktop(2)}
-                                style={{ flex: 1, borderRadius: '16px', overflow: 'hidden', position: 'relative', cursor: 'pointer', background: '#F0F0F0' }}
+                                style={{ flex: 1, borderRadius: '16px', overflow: 'hidden', position: 'relative', cursor: 'pointer', background: '#E5E5E5' }}
                             >
                                 <img src={bottom!.url} alt=""
                                     style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.2s' }}

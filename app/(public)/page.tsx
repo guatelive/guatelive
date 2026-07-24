@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { ImageWithSkeleton } from "@/components/ui/image-with-skeleton";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/layout/site-layout";
 import { createClient } from "@/lib/supabase/server";
@@ -233,7 +233,7 @@ export default async function HomePage() {
               {/* Imagen de fondo en mobile */}
               {photos[0] && (
                 <div className="absolute inset-0 md:hidden">
-                  <Image src={photos[0].src} alt="" fill sizes="100vw" className="object-cover" />
+                  <ImageWithSkeleton src={photos[0].src} alt="" fill sizes="100vw" className="object-cover" />
                   <div className="absolute inset-0 bg-[#0A0A0A]/75" />
                 </div>
               )}
@@ -303,7 +303,7 @@ export default async function HomePage() {
                           border: '3px solid rgba(255,255,255,0.09)',
                         }}
                       >
-                        <Image
+                        <ImageWithSkeleton
                           src={photo.src}
                           alt={photo.name ?? ''}
                           fill

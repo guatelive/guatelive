@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import { Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
@@ -43,7 +43,7 @@ export function EventCard({ event }: { event: DbEvent }) {
       {/* Photo block */}
       <div style={{ position: 'relative', height: 160, backgroundColor: '#242424' }}>
         {event.image_url ? (
-          <Image
+          <ImageWithSkeleton
             src={event.image_url}
             alt={event.title}
             fill
