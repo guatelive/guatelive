@@ -1,18 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type Photo = { url: string; is_primary: boolean; order_index: number };
 
 const DESKTOP_H = 400;
 const MOBILE_H  = 320;
 const AUTO_MS   = 3500;
+const SWIPE_THRESHOLD = 50;
 
 export default function GalleryClient({ photos }: { photos: Photo[] }) {
     const [mobileActive,  setMobileActive]  = useState(0);
     const [desktopActive, setDesktopActive] = useState(0);
     const [mobileLoaded,  setMobileLoaded]  = useState(false);
     const [desktopLoaded, setDesktopLoaded] = useState(false);
+    const touchStartX = useRef(0);
 
     // Auto-avance mobile con crossfade
     useEffect(() => {
@@ -49,6 +51,14 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                     marginBottom: '24px',
                     overflow: 'hidden',
                     background: mobileLoaded ? '#E5E5E5' : undefined,
+                    touchAction: 'pan-y',
+                }}
+                onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+                onTouchEnd={(e) => {
+                    const diff = touchStartX.current - e.changedTouches[0].clientX;
+                    if (Math.abs(diff) > SWIPE_THRESHOLD) {
+                        setMobileActive((i) => (diff > 0 ? (i + 1) % n : (i - 1 + n) % n));
+                    }
                 }}
             >
                 {photos.map((photo, i) => (
