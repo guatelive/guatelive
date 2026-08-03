@@ -10,6 +10,8 @@ import { guatNow } from "@/lib/hours-utils";
 import type { DbEvent, DbBankPromotion } from "@/lib/types";
 import { PromosCarousel } from "@/components/home/PromosCarousel";
 import { resolvePromoPlaces } from "@/lib/promo-place-match";
+import { sortByDiscountWithDailyVariation } from "@/lib/promo-order";
+import { formatUpdatedLabel } from "@/lib/promo-freshness";
 import { SchemaMarkup } from "@/components/seo/schema-markup";
 import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/schema-builders";
 import { NewsletterSignup } from "@/components/home/newsletter-signup";
@@ -58,16 +60,20 @@ export default async function HomePage() {
       .from("bank_promotions")
       .select("*")
       .eq("is_active", true)
-      .order("discount_pct", { ascending: false, nullsFirst: false })
-      .limit(8),
+      .order("discount_pct", { ascending: false, nullsFirst: false }),
     supabase.from("places").select("name, slug, zone").eq("is_published", true),
   ]);
 
-  const promoPlaces = resolvePromoPlaces((activePromos ?? []) as DbBankPromotion[], promoMatchPlaces ?? []);
-  const promosWithPlaces = ((activePromos ?? []) as DbBankPromotion[]).map((promo) => ({
+  // Descuento más alto primero siempre; el shuffle diario solo varía el
+  // orden entre promos empatadas en % — antes de esto, el home mostraba
+  // literalmente el mismo top-8 fijo por descuento y nunca rotaba.
+  const shuffledPromos = sortByDiscountWithDailyVariation((activePromos ?? []) as DbBankPromotion[], guatNow()).slice(0, 8);
+  const promoPlaces = resolvePromoPlaces(shuffledPromos, promoMatchPlaces ?? []);
+  const promosWithPlaces = shuffledPromos.map((promo) => ({
     ...promo,
     places: promoPlaces.get(promo.id) ?? [],
   }));
+  const promosUpdatedLabel = formatUpdatedLabel(shuffledPromos);
 
   return (
     <SiteLayout>
@@ -116,7 +122,7 @@ export default async function HomePage() {
         </div>
       </Section> */}
 
-      <PromosCarousel promos={promosWithPlaces} />
+      <PromosCarousel promos={promosWithPlaces} lastUpdatedLabel={promosUpdatedLabel} />
 
       {/* DEBUG: Remove when home is production-ready */}
       {/* <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6">

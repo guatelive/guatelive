@@ -5,13 +5,16 @@ import { buildBreadcrumbSchema, buildOfferSchema } from '@/lib/schema-builders';
 import { createBuildTimeClient } from '@/lib/supabase/server';
 import { SITE_URL } from '@/lib/site-config';
 import { resolvePromoPlaces } from '@/lib/promo-place-match';
+import { sortByDiscountWithDailyVariation } from '@/lib/promo-order';
+import { formatUpdatedLabel } from '@/lib/promo-freshness';
+import { guatNow } from '@/lib/hours-utils';
 import type { DbBankPromotion } from '@/lib/types';
 
 export const revalidate = 3600;
 
 export const metadata = {
     title: 'Promos bancarias — GuateLive',
-    description: 'Descuentos vigentes en restaurantes, cafés y bares de Guatemala con tarjetas BAC Credomatic y Promerica.',
+    description: 'Descuentos vigentes en restaurantes, cafés y bares de Guatemala con tarjetas BAC Credomatic, Promerica y G&T Continental.',
     alternates: { canonical: `${SITE_URL}/promos` },
 };
 
@@ -27,7 +30,8 @@ export default async function PromosPage() {
         supabase.from('places').select('name, slug, zone').eq('is_published', true),
     ]);
 
-    const promos = (data ?? []) as DbBankPromotion[];
+    const promos = sortByDiscountWithDailyVariation((data ?? []) as DbBankPromotion[], guatNow());
+    const updatedLabel = formatUpdatedLabel(promos);
     const promoPlaces = resolvePromoPlaces(promos, placesData ?? []);
 
     const breadcrumbSchema = buildBreadcrumbSchema([
@@ -58,8 +62,11 @@ export default async function PromosPage() {
                         Promos bancarias
                     </h1>
                     <p className="mt-3 text-lg text-muted-foreground">
-                        Descuentos vigentes con BAC Credomatic y Promerica en restaurantes, cafés y bares de Guatemala.
+                        Descuentos vigentes con BAC Credomatic, Promerica y G&T Continental en restaurantes, cafés y bares de Guatemala.
                     </p>
+                    {promos.length > 0 && (
+                        <p className="mt-2 text-xs text-muted-foreground">{updatedLabel} · revisamos promos todos los días</p>
+                    )}
                 </div>
 
                 {promos.length === 0 ? (
