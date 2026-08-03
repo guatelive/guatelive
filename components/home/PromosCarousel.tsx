@@ -18,7 +18,7 @@ const arrowButtonStyle: CSSProperties = {
     border: '1.5px solid #D4D4D4', background: '#fff', cursor: 'pointer',
 };
 
-export function PromosCarousel({ promos: promosProp }: { promos: PromoWithPlaces[] }) {
+export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promos: PromoWithPlaces[]; lastUpdatedLabel?: string }) {
     // Reordenado solo para display — evita que el orden real (discount_pct
     // desc) deje varias promos del mismo banco consecutivas.
     const promos = interleaveByBank(promosProp);
@@ -119,6 +119,11 @@ export function PromosCarousel({ promos: promosProp }: { promos: PromoWithPlaces
                         PROMOS
                     </p>
                     <div style={{ width: 28, height: 2, backgroundColor: '#E11D2E', marginTop: 6 }} />
+                    {lastUpdatedLabel && (
+                        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 10, color: '#666666', marginTop: 4 }}>
+                            {lastUpdatedLabel}
+                        </p>
+                    )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <Link
