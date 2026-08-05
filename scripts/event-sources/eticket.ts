@@ -8,14 +8,18 @@
 //     confirmó pidiendo `?categoria=1` y comparando: devuelve exactamente los
 //     mismos `idevento` que sin el parámetro. Por eso este adaptador NO intenta
 //     filtrar por categoría vía URL.
-//   - La categoría del evento (Conciertos/Teatro/Deportes/...) y el precio de las
-//     entradas se cargan por JS/AJAX después de la carga inicial — no están en el
-//     HTML estático ni en la página de detalle (`masinformacion.aspx`) sin
-//     ejecutar ese JS. Este proyecto no usa headless browsers para scraping (ver
-//     ADR-019 — mismo criterio de no escalar complejidad/riesgo por una fuente),
-//     así que `category` queda siempre 'Otros' y `price`/`isFree` quedan
-//     desconocidos (null/false — la app ya sabe representar "precio desconocido"
-//     sin inventar un valor, ver `!is_free && price === null` en el JSON-LD).
+//   - La categoría real del evento (Conciertos/Teatro/Deportes/...) y el precio de
+//     las entradas viven en una API privada del sitio (`api.eticket.com.gt/v2/...`,
+//     requiere un "guest token" client-side) — no un endpoint público documentado.
+//     Usarla cruzaría a la misma zona gris que ya se evitó con
+//     eventos.guatemala.com (apoyarse en algo que el sitio no expone para terceros).
+//     Por eso `category` se infiere del título por keyword
+//     (`detectCategoryFromTitle()`, category-map.ts) con cobertura parcial —
+//     la mayoría de títulos son solo el nombre del artista, sin ninguna palabra que
+//     indique el tipo de evento, y esos quedan en 'Otros'. `price`/`isFree` quedan
+//     desconocidos siempre (null/false — la app ya sabe representar "precio
+//     desconocido" sin inventar un valor, ver `!is_free && price === null` en el
+//     JSON-LD).
 //   - No hay dirección/zona en el listado ni en el detalle (solo ciudad, ej.
 //     "GUATEMALA", que no es suficientemente específico para `zone`). Se deriva la
 //     zona del propio nombre del venue con `extractZone()` — venues como "Centro
@@ -24,11 +28,11 @@
 //     Zona 14" o "Cayalá" sí matchean directo.
 //   - `description` nunca copia texto del artículo/anuncio original (no hay texto de
 //     "sobre el evento" en esta fuente de todos modos, solo se usa para un aviso
-//     propio cuando falta la hora) e `imageUrl` siempre es `null` — no se hotlinkea
-//     la imagen de la fuente. Ver ADR-020 en docs/decisions.md: copiar texto/imagen
-//     de terceros es riesgo de copyright/contenido duplicado: Fredy completa ambos
-//     campos a mano al revisar en /admin/events, igual que con los eventos de
-//     Facebook.
+//     propio cuando falta la hora — el resto de la descripción la escribe el skill
+//     de descripciones-eventos, grounded solo en campos estructurados propios).
+//     `imageUrl` nunca hotlinkea la imagen de la fuente — sale de un banco de fotos
+//     libres por categoría (`event-photos.ts`, `pickEventPhoto()`), o `null` si el
+//     pool de esa categoría todavía está vacío. Ver ADR-020/021 en docs/decisions.md.
 //   - Cada tarjeta de evento está precedida siempre por el mismo separador
 //     (`<div style="margin:0px -10px; padding:0px 10px; background-color:#F0F0F0;">
 //     <img src="images/spacer.gif" .../></div>`) — confirmado que aparece
@@ -39,6 +43,8 @@
 
 import * as cheerio from 'cheerio';
 import { extractZone } from './zone-extract';
+import { detectCategoryFromTitle } from './category-map';
+import { pickEventPhoto } from './event-photos';
 import type { EventSource, RawEvent } from './types';
 
 const LISTING_URL = 'https://www.eticket.gt/eventos.aspx';
@@ -98,9 +104,10 @@ function parseCard(chunk: string): RawEvent | null {
         : `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T19:00:00`;
     const description = hourMatch ? null : '[Hora no confirmada por la fuente — revisar antes de publicar]';
 
-    // Nunca se usa la imagen de la fuente (hotlink a contenido de terceros) — Fredy
-    // sube su propia imagen al revisar/publicar en /admin/events.
-    const imageUrl = null;
+    const category = detectCategoryFromTitle(title);
+    // Nunca se usa la imagen de la fuente (hotlink a contenido de terceros) — sale
+    // del banco de fotos libres por categoría, o null si ese pool todavía está vacío.
+    const imageUrl = pickEventPhoto(category, externalId);
     const sourceUrl = `https://www.eticket.gt/masinformacion.aspx?idevento=${externalId}`;
 
     const zone = extractZone(venueName);
@@ -113,7 +120,7 @@ function parseCard(chunk: string): RawEvent | null {
         externalId,
         title,
         description,
-        category: 'Otros',
+        category,
         venueName,
         zone,
         dateStart,
