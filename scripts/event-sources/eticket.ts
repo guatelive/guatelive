@@ -18,10 +18,17 @@
 //     sin inventar un valor, ver `!is_free && price === null` en el JSON-LD).
 //   - No hay dirección/zona en el listado ni en el detalle (solo ciudad, ej.
 //     "GUATEMALA", que no es suficientemente específico para `zone`). Se deriva la
-//     zona del propio nombre del venue con `extractZone()` (mismo helper que
-//     guatemala-com.ts) — venues como "Centro Cultural Miguel Ángel Asturias" no
-//     traen una zona reconocible en el texto y quedan fuera; venues como "Sporta
-//     Zona 14" o "Cayalá" sí.
+//     zona del propio nombre del venue con `extractZone()` — venues como "Centro
+//     Cultural Miguel Ángel Asturias" no traen una zona reconocible en el texto y
+//     quedan fuera salvo que estén en venue-zone-overrides.ts; venues como "Sporta
+//     Zona 14" o "Cayalá" sí matchean directo.
+//   - `description` nunca copia texto del artículo/anuncio original (no hay texto de
+//     "sobre el evento" en esta fuente de todos modos, solo se usa para un aviso
+//     propio cuando falta la hora) e `imageUrl` siempre es `null` — no se hotlinkea
+//     la imagen de la fuente. Ver ADR-020 en docs/decisions.md: copiar texto/imagen
+//     de terceros es riesgo de copyright/contenido duplicado: Fredy completa ambos
+//     campos a mano al revisar en /admin/events, igual que con los eventos de
+//     Facebook.
 //   - Cada tarjeta de evento está precedida siempre por el mismo separador
 //     (`<div style="margin:0px -10px; padding:0px 10px; background-color:#F0F0F0;">
 //     <img src="images/spacer.gif" .../></div>`) — confirmado que aparece
@@ -91,7 +98,9 @@ function parseCard(chunk: string): RawEvent | null {
         : `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T19:00:00`;
     const description = hourMatch ? null : '[Hora no confirmada por la fuente — revisar antes de publicar]';
 
-    const imageUrl = $('img[data-src]').first().attr('data-src') ?? null;
+    // Nunca se usa la imagen de la fuente (hotlink a contenido de terceros) — Fredy
+    // sube su propia imagen al revisar/publicar en /admin/events.
+    const imageUrl = null;
     const sourceUrl = `https://www.eticket.gt/masinformacion.aspx?idevento=${externalId}`;
 
     const zone = extractZone(venueName);

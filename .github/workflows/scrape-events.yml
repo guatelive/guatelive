@@ -14,13 +14,6 @@ jobs:
     # secrets" bajo el ambiente "Production", no Repository secrets — sin declarar
     # el ambiente acá, el job falla en ~1s con createClient('', '').
     environment: Production
-    strategy:
-      # fail-fast: false — una fuente caída no debe abortar el scrape de la otra.
-      # Cada corrida es independiente: el propio scraper ya no toca la tabla si su
-      # scrape individual falla (scrape-events.ts).
-      fail-fast: false
-      matrix:
-        source: [guatemala-com, eticket]
     steps:
       - uses: actions/checkout@v4
 
@@ -30,7 +23,11 @@ jobs:
 
       - run: npm ci
 
-      - run: npx tsx scripts/scrape-events.ts --source=${{ matrix.source }}
+      # Una sola fuente por ahora (eticket.gt) — ver scripts/event-sources/index.ts.
+      # Si se agrega una segunda fuente, volver a un strategy.matrix con
+      # fail-fast: false (mismo patrón que scrape-bank-promos.yml) para que una
+      # fuente caída no bloquee a la otra.
+      - run: npx tsx scripts/scrape-events.ts --source=eticket
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
