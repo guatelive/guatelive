@@ -1,0 +1,36 @@
+name: Scrape events
+
+on:
+  schedule:
+    # 12:30 UTC = 6:30 AM hora de Guatemala (UTC-6, sin horario de verano) — 30 min
+    # después del cron de scrape-bank-promos.yml para no correr al mismo tiempo.
+    - cron: '30 12 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    # Mismo gotcha que scrape-bank-promos.yml: los secrets son "Environment
+    # secrets" bajo el ambiente "Production", no Repository secrets — sin declarar
+    # el ambiente acá, el job falla en ~1s con createClient('', '').
+    environment: Production
+    strategy:
+      # fail-fast: false — una fuente caída no debe abortar el scrape de la otra.
+      # Cada corrida es independiente: el propio scraper ya no toca la tabla si su
+      # scrape individual falla (scrape-events.ts).
+      fail-fast: false
+      matrix:
+        source: [guatemala-com, eticket]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - run: npx tsx scripts/scrape-events.ts --source=${{ matrix.source }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
