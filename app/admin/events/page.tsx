@@ -31,7 +31,7 @@ export default async function AdminEventsPage({
     const supabase = await createClient();
     const { data: events } = await supabase
         .from('events')
-        .select('id, title, category, zone, date_start, status, sponsored')
+        .select('id, title, category, zone, date_start, status, sponsored, source, contact_link')
         .order(column, { ascending });
 
     const rows = events ?? [];
@@ -70,6 +70,7 @@ export default async function AdminEventsPage({
                             <th className="px-4 py-3">Título</th>
                             <th className="px-4 py-3">Categoría</th>
                             <th className="px-4 py-3">Zona</th>
+                            <th className="px-4 py-3">Fuente</th>
                             <th className="px-4 py-3">
                                 Fecha
                                 {activeSort === 'date_desc' && ' ↓'}
@@ -92,6 +93,24 @@ export default async function AdminEventsPage({
                                 </td>
                                 <td className="px-4 py-3 text-[#666666]">{event.category}</td>
                                 <td className="px-4 py-3 text-[#666666]">{event.zone}</td>
+                                <td className="px-4 py-3 text-[#666666]">
+                                    {event.source ? (
+                                        event.contact_link ? (
+                                            <a
+                                                href={event.contact_link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="underline hover:text-[#0A0A0A]"
+                                            >
+                                                {event.source}
+                                            </a>
+                                        ) : (
+                                            event.source
+                                        )
+                                    ) : (
+                                        '—'
+                                    )}
+                                </td>
                                 <td className="px-4 py-3 text-[#666666]">
                                     {new Date(event.date_start).toLocaleDateString('es-GT', {
                                         day: 'numeric',
@@ -124,7 +143,7 @@ export default async function AdminEventsPage({
                         ))}
                         {rows.length === 0 && (
                             <tr>
-                                <td colSpan={6} className="px-4 py-8 text-center text-[#666666]">
+                                <td colSpan={7} className="px-4 py-8 text-center text-[#666666]">
                                     No hay eventos todavía.
                                 </td>
                             </tr>

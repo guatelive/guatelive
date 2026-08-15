@@ -2,6 +2,7 @@ import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import { Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
+import { eventLocation } from '@/lib/event-display';
 
 const BADGE_STYLE: React.CSSProperties = {
   position: 'absolute',
@@ -42,6 +43,7 @@ export function EventCard({ event }: { event: DbEvent }) {
     <div style={{ backgroundColor: '#1A1A1A', borderRadius: 8, overflow: 'hidden', width: '100%' }}>
       {/* Photo block */}
       <div style={{ position: 'relative', height: 160, backgroundColor: '#242424' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: colors.fg, zIndex: 3 }} />
         {event.image_url ? (
           <ImageWithSkeleton
             src={event.image_url}
@@ -115,7 +117,7 @@ export function EventCard({ event }: { event: DbEvent }) {
         </div>
 
         <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: '#888888', lineHeight: 1.4 }}>
-          {formatDate(event.date_start)} · {event.zone}
+          {formatDate(event.date_start)}{eventLocation(event) ? ` · 📍 ${eventLocation(event)}` : ''}
         </p>
       </div>
     </div>

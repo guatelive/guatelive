@@ -1,10 +1,21 @@
 // Adaptador Promerica — implementa BankPromoSource (ver types.ts).
 //
+// ⚠️ DESACTIVADO desde 2026-08-14 (fuera del matrix de
+// .github/workflows/scrape-bank-promos.yml, ver ADR-019 en docs/decisions.md).
+// clubpromerica.com se reestructuró: la URL de abajo (`BASE_URL`) ya devuelve
+// 404, el catálogo real se movió a /gt/beneficios/gastronomia con HTML
+// distinto (no nopCommerce), y el sitio agregó un robots.txt que bloquea
+// explícitamente ClaudeBot/GPTBot/CCBot/etc. — confirmado también con 403
+// directo. El código de abajo (selectores, extractMerchantName) queda tal
+// cual como referencia si el bloqueo se revierte algún día, pero ya no aplica
+// a la estructura actual del sitio ni debería correr contra él sin antes
+// revisar robots.txt de nuevo.
+//
 // A diferencia de BAC (Drupal, catálogo propio), las promociones de Promerica
-// viven en un sitio aparte: Club Promerica (clubpromerica.com), una tienda
+// vivían en un sitio aparte: Club Promerica (clubpromerica.com), una tienda
 // nopCommerce de beneficios/descuentos. Estructura confirmada contra HTML real
 // (fetch directo a la categoría "Sabores", la más cercana a "Restaurantes" que
-// tiene el sitio — no existe una subcategoría más granular):
+// tenía el sitio — no existía una subcategoría más granular):
 //   - Catálogo: https://www.clubpromerica.com/guatemala/sabores?pagesize=9&pagenumber=N
 //   - Cada promo es un <div class="item-box"> > <div class="product-item"
 //     data-productid="<ID>"> — sí es contenido real de catálogo (no modal por

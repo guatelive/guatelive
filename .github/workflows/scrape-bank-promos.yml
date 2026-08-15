@@ -18,13 +18,23 @@ jobs:
     # sesión — mismo fallo en ambas, no relacionado al código del scraper).
     environment: Production
     strategy:
-      # fail-fast: false — un banco caído (ej. sitio de Promerica sin
-      # responder) no debe abortar el scrape de los otros 2. Cada corrida es
-      # independiente: el propio scraper ya no toca la tabla si su scrape
-      # individual falla (scrape-bank-promos.ts).
+      # fail-fast: false — un banco caído no debe abortar el scrape de los
+      # otros. Cada corrida es independiente: el propio scraper ya no toca la
+      # tabla si su scrape individual falla (scrape-bank-promos.ts).
+      #
+      # Promerica sacado del matrix (2026-08-14, ver ADR-019 en
+      # docs/decisions.md): clubpromerica.com se reestructuró (la URL vieja
+      # que usaba el scraper ahora es 404) y de paso agregó un robots.txt
+      # gestionado por Cloudflare que bloquea explícitamente ClaudeBot,
+      # GPTBot, CCBot y otros crawlers de IA/scraping — confirmado también
+      # con 403 directo contra la URL nueva. No es un bloqueo transitorio
+      # para reintentar: es una señal explícita del sitio, mismo criterio ya
+      # aplicado a eventos.guatemala.com (ADR-020/021). El adaptador
+      # (bank-sources/promerica.ts) se deja en el repo por si el bloqueo se
+      # revierte algún día, pero no corre en este cron.
       fail-fast: false
       matrix:
-        bank: [bac, promerica, gtc]
+        bank: [bac, gtc]
     steps:
       - uses: actions/checkout@v4
 

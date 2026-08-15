@@ -14,30 +14,6 @@ export function getCategoryColor(cat: string): string {
     return '#666';
 }
 
-export type CategoryStyle = { bar: string; pillBg: string; pillText: string; dot: string };
-
-const CATEGORY_STYLES: Record<string, CategoryStyle> = {
-    aventura: { bar: '#4A8A4A', pillBg: '#1a3a1a', pillText: '#6bcb6b', dot: '#4A8A4A' },
-    nocturna: { bar: '#E11D2E', pillBg: '#3a1212', pillText: '#f08080', dot: '#E11D2E' },
-    gastronomia: { bar: '#E8A020', pillBg: '#2a1f08', pillText: '#f5c842', dot: '#E8A020' },
-    familiar: { bar: '#185FA5', pillBg: '#0e1f38', pillText: '#7ab8f5', dot: '#185FA5' },
-    cultura: { bar: '#7040C0', pillBg: '#20103a', pillText: '#c09ff5', dot: '#7040C0' },
-    default: { bar: '#666666', pillBg: '#222222', pillText: '#aaaaaa', dot: '#666666' },
-};
-
-export function getCategoryStyle(cat: string): CategoryStyle {
-    const c = (cat || '').toLowerCase();
-    if (c.includes('aventura')) return CATEGORY_STYLES.aventura;
-    if (
-        c.includes('nocturna') || c.includes('música') ||
-        c.includes('musica') || c.includes('concierto') || c.includes('music')
-    ) return CATEGORY_STYLES.nocturna;
-    if (c.includes('gastronom')) return CATEGORY_STYLES.gastronomia;
-    if (c.includes('familiar')) return CATEGORY_STYLES.familiar;
-    if (c.includes('cultura') || c.includes('taller')) return CATEGORY_STYLES.cultura;
-    return CATEGORY_STYLES.default;
-}
-
 // dateStart puede ser ISO completo ("2026-07-06T18:00:00") o datetime-local ("2026-07-06T18:00")
 export function formatEventDateTime(dateStart: string): string {
     if (!dateStart) return '';
