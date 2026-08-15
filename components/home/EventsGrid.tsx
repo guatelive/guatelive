@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
-import { getCategoryStyle, formatEventDateTime, eventLocation } from '@/lib/event-display';
+import { formatEventDateTime, eventLocation } from '@/lib/event-display';
+import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 
 const DURATION = 4000;
 const TRANSITION_MS = 350;
@@ -44,7 +45,8 @@ function GratisBadge({ dark, size }: { dark: boolean; size: number }) {
 
 function MainCard({ event }: { event: DbEvent | null }) {
     if (!event) return <div />;
-    const style = getCategoryStyle(event.category);
+    const badge = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
+    const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
     const location = eventLocation(event);
     return (
         <Link href={`/evento/${event.slug}`} style={{
@@ -53,16 +55,20 @@ function MainCard({ event }: { event: DbEvent | null }) {
             borderRadius: 10, background: '#1A1A1A',
             width: '100%', height: '100%', minHeight: 370, textDecoration: 'none',
         }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: style.bar, zIndex: 3 }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: badge.fg, zIndex: 3 }} />
             <div style={{ position: 'relative', overflow: 'hidden', height: 320, background: '#242424', flexShrink: 0 }}>
-                {event.image_url && (
+                {event.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                        <PlaceholderIcon style={{ width: 40, height: 40, color: 'rgba(255,255,255,0.15)' }} />
+                    </div>
                 )}
                 <span style={{
                     position: 'absolute', top: '0.75rem', left: '0.75rem', zIndex: 3,
-                    background: style.pillBg, color: style.pillText,
-                    fontSize: 12, fontWeight: 600, borderRadius: 999, padding: '4px 11px',
+                    background: badge.bg, color: badge.fg,
+                    fontSize: 12, fontWeight: 600, borderRadius: 4, padding: '4px 11px',
                     textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: 'var(--font-sans)',
                 }}>
                     {event.category}
@@ -87,6 +93,27 @@ function MainCard({ event }: { event: DbEvent | null }) {
                         Q{event.price}
                     </p>
                 ) : null}
+                {event.tags.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: '0.5rem' }}>
+                        {event.tags.slice(0, 3).map(tag => (
+                            <span
+                                key={tag}
+                                style={{
+                                    fontFamily: 'var(--font-sans)', fontSize: 11,
+                                    color: 'rgba(255,255,255,0.7)', backgroundColor: 'rgba(255,255,255,0.1)',
+                                    padding: '3px 9px', borderRadius: 999,
+                                }}
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                        {event.tags.length > 3 && (
+                            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', padding: '3px 4px' }}>
+                                +{event.tags.length - 3}
+                            </span>
+                        )}
+                    </div>
+                )}
                 <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, color: '#E11D2E', marginTop: '0.5rem' }}>
                     Ver detalles →
                 </p>
@@ -97,7 +124,8 @@ function MainCard({ event }: { event: DbEvent | null }) {
 
 function MediaCard({ event }: { event: DbEvent | null }) {
     if (!event) return <div />;
-    const style = getCategoryStyle(event.category);
+    const badge = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
+    const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
     const location = eventLocation(event);
     return (
         <Link href={`/evento/${event.slug}`} style={{
@@ -106,16 +134,20 @@ function MediaCard({ event }: { event: DbEvent | null }) {
             borderRadius: 8, background: '#1A1A1A',
             width: '100%', height: '100%', minHeight: 180, textDecoration: 'none',
         }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: style.bar, zIndex: 3 }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: badge.fg, zIndex: 3 }} />
             <div style={{ position: 'relative', overflow: 'hidden', flex: '1 1 0%', minHeight: 90, background: '#242424' }}>
-                {event.image_url && (
+                {event.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                        <PlaceholderIcon style={{ width: 28, height: 28, color: 'rgba(255,255,255,0.15)' }} />
+                    </div>
                 )}
                 <span style={{
                     position: 'absolute', top: '0.55rem', left: '0.55rem', zIndex: 3,
-                    background: style.pillBg, color: style.pillText,
-                    fontSize: 10, fontWeight: 600, borderRadius: 999, padding: '3px 9px',
+                    background: badge.bg, color: badge.fg,
+                    fontSize: 10, fontWeight: 600, borderRadius: 4, padding: '3px 9px',
                     textTransform: 'uppercase', fontFamily: 'var(--font-sans)',
                 }}>
                     {event.category}

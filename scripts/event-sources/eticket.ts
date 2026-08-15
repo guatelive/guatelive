@@ -8,18 +8,26 @@
 //     confirmó pidiendo `?categoria=1` y comparando: devuelve exactamente los
 //     mismos `idevento` que sin el parámetro. Por eso este adaptador NO intenta
 //     filtrar por categoría vía URL.
-//   - La categoría real del evento (Conciertos/Teatro/Deportes/...) y el precio de
-//     las entradas viven en una API privada del sitio (`api.eticket.com.gt/v2/...`,
-//     requiere un "guest token" client-side) — no un endpoint público documentado.
-//     Usarla cruzaría a la misma zona gris que ya se evitó con
-//     eventos.guatemala.com (apoyarse en algo que el sitio no expone para terceros).
-//     Por eso `category` se infiere del título por keyword
-//     (`detectCategoryFromTitle()`, category-map.ts) con cobertura parcial —
+//   - La categoría real del evento (Conciertos/Teatro/Deportes/...) vive en una API
+//     privada del sitio (`api.eticket.com.gt/v2/...`, requiere un "guest token"
+//     client-side) — no un endpoint público documentado. Usarla cruzaría a la misma
+//     zona gris que ya se evitó con eventos.guatemala.com (apoyarse en algo que el
+//     sitio no expone para terceros). Por eso `category` se infiere del título por
+//     keyword (`detectCategoryFromTitle()`, category-map.ts) con cobertura parcial —
 //     la mayoría de títulos son solo el nombre del artista, sin ninguna palabra que
-//     indique el tipo de evento, y esos quedan en 'Otros'. `price`/`isFree` quedan
-//     desconocidos siempre (null/false — la app ya sabe representar "precio
-//     desconocido" sin inventar un valor, ver `!is_free && price === null` en el
-//     JSON-LD).
+//     indique el tipo de evento, y esos quedan en 'Otros'.
+//   - El precio SÍ es público: el listado incluye un `<script type="application/ld+json">`
+//     con un array de eventos Schema.org (`@type: Event`), cada uno con `offers[]`
+//     (`price`, `priceCurrency`, `availability`) — es markup que el sitio publica a
+//     propósito para crawlers/SEO, no la API privada. Se parsea con
+//     `extractJsonLdEvents()` y se cruza por `idevento` con las tarjetas HTML.
+//     `price` guardado = el mínimo entre los `offers[].price` del evento (el precio
+//     "desde"), tal cual lo publica la fuente, sin interpretar tiers de cortesía ni
+//     descuentos. `isFree` solo es `true` si ese mínimo es exactamente 0 — no se
+//     asume gratis en base a precios simbólicos bajos (ej. Q0.01 de algunas tarjetas
+//     "CORTESÍA") porque no hay forma de confirmarlo sin inventar el dato. Si el
+//     evento no trae `offers` en el JSON-LD, `price` queda `null` (desconocido, no
+//     gratis) — mismo comportamiento que antes en ese caso.
 //   - No hay dirección/zona en el listado ni en el detalle (solo ciudad, ej.
 //     "GUATEMALA", que no es suficientemente específico para `zone`). Se deriva la
 //     zona del propio nombre del venue con `extractZone()` — venues como "Centro
@@ -76,7 +84,57 @@ async function fetchHtml(url: string): Promise<string | null> {
     }
 }
 
-function parseCard(chunk: string): RawEvent | null {
+type JsonLdOffer = {
+    price?: number;
+};
+
+type JsonLdEvent = {
+    offers?: JsonLdOffer[];
+};
+
+function isJsonLdEventObject(value: unknown): value is JsonLdEvent & { '@type': string; url: string } {
+    if (!value || typeof value !== 'object') return false;
+    const candidate = value as Record<string, unknown>;
+    return candidate['@type'] === 'Event' && typeof candidate.url === 'string';
+}
+
+// El listado trae >1 bloque `application/ld+json` (uno describe la Organization,
+// otro trae el array de Event) — se recorren todos y se quedan solo con los `Event`.
+function extractJsonLdEvents(html: string): Map<string, JsonLdEvent> {
+    const byExternalId = new Map<string, JsonLdEvent>();
+    const scriptBlocks = html.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
+
+    for (const block of scriptBlocks) {
+        let parsed: unknown;
+        try {
+            parsed = JSON.parse(block[1].trim());
+        } catch {
+            continue;
+        }
+
+        const items = Array.isArray(parsed) ? parsed : [parsed];
+        for (const item of items) {
+            if (!isJsonLdEventObject(item)) continue;
+            const externalId = item.url.match(/idevento=(\d+)/)?.[1];
+            if (externalId) byExternalId.set(externalId, item);
+        }
+    }
+
+    return byExternalId;
+}
+
+function extractPrice(jsonLdEvent: JsonLdEvent | undefined): { price: number | null; isFree: boolean } {
+    const prices = (jsonLdEvent?.offers ?? [])
+        .map(offer => offer.price)
+        .filter((price): price is number => typeof price === 'number');
+
+    if (prices.length === 0) return { price: null, isFree: false };
+
+    const minPrice = Math.min(...prices);
+    return { price: minPrice, isFree: minPrice === 0 };
+}
+
+function parseCard(chunk: string, jsonLdEvents: Map<string, JsonLdEvent>): RawEvent | null {
     const $ = cheerio.load(chunk);
 
     const eventLink = $('a[href*="idevento="]').first().attr('href');
@@ -116,6 +174,8 @@ function parseCard(chunk: string): RawEvent | null {
         return null;
     }
 
+    const { price, isFree } = extractPrice(jsonLdEvents.get(externalId));
+
     return {
         externalId,
         title,
@@ -125,8 +185,8 @@ function parseCard(chunk: string): RawEvent | null {
         zone,
         dateStart,
         dateEnd: null,
-        price: null,
-        isFree: false,
+        price,
+        isFree,
         imageUrl,
         sourceUrl,
     };
@@ -141,9 +201,11 @@ async function fetchEvents(): Promise<RawEvent[]> {
         throw new Error('eticket.gt: 0 tarjetas detectadas — probable cambio de estructura del sitio');
     }
 
+    const jsonLdEvents = extractJsonLdEvents(html);
+
     const seen = new Map<string, RawEvent>();
     for (const chunk of chunks) {
-        const event = parseCard(chunk);
+        const event = parseCard(chunk, jsonLdEvents);
         if (!event || seen.has(event.externalId)) continue;
         seen.set(event.externalId, event);
     }
