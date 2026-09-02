@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { eventSchema } from '@/lib/validations/event';
+import { activitySchema } from '@/lib/validations/activity';
 import { slugify } from '@/lib/slug';
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
@@ -23,7 +23,7 @@ async function ensureUniqueSlug(
     let candidate = base;
     let suffix = 2;
     for (;;) {
-        let query = supabase.from('events').select('id').eq('slug', candidate);
+        let query = supabase.from('activities').select('id').eq('slug', candidate);
         if (excludeId) query = query.neq('id', excludeId);
         const { data } = await query.maybeSingle();
         if (!data) return candidate;
@@ -38,7 +38,7 @@ function extractStoragePath(imageUrl: string): string | null {
     return idx === -1 ? null : imageUrl.slice(idx + marker.length);
 }
 
-async function deleteEventImage(supabase: SupabaseClient, imageUrl: string | null) {
+async function deleteActivityImage(supabase: SupabaseClient, imageUrl: string | null) {
     if (!imageUrl) return;
     const path = extractStoragePath(imageUrl);
     if (!path) return;
@@ -53,9 +53,9 @@ async function deleteEventImage(supabase: SupabaseClient, imageUrl: string | nul
     }
 }
 
-async function uploadEventImage(supabase: SupabaseClient, file: File, slug: string): Promise<string> {
+async function uploadActivityImage(supabase: SupabaseClient, file: File, slug: string): Promise<string> {
     const ext = file.name.split('.').pop() || 'jpg';
-    const path = `events/${slug}-${Date.now()}.${ext}`;
+    const path = `activities/${slug}-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from('images').upload(path, file);
     if (error) throw new Error(`No se pudo subir la imagen: ${error.message}`);
     const { data } = supabase.storage.from('images').getPublicUrl(path);
@@ -72,12 +72,12 @@ function parsePriceTiers(formData: FormData): unknown {
     }
 }
 
-function parseEventForm(formData: FormData) {
+function parseActivityForm(formData: FormData) {
     const priceRaw = str(formData, 'price');
     const tagsRaw = str(formData, 'tags');
     const isFree = formData.get('is_free') === 'on';
 
-    return eventSchema.parse({
+    return activitySchema.parse({
         title: str(formData, 'title') ?? '',
         slug: str(formData, 'slug'),
         description: str(formData, 'description'),
@@ -85,8 +85,7 @@ function parseEventForm(formData: FormData) {
         zone: str(formData, 'zone') ?? '',
         venue_name: str(formData, 'venue_name'),
         place_id: str(formData, 'place_id'),
-        date_start: str(formData, 'date_start') ?? '',
-        date_end: str(formData, 'date_end'),
+        recurrence_text: str(formData, 'recurrence_text') ?? '',
         price: !isFree && priceRaw ? Math.round(parseFloat(priceRaw) * 100) / 100 : undefined,
         is_free: isFree,
         price_tiers: parsePriceTiers(formData),
@@ -102,9 +101,9 @@ function publishedAt(status: string): string | null {
     return status === 'published' ? new Date().toISOString() : null;
 }
 
-export async function createEvent(formData: FormData) {
+export async function createActivity(formData: FormData) {
     const supabase = await createClient();
-    const parsed = parseEventForm(formData);
+    const parsed = parseActivityForm(formData);
 
     const baseSlug = slugify(parsed.slug ?? parsed.title);
     const slug = await ensureUniqueSlug(supabase, baseSlug);
@@ -112,10 +111,10 @@ export async function createEvent(formData: FormData) {
     let imageUrl: string | null = null;
     const imageFile = formData.get('image');
     if (imageFile instanceof File && imageFile.size > 0) {
-        imageUrl = await uploadEventImage(supabase, imageFile, slug);
+        imageUrl = await uploadActivityImage(supabase, imageFile, slug);
     }
 
-    const { error } = await supabase.from('events').insert({
+    const { error } = await supabase.from('activities').insert({
         ...parsed,
         slug,
         image_url: imageUrl,
@@ -124,23 +123,24 @@ export async function createEvent(formData: FormData) {
         description: parsed.description ?? null,
         contact_link: parsed.contact_link ?? null,
         price: parsed.price ?? null,
-        date_end: parsed.date_end ?? null,
         published_at: publishedAt(parsed.status),
+        updated_at: new Date().toISOString(),
     });
 
     if (error) throw new Error(error.message);
 
-    revalidatePath('/admin/events');
+    revalidatePath('/admin/activities');
+    revalidatePath('/actividades');
     revalidatePath('/');
-    redirect('/admin/events');
+    redirect('/admin/activities');
 }
 
-export async function updateEvent(id: string, formData: FormData) {
+export async function updateActivity(id: string, formData: FormData) {
     const supabase = await createClient();
-    const parsed = parseEventForm(formData);
+    const parsed = parseActivityForm(formData);
 
     const { data: existing } = await supabase
-        .from('events')
+        .from('activities')
         .select('image_url')
         .eq('id', id)
         .single();
@@ -151,15 +151,15 @@ export async function updateEvent(id: string, formData: FormData) {
     let imageUrl = existing?.image_url ?? null;
     const imageFile = formData.get('image');
     if (imageFile instanceof File && imageFile.size > 0) {
-        imageUrl = await uploadEventImage(supabase, imageFile, slug);
-        await deleteEventImage(supabase, existing?.image_url ?? null);
+        imageUrl = await uploadActivityImage(supabase, imageFile, slug);
+        await deleteActivityImage(supabase, existing?.image_url ?? null);
     } else if (str(formData, 'remove_image') === '1') {
-        await deleteEventImage(supabase, existing?.image_url ?? null);
+        await deleteActivityImage(supabase, existing?.image_url ?? null);
         imageUrl = null;
     }
 
     const { error } = await supabase
-        .from('events')
+        .from('activities')
         .update({
             ...parsed,
             slug,
@@ -169,31 +169,33 @@ export async function updateEvent(id: string, formData: FormData) {
             description: parsed.description ?? null,
             contact_link: parsed.contact_link ?? null,
             price: parsed.price ?? null,
-            date_end: parsed.date_end ?? null,
             published_at: publishedAt(parsed.status),
+            updated_at: new Date().toISOString(),
         })
         .eq('id', id);
 
     if (error) throw new Error(error.message);
 
-    revalidatePath('/admin/events');
+    revalidatePath('/admin/activities');
+    revalidatePath('/actividades');
     revalidatePath('/');
-    redirect('/admin/events');
+    redirect('/admin/activities');
 }
 
-export async function deleteEvent(id: string) {
+export async function deleteActivity(id: string) {
     const supabase = await createClient();
     const { data: existing } = await supabase
-        .from('events')
+        .from('activities')
         .select('image_url')
         .eq('id', id)
         .single();
 
-    const { error } = await supabase.from('events').delete().eq('id', id);
+    const { error } = await supabase.from('activities').delete().eq('id', id);
     if (error) throw new Error(error.message);
 
-    await deleteEventImage(supabase, existing?.image_url ?? null);
+    await deleteActivityImage(supabase, existing?.image_url ?? null);
 
-    revalidatePath('/admin/events');
+    revalidatePath('/admin/activities');
+    revalidatePath('/actividades');
     revalidatePath('/');
 }

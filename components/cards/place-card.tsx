@@ -17,7 +17,10 @@ type PlaceCardProps = {
     openNow?: OpenStatus;
 };
 
-export function PlaceCard({ place, openNow }: PlaceCardProps) {
+// titleFont: 'display' lo usa el home v2 (Bricolage Grotesque, ver
+// design_handoff_home_v2/README.md) — el resto de superficies que reusan esta
+// card (/buscar, /zona/[zone]/restaurantes) se quedan con el serif por defecto.
+export function PlaceCard({ place, openNow, titleFont = 'serif' }: PlaceCardProps & { titleFont?: 'serif' | 'display' }) {
     const imageUrl = place.primary_photo_url;
     const rating = place.rating ?? 0;
     const reviewCount = place.rating_count ?? 0;
@@ -60,7 +63,12 @@ export function PlaceCard({ place, openNow }: PlaceCardProps) {
 
             {/* Contenido */}
             <div className="p-4 flex flex-col">
-                <h3 className="font-bold text-lg">{place.name}</h3>
+                <h3
+                    className="font-bold text-lg"
+                    style={titleFont === 'display' ? { fontFamily: 'var(--font-display)', fontWeight: 800 } : undefined}
+                >
+                    {place.name}
+                </h3>
 
                 {category && (
                     <p className="text-sm text-muted-foreground">{category}</p>

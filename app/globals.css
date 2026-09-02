@@ -3,12 +3,14 @@
 @theme inline {
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
+  --font-display: var(--font-display);
 
   /* Brand tokens directos */
   --color-brand-black: #0A0A0A;
   --color-brand-white: #FFFFFF;
   --color-brand-red: #E11D2E;
   --color-brand-red-hover: #C41626;
+  --color-brand-lime: #C8E64E;
   --color-gray-50: #FAFAFA;
   --color-gray-100: #F5F5F5;
   --color-gray-200: #E5E5E5;
@@ -37,11 +39,13 @@
   :root {
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+    --font-display: 'Bricolage Grotesque', 'Inter', -apple-system, system-ui, sans-serif;
 
     /* Brand tokens */
     --brand-black: #0A0A0A;
     --brand-white: #FFFFFF;
     --brand-red: #E11D2E;
+    --brand-lime: #C8E64E;
     --gray-50: #FAFAFA;
     --gray-100: #F5F5F5;
     --gray-200: #E5E5E5;
@@ -170,15 +174,7 @@
   0%, 80%, 100% { transform: scale(0.6); opacity: 0.25; }
   40%           { transform: scale(1); opacity: 1; }
 }
-@keyframes heroDotPulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.3; }
-}
-
 @layer components {
-  .hero-live-dot {
-    animation: heroDotPulse 1.5s infinite;
-  }
   .event-small-card:hover {
     background-color: #ffffff !important;
   }
@@ -355,5 +351,32 @@
     background-image: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
     background-size: 200% 100%;
     animation: skeletonShimmer 1.4s ease-in-out infinite;
+  }
+}
+
+/* ── Home v2 (design_handoff_home_v2) ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@layer components {
+  .marquee-track {
+    display: inline-block;
+    animation: marquee 22s linear infinite;
+  }
+
+  /* Tilt 3D en hover — usado en cards de Eventos/Actividades del home v2 */
+  .tilt-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .tilt-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    z-index: 5;
+  }
+
+  /* bubble-row alineado a la izquierda dentro del hero split (desktop) */
+  .bubble-row-hero {
+    justify-content: flex-start !important;
   }
 }

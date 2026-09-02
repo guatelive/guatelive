@@ -19,6 +19,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <Link href="/admin/events" className="text-sm text-[#666666] hover:text-[#0A0A0A]">
                             Eventos
                         </Link>
+                        <Link href="/admin/activities" className="text-sm text-[#666666] hover:text-[#0A0A0A]">
+                            Actividades
+                        </Link>
                         <Link href="/admin/ediciones" className="text-sm text-[#666666] hover:text-[#0A0A0A]">
                             Ediciones
                         </Link>

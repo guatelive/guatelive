@@ -1,5 +1,26 @@
+import type { PriceTier } from '@/lib/types';
+
 const DAYS_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const MONTHS_SHORT = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+export type PriceDisplay =
+    | { kind: 'free' }
+    | { kind: 'priced'; label: string }
+    | { kind: 'unknown' };
+
+// Única fuente de verdad para decidir qué mostrar de precio — reemplaza la lógica
+// `is_free ? … : price !== null ? … : null` que estaba duplicada (y ligeramente
+// inconsistente) en cards, carrusel del home, explorer, detalle y JSON-LD.
+export function priceDisplay(input: { is_free: boolean; price: number | null; price_tiers?: PriceTier[] }): PriceDisplay {
+    const tiers = input.price_tiers ?? [];
+    if (tiers.length > 0) {
+        const min = Math.min(...tiers.map(t => t.price));
+        return { kind: 'priced', label: `Desde Q${min}` };
+    }
+    if (input.is_free) return { kind: 'free' };
+    if (input.price !== null) return { kind: 'priced', label: `Q${input.price}` };
+    return { kind: 'unknown' };
+}
 
 export function getCategoryColor(cat: string): string {
     const c = (cat || '').toLowerCase();

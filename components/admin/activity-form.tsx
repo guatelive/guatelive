@@ -10,25 +10,20 @@ import { PriceTiersInput } from './price-tiers-input';
 import { ImageCropper } from './image-cropper';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { EVENT_TAG_GROUPS } from '@/lib/event-tags';
-import { EventPreview } from './event-preview';
-import type { DbEvent } from '@/lib/types';
+import type { DbActivity } from '@/lib/types';
 
 type PlaceOption = { id: string; name: string };
 
 interface Props {
     mode: 'create' | 'edit';
-    event?: DbEvent;
+    activity?: DbActivity;
     initialPlaceName?: string;
     action: (formData: FormData) => void | Promise<void>;
 }
 
-function toDatetimeLocal(iso: string): string {
-    return iso.slice(0, 16);
-}
-
 function SubmitButton({ mode }: { mode: 'create' | 'edit' }) {
     const { pending } = useFormStatus();
-    const label = mode === 'create' ? 'Crear evento' : 'Guardar cambios';
+    const label = mode === 'create' ? 'Crear actividad' : 'Guardar cambios';
     return (
         <Button type="submit" disabled={pending} className="normal-case tracking-normal">
             {pending ? 'Guardando…' : label}
@@ -36,24 +31,21 @@ function SubmitButton({ mode }: { mode: 'create' | 'edit' }) {
     );
 }
 
-export function EventForm({ mode, event, initialPlaceName, action }: Props) {
+export function ActivityForm({ mode, activity, initialPlaceName, action }: Props) {
     const [zones, setZones] = useState<string[]>([]);
     const [places, setPlaces] = useState<PlaceOption[]>([]);
     const [placeName, setPlaceName] = useState(initialPlaceName ?? '');
-    const [imagePreview, setImagePreview] = useState<string | null>(event?.image_url ?? null);
+    const [imagePreview, setImagePreview] = useState<string | null>(activity?.image_url ?? null);
     const [imageRemoved, setImageRemoved] = useState(false);
     const [cropFile, setCropFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Controlled fields for live preview
-    const [title, setTitle] = useState(event?.title ?? '');
-    const [category, setCategory] = useState(event?.category ?? 'Otros');
-    const [zone, setZone] = useState(event?.zone ?? '');
-    const [dateStart, setDateStart] = useState(event ? toDatetimeLocal(event.date_start) : '');
-    const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
-    const [isFree, setIsFree] = useState(event?.is_free ?? false);
-    const [priceTiers, setPriceTiers] = useState(event?.price_tiers ?? []);
-    const [venueName, setVenueName] = useState(event?.venue_name ?? '');
+    const [title, setTitle] = useState(activity?.title ?? '');
+    const [category, setCategory] = useState(activity?.category ?? 'Otros');
+    const [zone, setZone] = useState(activity?.zone ?? '');
+    const [price, setPrice] = useState(activity?.price != null ? String(activity.price) : '');
+    const [isFree, setIsFree] = useState(activity?.is_free ?? false);
+    const [venueName, setVenueName] = useState(activity?.venue_name ?? '');
 
     useEffect(() => {
         fetch('/api/zones')
@@ -82,7 +74,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
         // inject cropped file into the hidden input for FormData submission
         if (fileInputRef.current) {
             const dt = new DataTransfer();
-            dt.items.add(new File([blob], 'event-image.jpg', { type: 'image/jpeg' }));
+            dt.items.add(new File([blob], 'activity-image.jpg', { type: 'image/jpeg' }));
             fileInputRef.current.files = dt.files;
         }
     }
@@ -93,10 +85,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
         if (fileInputRef.current) fileInputRef.current.value = '';
     }
 
-    const previewData = { title, category, zone, date_start: dateStart, price, isFree, priceTiers, imageUrl: imagePreview, venue_name: venueName };
-
     return (
-        <div className="flex gap-8 items-start">
         <form action={action} className="w-full max-w-xl space-y-5">
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Título</label>
@@ -105,14 +94,14 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Slug (opcional, se genera automático)</label>
-                <Input name="slug" defaultValue={event?.slug} />
+                <Input name="slug" defaultValue={activity?.slug} />
             </div>
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Descripción</label>
                 <Textarea
                     name="description"
-                    defaultValue={event?.description ?? ''}
+                    defaultValue={activity?.description ?? ''}
                     rows={5}
                 />
             </div>
@@ -160,25 +149,14 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="mb-1 block text-sm text-[#666666]">Fecha y hora de inicio</label>
-                    <Input
-                        type="datetime-local"
-                        name="date_start"
-                        value={dateStart}
-                        onChange={e => setDateStart(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label className="mb-1 block text-sm text-[#666666]">Hora de fin (opcional)</label>
-                    <Input
-                        type="datetime-local"
-                        name="date_end"
-                        defaultValue={event?.date_end ? toDatetimeLocal(event.date_end) : ''}
-                    />
-                </div>
+            <div>
+                <label className="mb-1 block text-sm text-[#666666]">¿Cuándo se puede hacer?</label>
+                <Input
+                    name="recurrence_text"
+                    defaultValue={activity?.recurrence_text ?? ''}
+                    placeholder="Ej. Todos los sábados 8am, Abierto todos los días 9am–5pm"
+                    required
+                />
             </div>
 
             <div>
@@ -192,7 +170,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                             if (e.target.checked) setPrice('');
                         }}
                     />
-                    Este evento es gratis
+                    Esta actividad es gratis
                 </label>
                 <label className="mb-1 mt-2 block text-sm text-[#666666]">
                     Precio {isFree ? '' : '(dejar vacío si no sabés el precio)'}
@@ -213,16 +191,16 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                     Precios múltiples (opcional)
                 </label>
                 <p className="mb-2 text-xs text-[#999999]">
-                    Si el evento cobra distinto según tipo de entrada (ej. Nacional/Extranjero,
-                    VIP/General, Niño/Adulto), agregalos acá — reemplazan al precio de arriba
-                    en las cards y el detalle.
+                    Si la actividad cobra distinto según tipo de entrada (ej. Nacional/Extranjero,
+                    Adulto/Niño), agregalos acá — reemplazan al precio de arriba en las cards y el
+                    detalle.
                 </p>
-                <PriceTiersInput name="price_tiers" defaultValue={event?.price_tiers} onChange={setPriceTiers} />
+                <PriceTiersInput name="price_tiers" defaultValue={activity?.price_tiers} />
             </div>
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Tags</label>
-                <TagPicker name="tags" groups={EVENT_TAG_GROUPS} defaultValue={event?.tags ?? []} />
+                <TagPicker name="tags" groups={EVENT_TAG_GROUPS} defaultValue={activity?.tags ?? []} />
             </div>
 
             <div>
@@ -266,17 +244,17 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Link de contacto</label>
-                <Input type="url" name="contact_link" defaultValue={event?.contact_link ?? ''} placeholder="https://…" />
+                <Input type="url" name="contact_link" defaultValue={activity?.contact_link ?? ''} placeholder="https://…" />
             </div>
 
             <div className="flex items-center gap-6">
                 <label className="flex items-center gap-2 text-sm text-[#0A0A0A]">
-                    <input type="checkbox" name="sponsored" defaultChecked={event?.sponsored} />
+                    <input type="checkbox" name="sponsored" defaultChecked={activity?.sponsored} />
                     Patrocinado
                 </label>
 
                 <label className="flex items-center gap-2 text-sm text-[#0A0A0A]">
-                    <input type="checkbox" name="featured" defaultChecked={event?.featured} />
+                    <input type="checkbox" name="featured" defaultChecked={activity?.featured} />
                     Destacado
                 </label>
 
@@ -284,7 +262,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                     <label className="mb-1 block text-sm text-[#666666]">Estado</label>
                     <select
                         name="status"
-                        defaultValue={event?.status ?? 'pending'}
+                        defaultValue={activity?.status ?? 'pending'}
                         className="h-10 rounded-md border border-[#E5E5E5] px-3 text-sm"
                     >
                         <option value="pending">Borrador</option>
@@ -294,22 +272,16 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
             </div>
 
             <SubmitButton mode={mode} />
+
+            {/* Cropper modal */}
+            {cropFile && (
+                <ImageCropper
+                    file={cropFile}
+                    aspect={16 / 9}
+                    onCrop={handleCropDone}
+                    onCancel={() => setCropFile(null)}
+                />
+            )}
         </form>
-
-        {/* Cropper modal */}
-        {cropFile && (
-            <ImageCropper
-                file={cropFile}
-                aspect={16 / 9}
-                onCrop={handleCropDone}
-                onCancel={() => setCropFile(null)}
-            />
-        )}
-
-        {/* Preview panel */}
-        <div className="hidden lg:block w-[580px] shrink-0">
-            <EventPreview data={previewData} />
-        </div>
-        </div>
     );
 }

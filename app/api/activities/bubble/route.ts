@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { guatNow } from '@/lib/hours-utils';
 
 export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
@@ -14,10 +13,9 @@ export async function GET(req: NextRequest) {
     );
 
     let query = supabase
-        .from('events')
-        .select('id, title, slug, description, category, zone, venue_name, place_id, date_start, date_end, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags')
-        .eq('status', 'published')
-        .gte('date_start', guatNow().toISOString());
+        .from('activities')
+        .select('id, title, slug, description, category, zone, venue_name, place_id, recurrence_text, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags')
+        .eq('status', 'published');
 
     if (!all && category) {
         query = query.eq('category', category);
@@ -28,7 +26,7 @@ export async function GET(req: NextRequest) {
         query = query.eq('zone', zone);
     }
 
-    query = query.order('date_start', { ascending: true });
+    query = query.order('featured', { ascending: false }).order('created_at', { ascending: false });
 
     const { data, error } = await query.limit(60);
 

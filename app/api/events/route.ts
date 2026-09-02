@@ -12,7 +12,7 @@ export async function GET() {
         .from('events')
         .select(`
             id, title, slug, description, category, zone, venue_name,
-            place_id, date_start, date_end, price, is_free, image_url, contact_link,
+            place_id, date_start, date_end, price, is_free, price_tiers, image_url, contact_link,
             sponsored, featured, tags
         `)
         .eq('status', 'published')

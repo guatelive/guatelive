@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { priceTiersSchema } from '@/lib/validations/price-tiers';
 
-export const eventSchema = z.object({
+export const activitySchema = z.object({
     title: z.string().trim().min(1, 'El título es obligatorio'),
     slug: z.string().trim().optional(),
     description: z.string().trim().optional(),
@@ -10,8 +10,7 @@ export const eventSchema = z.object({
     zone: z.string().trim().min(1, 'La zona es obligatoria'),
     venue_name: z.string().trim().optional(),
     place_id: z.string().uuid().optional(),
-    date_start: z.string().min(1, 'La fecha es obligatoria'),
-    date_end: z.string().optional(),
+    recurrence_text: z.string().trim().min(1, 'Contá cuándo se puede hacer (ej. "Todos los sábados 8am")'),
     price: z.number().nonnegative().optional(),
     is_free: z.boolean(),
     price_tiers: priceTiersSchema.default([]),
@@ -23,4 +22,4 @@ export const eventSchema = z.object({
     status: z.enum(['pending', 'published']),
 });
 
-export type EventFormData = z.infer<typeof eventSchema>;
+export type ActivityFormData = z.infer<typeof activitySchema>;
