@@ -1,6 +1,6 @@
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import { Star } from 'lucide-react';
-import type { DbEvent } from '@/lib/types';
+import type { DbActivity } from '@/lib/types';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 import { eventLocation, priceDisplay } from '@/lib/event-display';
 
@@ -16,30 +16,17 @@ const BADGE_STYLE: React.CSSProperties = {
   lineHeight: 1,
 };
 
-function formatDate(dateStr: string): string {
-  const [datePart, timePart = ''] = dateStr.split('T');
-  const parts = datePart.split('-');
-  const year = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1;
-  const day = parseInt(parts[2], 10);
-  const [hourStr = '00', minStr = '00'] = timePart.split(':');
-  const d = new Date(year, month, day);
-  const weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-  const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-  return `${weekdays[d.getDay()]} ${day} ${months[month]} · ${hourStr.padStart(2, '0')}:${minStr.padStart(2, '0')}`;
-}
-
 // titleFont: 'display' lo usa el home v2 (Bricolage Grotesque, ver
-// design_handoff_home_v2/README.md) — el resto de superficies que reusan esta
-// card (/buscar, /eventos/hoy) se quedan con el serif por defecto.
-export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titleFont?: 'serif' | 'display' }) {
-  const colors = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
-  const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
-  const price = priceDisplay(event);
+// design_handoff_home_v2/README.md) — /actividades se queda con el serif por
+// defecto.
+export function ActivityCard({ activity, titleFont = 'serif' }: { activity: DbActivity; titleFont?: 'serif' | 'display' }) {
+  const colors = EVENT_CATEGORY_BADGE[activity.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
+  const PlaceholderIcon = EVENT_CATEGORY_ICON[activity.category as EventCategory] ?? Star;
+  const price = priceDisplay(activity);
 
-  const rightBadge = event.sponsored
+  const rightBadge = activity.sponsored
     ? { label: 'PATROCINADO', bg: '#E11D2E', fg: '#FFFFFF' }
-    : event.is_free
+    : activity.is_free
       ? { label: 'GRATIS', bg: '#EFF4E8', fg: '#3B6D11' }
       : null;
 
@@ -48,10 +35,10 @@ export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titl
       {/* Photo block */}
       <div style={{ position: 'relative', height: 160, backgroundColor: '#242424' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: colors.fg, zIndex: 3 }} />
-        {event.image_url ? (
+        {activity.image_url ? (
           <ImageWithSkeleton
-            src={event.image_url}
-            alt={event.title}
+            src={activity.image_url}
+            alt={activity.title}
             fill
             sizes="(max-width: 640px) 85vw, 200px"
             className="object-cover"
@@ -63,7 +50,7 @@ export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titl
         )}
 
         <span style={{ ...BADGE_STYLE, top: 8, left: 8, backgroundColor: colors.bg, color: colors.fg }}>
-          {event.category}
+          {activity.category}
         </span>
 
         {rightBadge && (
@@ -86,7 +73,7 @@ export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titl
             fontWeight: titleFont === 'display' ? 800 : 700,
           }}
         >
-          {event.title}
+          {activity.title}
         </h3>
 
         {/* Price — prominent, decision-critical */}
@@ -121,7 +108,7 @@ export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titl
         </div>
 
         <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: '#888888', lineHeight: 1.4 }}>
-          {formatDate(event.date_start)}{eventLocation(event) ? ` · 📍 ${eventLocation(event)}` : ''}
+          {activity.recurrence_text}{eventLocation(activity) ? ` · 📍 ${eventLocation(activity)}` : ''}
         </p>
       </div>
     </div>

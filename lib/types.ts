@@ -1,3 +1,8 @@
+export type PriceTier = {
+  label: string;
+  price: number;
+};
+
 export type DbEvent = {
   id: string;
   title: string;
@@ -12,6 +17,28 @@ export type DbEvent = {
   date_end: string | null;
   price: number | null;
   is_free: boolean;
+  price_tiers: PriceTier[];
+  image_url: string | null;
+  contact_link: string | null;
+  sponsored: boolean;
+  featured: boolean;
+  tags: string[];
+  status: 'pending' | 'published';
+};
+
+export type DbActivity = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  category: string;
+  zone: string;
+  venue_name: string | null;
+  place_id: string | null;
+  recurrence_text: string | null;
+  price: number | null;
+  is_free: boolean;
+  price_tiers: PriceTier[];
   image_url: string | null;
   contact_link: string | null;
   sponsored: boolean;

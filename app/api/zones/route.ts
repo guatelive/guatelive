@@ -7,9 +7,14 @@ export async function GET() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const [{ data: placeRows, error: placesError }, { data: eventRows, error: eventsError }] = await Promise.all([
+    const [
+        { data: placeRows, error: placesError },
+        { data: eventRows, error: eventsError },
+        { data: activityRows, error: activitiesError },
+    ] = await Promise.all([
         supabase.from('places').select('zone').eq('is_published', true).not('zone', 'is', null),
         supabase.from('events').select('zone').eq('status', 'published').not('zone', 'is', null),
+        supabase.from('activities').select('zone').eq('status', 'published').not('zone', 'is', null),
     ]);
 
     if (placesError) {
@@ -18,11 +23,14 @@ export async function GET() {
     if (eventsError) {
         return NextResponse.json({ error: eventsError.message }, { status: 500 });
     }
+    if (activitiesError) {
+        return NextResponse.json({ error: activitiesError.message }, { status: 500 });
+    }
 
-    // Contar manualmente por zona — places y events combinados, para que una zona
-    // con eventos pero cero lugares publicados también aparezca como opción.
+    // Contar manualmente por zona — places, events y activities combinados, para que una
+    // zona con solo eventos/actividades y cero lugares publicados también aparezca como opción.
     const counts: Record<string, number> = {};
-    for (const row of [...(placeRows ?? []), ...(eventRows ?? [])]) {
+    for (const row of [...(placeRows ?? []), ...(eventRows ?? []), ...(activityRows ?? [])]) {
         const z = (row.zone as string).trim();
         if (z) counts[z] = (counts[z] ?? 0) + 1;
     }

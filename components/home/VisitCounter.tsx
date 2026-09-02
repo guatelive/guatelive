@@ -15,8 +15,8 @@ export function VisitCounter() {
     // Cargando
     if (count === null) {
         return (
-            <p className="text-sm text-muted-foreground">
-                Ya somos parte de <span className="font-semibold text-foreground">…</span> planes en Guate
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#111111' }}>
+                Ya somos parte de <span style={{ color: '#E11D2E', fontWeight: 800 }}>…</span> planes en Guate
             </p>
         );
     }
@@ -25,12 +25,8 @@ export function VisitCounter() {
     if (count === false || count === 0) return null;
 
     return (
-        <p className="text-sm text-muted-foreground">
-            Ya somos parte de{' '}
-            <span className="font-semibold text-foreground">
-                {count.toLocaleString('es-GT')}
-            </span>{' '}
-            planes en Guate
+        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#111111' }}>
+            Ya somos parte de <span style={{ color: '#E11D2E', fontWeight: 800 }}>{count.toLocaleString('es-GT')}</span> planes en Guate
         </p>
     );
 }

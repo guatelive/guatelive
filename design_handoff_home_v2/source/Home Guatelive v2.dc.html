@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0}
+    ::-webkit-scrollbar{display:none}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  </style>
+  <script src="./image-slot.js"></script>
+</helmet>
+<template id="__bundler_thumbnail" data-bg-color="#d81e2c">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#d81e2c"/>
+    <text x="600" y="380" font-family="Helvetica,Arial,sans-serif" font-size="150" font-weight="800" fill="#ffffff" text-anchor="middle">Guate</text>
+    <text x="600" y="520" font-family="Helvetica,Arial,sans-serif" font-size="150" font-weight="800" fill="#c8e64e" text-anchor="middle">Live</text>
+  </svg>
+</template>
+<div style="font-family:'Inter',Helvetica,Arial,sans-serif;color:#111111;background:#ffffff;overflow:hidden">
+
+  <!-- HEADER -->
+  <div style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:24px 40px">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;letter-spacing:-0.01em">Guate<span style="color:#d81e2c">Live</span></div>
+    <div style="display:flex;gap:12px">
+      <div style="border:2px solid #111;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#c8e64e;display:inline-block"></span>Ediciones</div>
+      <div style="background:#111;color:#fff;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:700">Promos</div>
+    </div>
+  </div>
+
+  <!-- HERO split diagonal -->
+  <div style="max-width:1400px;margin:0 auto;padding:12px 40px 0;position:relative">
+    <div style="display:grid;grid-template-columns:{{ heroCols }};gap:0;align-items:stretch;min-height:{{ heroMinHeight }};overflow:hidden">
+      <div style="padding:{{ heroTextPad }};display:flex;flex-direction:column;justify-content:center">
+        <div style="color:#d81e2c;font-size:13px;font-weight:700;letter-spacing:0.06em;margin-bottom:18px">● TODO LO QUE PASA EN GUATE, EN UN SOLO LUGAR</div>
+        <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:{{ heroTitleSize }};margin:0 0 18px;line-height:1.0;letter-spacing:-0.01em">¿Qué hacemos <span style="color:#d81e2c">hoy</span> en Guate?</h1>
+        <div style="color:#555;font-size:18px;margin-bottom:20px">Encuentra cafés, restaurantes y cosas que hacer.</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;color:#111;font-size:14px;font-weight:600;margin-bottom:28px">
+          <span style="background:#c8e64e;padding:2px 10px;border-radius:999px;font-weight:800">126</span> planes activos en Guate
+        </div>
+        <div style="max-width:560px;display:flex;align-items:center;gap:10px;background:#f4f4f4;border:2px solid #111;border-radius:999px;padding:14px 22px;margin-bottom:18px">
+          <span style="color:#111;font-size:16px">🔍</span>
+          <span style="color:#777;font-size:15px">Busca cafés, restaurantes, eventos...</span>
+        </div>
+
+        <div style="max-width:560px">
+          <div style="display:flex;gap:28px;border-bottom:1px solid #eee;margin-bottom:16px">
+            <div style="color:#d81e2c;font-weight:700;font-size:14px;padding-bottom:10px;border-bottom:2px solid #d81e2c">¿Qué?</div>
+            <div style="color:#aaa;font-weight:600;font-size:14px;padding-bottom:10px">¿Dónde?</div>
+            <div style="color:#aaa;font-weight:600;font-size:14px;padding-bottom:10px">¿Cuándo?</div>
+          </div>
+          <div style="display:flex;gap:26px;border-bottom:1px solid #eee;margin-bottom:16px;padding-bottom:10px">
+            <div style="color:#777;font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px">🍽️ Salir a comer</div>
+            <div style="color:#d81e2c;font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;border-bottom:2px solid #d81e2c;padding-bottom:10px;margin-bottom:-10px">📅 Eventos</div>
+            <div style="color:#777;font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px">✨ Actividades</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">🏃 Deportivo</div>
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">🎭 Cultural</div>
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">🎵 Concierto</div>
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">🌳 Aventura</div>
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">🍴 Gastronomía</div>
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">🌙 Vida Nocturna</div>
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">🔧 Talleres</div>
+            <div style="border:2px solid #eee;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;color:#333;display:flex;align-items:center;gap:6px;cursor:pointer">👪 Familiar</div>
+            <div style="background:#d81e2c;border:2px solid #d81e2c;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px;cursor:pointer">🎫 Cualquier evento</div>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;clip-path:{{ heroClip }};background:#d81e2c;height:{{ heroImgHeight }};overflow:hidden">
+        <div style="position:absolute;inset:0">
+          <image-slot id="hero-img" shape="rect" placeholder="Foto: momento festivo en Guate" style="width:100%;height:100%;opacity:0.92"></image-slot>
+        </div>
+        <div style="position:absolute;top:24px;right:24px;background:#c8e64e;color:#111;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;padding:10px 16px;border-radius:10px;transform:rotate(6deg);box-shadow:0 8px 18px rgba(0,0,0,0.25)">¡ESTA SEMANA!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARQUEE TICKER -->
+  <div style="background:#111;padding:12px 0;margin-top:{{ tickerMarginTop }};overflow:hidden;white-space:nowrap">
+    <div style="display:inline-block;animation:marquee 22s linear infinite">
+      <span style="color:#fff;font-weight:700;font-size:14px;letter-spacing:0.04em">MÚSICA EN VIVO &nbsp;•&nbsp; <span style="color:#c8e64e">GASTRONOMÍA</span> &nbsp;•&nbsp; FESTIVALES &nbsp;•&nbsp; <span style="color:#c8e64e">PROMOS DE HOY</span> &nbsp;•&nbsp; VIDA NOCTURNA &nbsp;•&nbsp; <span style="color:#c8e64e">ACTIVIDADES FAMILIARES</span> &nbsp;•&nbsp; DEPORTES &nbsp;•&nbsp;&nbsp;&nbsp;</span>
+      <span style="color:#fff;font-weight:700;font-size:14px;letter-spacing:0.04em">MÚSICA EN VIVO &nbsp;•&nbsp; <span style="color:#c8e64e">GASTRONOMÍA</span> &nbsp;•&nbsp; FESTIVALES &nbsp;•&nbsp; <span style="color:#c8e64e">PROMOS DE HOY</span> &nbsp;•&nbsp; VIDA NOCTURNA &nbsp;•&nbsp; <span style="color:#c8e64e">ACTIVIDADES FAMILIARES</span> &nbsp;•&nbsp; DEPORTES &nbsp;•&nbsp;&nbsp;&nbsp;</span>
+    </div>
+  </div>
+
+  <div style="max-width:1400px;margin:0 auto;padding:0 40px 100px">
+
+    <!-- EVENTOS: ticket strip -->
+    <div style="margin:56px 0 64px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px">Eventos</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <a style="color:#d81e2c;font-size:14px;font-weight:700;text-decoration:none">Ver todos →</a>
+          <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:8px">
+              <div style="width:32px;height:32px;border:2px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700">‹</div>
+              <div style="width:32px;height:32px;border:2px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700">›</div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;grid-template-rows:auto auto;gap:16px">
+          <div style="grid-column:1;grid-row:1 / 3;background:#141414;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer" onClick="{{ eventos.0.onOpen }}">
+            <div style="position:relative;flex:1;min-height:0">
+              <image-slot id="evt-1" shape="rect" placeholder="Foto: Miguel Mateos &amp; Vilma Palma" style="width:100%;height:100%"></image-slot>
+              <div style="position:absolute;top:12px;left:12px;background:#dbe7fb;color:#1d4ed8;font-size:11px;font-weight:700;padding:5px 10px;border-radius:4px;letter-spacing:0.04em">MÚSICA</div>
+            </div>
+            <div style="padding:20px;flex-shrink:0">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:23px;color:#fff;line-height:1.15;margin-bottom:10px">MIGUEL MATEOS &amp; VILMA PALMA</div>
+              <div style="color:#bbb;font-size:13px;margin-bottom:12px">Jue 27 ago · 20:30 · 📍 FORUM MAJADAS</div>
+              <div style="display:flex;gap:8px;margin-bottom:14px">
+                <span style="background:#222;color:#ccc;font-size:11px;padding:5px 10px;border-radius:999px">concierto</span>
+                <span style="background:#222;color:#ccc;font-size:11px;padding:5px 10px;border-radius:999px">musica-en-vivo</span>
+              </div>
+              <div style="color:#d81e2c;font-size:13px;font-weight:700">Ver detalles →</div>
+            </div>
+          </div>
+          <div style="grid-column:2;grid-row:1;background:#141414;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer" onClick="{{ eventos.1.onOpen }}">
+            <div style="position:relative;height:150px">
+              <image-slot id="evt-2" shape="rect" placeholder="Foto: Hyrox Party" style="width:100%;height:100%"></image-slot>
+              <div style="position:absolute;top:10px;left:10px;background:#e8dcc4;color:#6b4a1f;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.04em">DEPORTES</div>
+            </div>
+            <div style="padding:14px">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#fff;line-height:1.2;margin-bottom:6px">HYROX PARTY</div>
+              <div style="color:#bbb;font-size:11px">Sáb 29 ago · 16:00 · 📍 SPORTA ZONA 14</div>
+            </div>
+          </div>
+          <div style="grid-column:3;grid-row:1;background:#141414;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer" onClick="{{ eventos.2.onOpen }}">
+            <div style="position:relative;height:150px">
+              <image-slot id="evt-3" shape="rect" placeholder="Foto: Festival de Marimba (16:00)" style="width:100%;height:100%"></image-slot>
+              <div style="position:absolute;top:10px;left:10px;background:#dbe7fb;color:#1d4ed8;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.04em">MÚSICA</div>
+            </div>
+            <div style="padding:14px">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#fff;line-height:1.2;margin-bottom:6px">46 FESTIVAL DE MARIMBA PAIZ — LA MARIMBA DOBLE</div>
+              <div style="color:#bbb;font-size:11px">Dom 30 ago · 16:00 · 📍 CENTRO CULTURAL MIGUEL ÁNGEL ASTURIAS</div>
+            </div>
+          </div>
+          <div style="grid-column:2;grid-row:2;background:#141414;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer" onClick="{{ eventos.3.onOpen }}">
+            <div style="position:relative;height:150px">
+              <image-slot id="evt-4" shape="rect" placeholder="Foto: Festival de Marimba (11:00)" style="width:100%;height:100%"></image-slot>
+              <div style="position:absolute;top:10px;left:10px;background:#dbe7fb;color:#1d4ed8;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.04em">MÚSICA</div>
+            </div>
+            <div style="padding:14px">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#fff;line-height:1.2;margin-bottom:6px">46 FESTIVAL DE MARIMBA PAIZ — LA MARIMBA DOBLE</div>
+              <div style="color:#bbb;font-size:11px">Dom 30 ago · 11:00 · 📍 CENTRO CULTURAL MIGUEL ÁNGEL ASTURIAS</div>
+            </div>
+          </div>
+          <div style="grid-column:3;grid-row:2;background:#141414;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer" onClick="{{ eventos.4.onOpen }}">
+            <div style="position:relative;height:150px">
+              <image-slot id="evt-5" shape="rect" placeholder="Foto: Festival de la Mujer Tecniscan" style="width:100%;height:100%"></image-slot>
+              <div style="position:absolute;top:10px;left:10px;display:flex;gap:6px">
+                <span style="background:#f4ead9;color:#7a5a2c;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.04em">FAMILIAR</span>
+                <span style="background:#1f7a3d;color:#fff;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.04em">GRATIS</span>
+              </div>
+            </div>
+            <div style="padding:14px">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;color:#fff;line-height:1.2;margin-bottom:6px">FESTIVAL DE LA MUJER TECNISCAN</div>
+              <div style="color:#bbb;font-size:11px">Sáb 5 sep · 07:00 · 📍 HOTEL WESTIN CAMINO REAL</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:20px">
+          <div style="height:3px;width:36px;background:#d81e2c;border-radius:2px"></div>
+          <div style="height:3px;width:36px;background:#eee;border-radius:2px"></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ eventosContainerStyle }}" ref="{{ eventosRefCb }}" onScroll="{{ onEventosScroll }}">
+        <sc-for list="{{ eventos }}" as="ev" hint-placeholder-count="5">
+          <div style="{{ ev.wrapStyle }}" data-base-rotate="rotate({{ ev.baseRotate }}deg)" onMouseMove="{{ onTiltMove }}" onMouseLeave="{{ onTiltLeave }}" onClick="{{ ev.onOpen }}">
+            <div style="position:relative;height:56%;flex-shrink:0">
+              <image-slot id="{{ ev.imageId }}" shape="rect" placeholder="{{ ev.imgPlaceholder }}" style="width:100%;height:100%"></image-slot>
+              <div style="position:absolute;top:10px;left:10px;background:{{ ev.badgeBg }};color:{{ ev.badgeFg }};font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;letter-spacing:0.04em">{{ ev.badge }}</div>
+            </div>
+            <div style="position:relative;height:1px;background:transparent;border-top:2px dashed #333;margin:0 0">
+              <div style="position:absolute;left:-10px;top:-9px;width:18px;height:18px;border-radius:50%;background:#fff"></div>
+              <div style="position:absolute;right:-10px;top:-9px;width:18px;height:18px;border-radius:50%;background:#fff"></div>
+            </div>
+            <div style="background:#141414;color:#fff;padding:16px;flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0">
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;line-height:1.2;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ ev.title }}</div>
+              <div style="color:#bbb;font-size:12px">{{ ev.date }} · 📍 {{ ev.venue }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+    </div>
+
+    <!-- ACTIVIDADES: sticker wall -->
+    <div style="margin-bottom:64px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px">Actividades</div>
+        <a style="color:#d81e2c;font-size:14px;font-weight:700;text-decoration:none">Ver todas →</a>
+      </div>
+      <div style="{{ actividadesContainerStyle }}" ref="{{ actividadesRefCb }}" onScroll="{{ onActividadesScroll }}">
+        <sc-for list="{{ actividades }}" as="act" hint-placeholder-count="3">
+          <sc-if value="{{ act.notPlaceholder }}" hint-placeholder-val="{{ true }}">
+            <div style="{{ act.wrapStyle }}" data-base-rotate="rotate({{ act.baseRotate }}deg)" onMouseMove="{{ onTiltMove }}" onMouseLeave="{{ onTiltLeave }}" onClick="{{ act.onOpen }}">
+              <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-3deg);width:56px;height:20px;background:rgba(200,230,78,0.85);box-shadow:0 2px 4px rgba(0,0,0,0.15)"></div>
+              <div style="padding:10px 10px 0">
+                <image-slot id="{{ act.imageId }}" shape="rect" placeholder="Foto de la actividad" style="width:100%;height:150px"></image-slot>
+              </div>
+              <div style="padding:12px 14px 16px">
+                <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;margin-bottom:4px;color:#111">{{ act.title }}</div>
+                <div style="color:#777;font-size:12px;margin-bottom:6px">{{ act.meta }}</div>
+                <div style="color:#d81e2c;font-weight:800;font-size:14px">{{ act.price }}</div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ act.placeholder }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ act.wrapStyle }}">
+              <div style="border:2px dashed #d0d0d0;border-radius:4px;height:100%;display:flex;align-items:center;justify-content:center;color:#b0b0b0;font-size:13px;text-align:center;padding:16px">+ Próxima actividad</div>
+            </div>
+          </sc-if>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- PROMOS: coupons -->
+    <div style="margin-bottom:40px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px">Promos</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <a style="color:#d81e2c;font-size:14px;font-weight:700;text-decoration:none">Ver todas →</a>
+          <div style="display:flex;gap:8px">
+            <div style="width:34px;height:34px;border:2px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700" onClick="{{ scrollPromosLeft }}">‹</div>
+            <div style="width:34px;height:34px;border:2px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700" onClick="{{ scrollPromosRight }}">›</div>
+          </div>
+        </div>
+      </div>
+      <div style="{{ promosContainerStyle }}" ref="{{ promosRefCb }}" onScroll="{{ onPromosScroll }}" onMouseDown="{{ onPromosDown }}" onMouseMove="{{ onPromosMove }}" onMouseUp="{{ onPromosUp }}" onMouseLeave="{{ onPromosUp }}">
+        <sc-for list="{{ promos }}" as="promo" hint-placeholder-count="4">
+          <div style="{{ promo.wrapStyle }}" onClick="{{ promo.onOpen }}">
+            <div style="position:relative;height:56%">
+              <image-slot id="{{ promo.imageId }}" shape="rect" placeholder="Foto de la promoción" style="width:100%;height:100%"></image-slot>
+              <sc-if value="{{ promo.bank }}" hint-placeholder-val="{{ '' }}">
+                <div style="position:absolute;top:10px;right:10px;background:#fff;color:#333;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px">{{ promo.bank }}</div>
+              </sc-if>
+            </div>
+            <div style="position:relative;display:flex;align-items:center">
+              <div style="flex:1;border-top:2px dashed #333"></div>
+              <div style="width:16px;height:16px;border-radius:50%;background:#fff;margin:0 -8px"></div>
+              <div style="background:#c8e64e;color:#111;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;padding:8px 14px;border-radius:8px;transform:rotate(-4deg);margin:0 10px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">-{{ promo.discount }}%</div>
+              <div style="width:16px;height:16px;border-radius:50%;background:#fff;margin:0 -8px"></div>
+              <div style="flex:1;border-top:2px dashed #333"></div>
+            </div>
+            <div style="background:#141414;color:#fff;padding:16px;flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0">
+              <div style="font-weight:700;font-size:15px;line-height:1.25;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ promo.title }}</div>
+              <div style="color:#bbb;font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ promo.summary }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+
+    <!-- EDITORIAL -->
+    <div style="margin-bottom:40px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px">Editorial</div>
+        <a style="color:#d81e2c;font-size:14px;font-weight:700;text-decoration:none">Ver todas las ediciones →</a>
+      </div>
+      <div style="background:#111;border-radius:16px;padding:{{ editorialPad }};display:grid;grid-template-columns:{{ editorialCols }};gap:32px;align-items:center;overflow:hidden">
+        <div>
+          <div style="color:#c8e64e;font-size:12px;font-weight:700;letter-spacing:0.08em;margin-bottom:14px">EDICIÓN Nº 3</div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:34px;color:#fff;line-height:1.05;margin-bottom:14px">¿Qué hacemos hoy?</div>
+          <div style="display:inline-block;background:#fff;color:#111;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;padding:8px 14px;border-radius:6px;transform:rotate(-2deg);margin-bottom:16px">Hoy: San Martín</div>
+          <div style="color:#bbb;font-size:15px;margin-bottom:22px">San Martín tiene menú nuevo. Y vale la pena.</div>
+          <div style="display:inline-flex;align-items:center;gap:8px;background:#d81e2c;color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:999px;cursor:pointer">Leé la edición <span>→</span></div>
+        </div>
+        <div style="display:flex;gap:14px;height:{{ editorialImgHeight }}">
+          <div style="flex:1;border-radius:10px;overflow:hidden;transform:rotate(-2deg)"><image-slot id="editorial-1" shape="rect" placeholder="Foto: plato del día" style="width:100%;height:100%"></image-slot></div>
+          <div style="flex:1;border-radius:10px;overflow:hidden;transform:rotate(1.5deg)"><image-slot id="editorial-2" shape="rect" placeholder="Foto: bebida" style="width:100%;height:100%"></image-slot></div>
+          <div style="flex:1;border-radius:10px;overflow:hidden;transform:rotate(-1deg)"><image-slot id="editorial-3" shape="rect" placeholder="Foto: mesa" style="width:100%;height:100%"></image-slot></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div style="background:#111;border-radius:16px;padding:48px 32px;text-align:center;margin-bottom:56px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-30px;right:40px;width:90px;height:90px;border-radius:50%;background:#c8e64e;opacity:0.15"></div>
+      <div style="color:#c8e64e;font-size:12px;font-weight:700;letter-spacing:0.08em;margin-bottom:12px">NEWSLETTER</div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:#fff;font-size:24px;margin-bottom:26px">Cada jueves, una edición. Sin spam, sin patrocinios disfrazados.</div>
+      <div style="display:flex;gap:10px;max-width:460px;margin:0 auto;flex-wrap:wrap;justify-content:center">
+        <input type="email" placeholder="tu@email.com" style="flex:1;min-width:200px;background:transparent;border:none;border-bottom:2px solid #444;color:#fff;font-size:15px;padding:10px 4px;outline:none"/>
+        <div style="background:#c8e64e;color:#111;font-weight:800;font-size:13px;letter-spacing:0.04em;padding:12px 22px;border-radius:8px;cursor:pointer">SUSCRIBIRME</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div style="border-top:1px solid #eee">
+    <div style="max-width:1400px;margin:0 auto;padding:56px 40px;display:grid;grid-template-columns:{{ footerCols }};gap:40px">
+      <div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;margin-bottom:10px">Guate<span style="color:#d81e2c">Live</span></div>
+        <div style="color:#777;font-size:14px">Todo lo que pasa en Guate, en un solo lugar.</div>
+      </div>
+      <div>
+        <div style="color:#999;font-size:12px;font-weight:700;letter-spacing:0.08em;margin-bottom:14px">ZONAS</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a style="color:#333;font-size:14px;text-decoration:none">Lugares en Antigua</a>
+          <a style="color:#333;font-size:14px;text-decoration:none">Lugares en Carretera a El Salvador</a>
+          <a style="color:#333;font-size:14px;text-decoration:none">Lugares en Zona 15</a>
+          <a style="color:#333;font-size:14px;text-decoration:none">Lugares en Zona 14</a>
+          <a style="color:#333;font-size:14px;text-decoration:none">Lugares en Zona 4</a>
+          <a style="color:#333;font-size:14px;text-decoration:none">Lugares en Cayalá</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ hasExpanded }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;z-index:60;padding:24px" onClick="{{ closeExpand }}">
+      <div style="background:#141414;color:#fff;max-width:560px;width:100%;border-radius:14px;overflow:hidden;position:relative" onClick="{{ stopClick }}">
+        <div style="position:relative;height:260px">
+          <image-slot id="{{ expandedView.imageId }}" shape="rect" placeholder="Foto" style="width:100%;height:100%"></image-slot>
+        </div>
+        <div style="padding:22px 26px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div style="background:{{ expandedView.badgeBg }};color:{{ expandedView.badgeFg }};font-size:11px;font-weight:700;padding:5px 10px;border-radius:4px;letter-spacing:0.04em">{{ expandedView.badge }}</div>
+            <div style="cursor:pointer;font-size:22px;color:#999;line-height:1" onClick="{{ closeExpand }}">×</div>
+          </div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:25px;line-height:1.2;margin-bottom:12px">{{ expandedView.title }}</div>
+          <sc-if value="{{ expandedView.meta }}" hint-placeholder-val="{{ '' }}">
+            <div style="color:#bbb;font-size:14px;margin-bottom:12px">{{ expandedView.meta }}</div>
+          </sc-if>
+          <sc-if value="{{ expandedView.desc }}" hint-placeholder-val="{{ '' }}">
+            <div style="color:#ccc;font-size:14px;line-height:1.55;margin-bottom:18px">{{ expandedView.desc }}</div>
+          </sc-if>
+          <div style="color:#c8e64e;font-weight:700;font-size:14px">{{ expandedView.cta }}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { isMobile: false, expanded: null };
+
+  eventosBase = [
+    { id: 1, badge: 'MÚSICA', badgeBg: '#dbe7fb', badgeFg: '#1d4ed8', title: 'MIGUEL MATEOS & VILMA PALMA', date: 'Jue 27 ago · 20:30', venue: 'FORUM MAJADAS', imgPlaceholder: 'Foto: Miguel Mateos & Vilma Palma' },
+    { id: 2, badge: 'DEPORTES', badgeBg: '#e8dcc4', badgeFg: '#6b4a1f', title: 'HYROX PARTY', date: 'Sáb 29 ago · 16:00', venue: 'SPORTA ZONA 14', imgPlaceholder: 'Foto: Hyrox Party' },
+    { id: 3, badge: 'MÚSICA', badgeBg: '#dbe7fb', badgeFg: '#1d4ed8', title: '46 FESTIVAL DE MARIMBA PAIZ — LA MARIMBA DOBLE', date: 'Dom 30 ago · 16:00', venue: 'CENTRO CULTURAL MIGUEL ÁNGEL ASTURIAS', imgPlaceholder: 'Foto: Festival de Marimba (16:00)' },
+    { id: 4, badge: 'MÚSICA', badgeBg: '#dbe7fb', badgeFg: '#1d4ed8', title: '46 FESTIVAL DE MARIMBA PAIZ — LA MARIMBA DOBLE', date: 'Dom 30 ago · 11:00', venue: 'CENTRO CULTURAL MIGUEL ÁNGEL ASTURIAS', imgPlaceholder: 'Foto: Festival de Marimba (11:00)' },
+    { id: 5, badge: 'FAMILIAR', badgeBg: '#f4ead9', badgeFg: '#7a5a2c', title: 'FESTIVAL DE LA MUJER TECNISCAN', date: 'Sáb 5 sep · 07:00', venue: 'HOTEL WESTIN CAMINO REAL', imgPlaceholder: 'Foto: Festival de la Mujer Tecniscan' }
+  ];
+
+  actividadesBase = [
+    { id: 1, badge: 'VIDA NOCTURNA', badgeBg: '#e8dcc4', badgeFg: '#6b4a1f', title: 'TEST', price: 'Q100', meta: 'Todos los sábados por la noche · 📍 TEST', placeholder: false },
+    { id: 2, placeholder: true },
+    { id: 3, placeholder: true }
+  ];
+
+  promosBase = [
+    { id: 1, discount: '50', bank: 'Promerica', title: 'SC Altos de la Antigua', summary: 'Sc altos de la antigua 50% de descuento en pizza', desc: '*Pizza + botella de vino con 50% de descuento. Válido al 31 de agosto 2026.' },
+    { id: 2, discount: '30', bank: 'BAC', title: 'Hilton Garden Inn', summary: '30% de descuento', desc: '1. 25% DE DESCUENTO – Martes de Asados, Miércoles Típico y Jueves Temático Mecánica: Disfruta 25% de descuento al pagar con...' },
+    { id: 3, discount: '50', bank: 'Promerica', title: 'Taquería la Estación segundo plato a mitad de precio.', summary: 'Taquería la estación segundo plato a mitad de precio.', desc: '50% de descuento en la compra del segundo desayuno. Válido al 31 de octubre 2026.' },
+    { id: 4, discount: '40', bank: null, title: 'Il Cubo', summary: 'Il cubo hasta un 40% de descuento en bebidas.', desc: 'Segunda bebida con 25%, tercera bebida con 40% de descuento. Paloma, Mojito, Negroni, Barril. Válido al 31 de diciembre 2026.' }
+  ];
+
+  componentDidMount() {
+    this.checkMobile = () => this.setState({ isMobile: window.innerWidth < 860 });
+    this.checkMobile();
+    window.addEventListener('resize', this.checkMobile);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.checkMobile); }
+
+  handleTiltMove(e) {
+    const el = e.currentTarget;
+    const base = el.dataset.baseRotate || '';
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `${base} perspective(900px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.03)`;
+    el.style.boxShadow = '0 20px 40px rgba(0,0,0,0.25)';
+    el.style.zIndex = '5';
+  }
+  handleTiltLeave(e) {
+    const el = e.currentTarget;
+    el.style.transform = el.dataset.baseRotate || 'none';
+    el.style.boxShadow = '';
+    el.style.zIndex = '1';
+  }
+
+  rot(id, spread) { return (((id * 41) % (spread * 2 + 1)) - spread); }
+
+  mapEventos(isMobile) {
+    const widths = isMobile ? '72vw' : 320;
+    return this.eventosBase.map((it, i) => ({
+      ...it,
+      imageId: `evt-${it.id}`,
+      wrapStyle: {
+        display: 'flex', flexDirection: 'column', boxSizing: 'border-box', width: widths, maxWidth: isMobile ? 300 : 320, height: 380, flexShrink: 0,
+        background: '#fff', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+        transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+        scrollSnapAlign: isMobile ? 'center' : undefined
+      },
+      baseRotate: 0,
+      onOpen: () => this.openExpand('evento', it)
+    }));
+  }
+
+  mapActividades(isMobile) {
+    const widths = isMobile ? 220 : 250;
+    return this.actividadesBase.map((it, i) => {
+      const w = { position: 'relative', width: widths, flexShrink: 0, background: '#fff', border: '1px solid #eee', borderRadius: 4, boxShadow: '0 8px 20px rgba(0,0,0,0.1)', cursor: 'pointer', transition: 'transform 0.25s ease, box-shadow 0.25s ease', scrollSnapAlign: isMobile ? 'center' : undefined };
+      if (it.placeholder) return { ...it, notPlaceholder: false, wrapStyle: { ...w, height: 220 } };
+      return { ...it, notPlaceholder: true, wrapStyle: w, baseRotate: 0, imageId: `act-${it.id}`, onOpen: () => this.openExpand('actividad', it) };
+    });
+  }
+
+  mapPromos(isMobile) {
+    const w = isMobile ? 270 : 320;
+    return this.promosBase.map(it => ({
+      ...it,
+      imageId: `promo-${it.id}`,
+      wrapStyle: { display: 'flex', flexDirection: 'column', width: w, height: 340, flexShrink: 0, background: '#fff', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', boxShadow: '0 6px 16px rgba(0,0,0,0.12)', scrollSnapAlign: 'center', transition: 'transform 0.2s ease' },
+      onOpen: () => this.openExpand('promo', it)
+    }));
+  }
+
+  openExpand(kind, item) { this.setState({ expanded: { kind, item } }); }
+  closeExpand() { this.setState({ expanded: null }); }
+  stopClick(e) { e.stopPropagation(); }
+
+  getExpandedView() {
+    const ex = this.state.expanded;
+    if (!ex) return null;
+    const { kind, item } = ex;
+    if (kind === 'evento') return { badge: item.badge, badgeBg: item.badgeBg, badgeFg: item.badgeFg, title: item.title, meta: `${item.date} · 📍 ${item.venue}`, desc: null, cta: 'Ver detalles →', imageId: `evt-${item.id}` };
+    if (kind === 'actividad') return { badge: item.badge, badgeBg: item.badgeBg, badgeFg: item.badgeFg, title: item.title, meta: item.meta, desc: `Precio: ${item.price}`, cta: 'Reservar →', imageId: `act-${item.id}` };
+    if (kind === 'promo') return { badge: `${item.discount}% OFF`, badgeBg: '#c8e64e', badgeFg: '#111', title: item.title, meta: item.bank ? `Alianza con ${item.bank}` : null, desc: item.desc, cta: 'Leer más →', imageId: `promo-${item.id}` };
+    return null;
+  }
+
+  scrollPromos(dir) { if (this._promosEl) this._promosEl.scrollBy({ left: dir * 340, behavior: 'smooth' }); }
+  promoDragStart(e) { this._drag = { down: true, startX: e.pageX, scrollLeft: this._promosEl.scrollLeft }; }
+  promoDragMove(e) { if (!this._drag || !this._drag.down) return; const dx = e.pageX - this._drag.startX; this._promosEl.scrollLeft = this._drag.scrollLeft - dx; }
+  promoDragEnd() { if (this._drag) this._drag.down = false; }
+
+  renderVals() {
+    const isMobile = this.state.isMobile;
+    const expandedView = this.getExpandedView();
+    return {
+      isMobile,
+      isDesktop: !isMobile,
+      heroCols: isMobile ? '1fr' : '1.1fr 0.9fr',
+      heroMinHeight: 'auto',
+      heroTextPad: isMobile ? '24px 0 32px' : '20px 40px 40px 0',
+      heroTitleSize: isMobile ? '38px' : '54px',
+      heroClip: isMobile ? 'polygon(0 8% ,100% 0, 100% 100%, 0 100%)' : 'polygon(12% 0, 100% 0, 100% 100%, 0 100%)',
+      heroImgHeight: (isMobile ? 260 : 420) + 'px',
+      tickerMarginTop: (isMobile ? 32 : 48) + 'px',
+      editorialCols: isMobile ? '1fr' : '1fr 1fr',
+      editorialPad: isMobile ? '28px 22px' : '44px',
+      editorialImgHeight: (isMobile ? 160 : 280) + 'px',
+      footerCols: isMobile ? '1fr' : '1.4fr 1fr',
+      eventosContainerStyle: { display: 'flex', gap: 24, overflowX: 'auto', paddingBottom: 8, scrollSnapType: isMobile ? 'x mandatory' : 'none' },
+      eventos: this.mapEventos(isMobile),
+      actividadesContainerStyle: { display: 'flex', gap: isMobile ? 20 : 32, overflowX: 'auto', paddingBottom: 16, paddingTop: 16, alignItems: 'flex-start', scrollSnapType: isMobile ? 'x mandatory' : 'none' },
+      actividades: this.mapActividades(isMobile),
+      promosContainerStyle: { display: 'flex', gap: 20, overflowX: 'auto', scrollSnapType: 'x mandatory', paddingBottom: 8, cursor: 'grab' },
+      promos: this.mapPromos(isMobile),
+      onTiltMove: (e) => this.handleTiltMove(e),
+      onTiltLeave: (e) => this.handleTiltLeave(e),
+      eventosRefCb: (el) => { this._eventosEl = el; },
+      onEventosScroll: () => {},
+      actividadesRefCb: (el) => { this._actividadesEl = el; },
+      onActividadesScroll: () => {},
+      onPromosScroll: () => {},
+      onPromosDown: (e) => this.promoDragStart(e),
+      onPromosMove: (e) => this.promoDragMove(e),
+      onPromosUp: () => this.promoDragEnd(),
+      promosRefCb: (el) => { this._promosEl = el; },
+      scrollPromosLeft: () => this.scrollPromos(-1),
+      scrollPromosRight: () => this.scrollPromos(1),
+      closeExpand: () => this.closeExpand(),
+      stopClick: (e) => this.stopClick(e),
+      hasExpanded: !!expandedView,
+      expandedView: expandedView || {}
+    };
+  }
+}
+
+</script>
+</body>
+</html>

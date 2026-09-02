@@ -4,10 +4,12 @@ import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/layout/site-layout";
 import { createClient } from "@/lib/supabase/server";
 import { BubbleSearch } from "@/components/home/bubble-search";
+import { MarqueeTicker } from "@/components/home/marquee-ticker";
 import { EditionPeekTab } from "@/components/home/EditionPeekTab";
 import { EventsGrid } from "@/components/home/EventsGrid";
+import { ActivitiesGrid } from "@/components/home/ActivitiesGrid";
 import { guatNow } from "@/lib/hours-utils";
-import type { DbEvent, DbBankPromotion } from "@/lib/types";
+import type { DbEvent, DbActivity, DbBankPromotion } from "@/lib/types";
 import { PromosCarousel } from "@/components/home/PromosCarousel";
 import { resolvePromoPlaces } from "@/lib/promo-place-match";
 import { sortByDiscountWithDailyVariation } from "@/lib/promo-order";
@@ -33,7 +35,7 @@ export const metadata = {
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEvents }, { data: activePromos }, { data: promoMatchPlaces }] = await Promise.all([
+  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEvents }, { data: activities }, { data: activePromos }, { data: promoMatchPlaces }] = await Promise.all([
     supabase
       .from("places")
       .select("id, name, slug, zone, rating, primary_category, hours, place_photos(url, is_primary, order_index)")
@@ -50,12 +52,19 @@ export default async function HomePage() {
       .single(),
     supabase
       .from("events")
-      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, price, is_free, image_url, contact_link, sponsored, featured, tags, status")
+      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags, status")
       .eq("status", "published")
       .gte("date_start", guatNow().toISOString())
       .order("featured", { ascending: false })
       .order("date_start", { ascending: true })
       .limit(12),
+    supabase
+      .from("activities")
+      .select("id, title, slug, description, category, zone, venue_name, place_id, recurrence_text, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags, status")
+      .eq("status", "published")
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(6),
     supabase
       .from("bank_promotions")
       .select("*")
@@ -78,9 +87,11 @@ export default async function HomePage() {
   return (
     <SiteLayout>
       <SchemaMarkup schema={[buildOrganizationSchema(), buildWebSiteSchema()]} />
-      <BubbleSearch />
+      <BubbleSearch heroImage={latestEdition?.cover_image_url ?? null} heroImageAlt={latestEdition?.title ?? ''} />
+      <MarqueeTicker />
 
       <EventsGrid events={(upcomingEvents ?? []) as DbEvent[]} />
+      <ActivitiesGrid activities={(activities ?? []) as DbActivity[]} />
       {/* Comentado intencionalmente: con "recién agregados" eliminado,
          la sección editorial quedó arriba y es fácil de encontrar sin este tab.
          Reactivar cuando el home crezca y la editorial vuelva a quedar
@@ -217,7 +228,7 @@ export default async function HomePage() {
         const translateY = [6, 0, 10];
 
         return (
-          <section className="mx-auto mt-6 max-w-6xl px-4 sm:px-6" style={{ borderTop: '0.5px solid #E5E5E5', paddingBottom: '1.5rem' }}>
+          <section className="mx-auto mt-6 max-w-[1400px] px-6 md:px-10" style={{ borderTop: '0.5px solid #E5E5E5', paddingBottom: '1.5rem' }}>
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', paddingTop: '0.85rem', paddingBottom: '0.7rem' }}>
               <div>
@@ -252,7 +263,7 @@ export default async function HomePage() {
                     Edición Nº {latestEdition.number}
                   </p>
                   <div className="mt-2 h-[2px] w-8 bg-[#E11D2E]" />
-                  <h2 className="mt-3 font-serif leading-tight" style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>
+                  <h2 className="mt-3 font-display font-extrabold leading-[1.05] tracking-[-0.01em]" style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>
                     {(() => {
                       const idx = latestEdition.title.indexOf('?');
                       if (idx === -1) return latestEdition.title;
@@ -262,12 +273,15 @@ export default async function HomePage() {
                         <>
                           <span>{before}</span>
                           {after && (
-                            <span style={{ display: 'block', marginTop: '10px' }}>
+                            <span style={{ display: 'block', marginTop: '12px' }}>
                               <span
                                 style={{
+                                  display: 'inline-block',
                                   background: '#fff',
-                                  color: '#0A0A0A',
-                                  padding: '2px 8px',
+                                  color: '#111111',
+                                  padding: '4px 10px',
+                                  borderRadius: 6,
+                                  transform: 'rotate(-2deg)',
                                   boxDecorationBreak: 'clone',
                                   WebkitBoxDecorationBreak: 'clone',
                                 }}>

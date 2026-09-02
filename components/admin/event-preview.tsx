@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { getCategoryColor, formatEventMeta } from '@/lib/event-display';
+import { getCategoryColor, formatEventMeta, priceDisplay } from '@/lib/event-display';
+import type { PriceTier } from '@/lib/types';
 
 export type EventPreviewData = {
     title: string;
@@ -10,6 +11,7 @@ export type EventPreviewData = {
     date_start: string;
     price: string; // string from input, empty = no sé el precio (a menos que isFree)
     isFree: boolean;
+    priceTiers: PriceTier[];
     imageUrl: string | null;
     venue_name: string;
 };
@@ -28,7 +30,8 @@ function PreviewCard({
     const isMsm = size === 'mobile-small';
     const parsed = data.price !== '' ? parseFloat(data.price) : NaN;
     const priceNum = isNaN(parsed) ? null : parsed;
-    const isGratis = data.isFree;
+    const price = priceDisplay({ is_free: data.isFree, price: priceNum, price_tiers: data.priceTiers });
+    const isGratis = price.kind === 'free';
 
     return (
         <div style={{
@@ -94,12 +97,12 @@ function PreviewCard({
                 padding: isBig ? '18px 20px' : isMsm ? '6px 8px' : '10px 12px',
                 zIndex: 3,
             }}>
-                {!isGratis && !isMsm && priceNum !== null && (
+                {!isMsm && price.kind === 'priced' && (
                     <p style={{
                         color: '#fff', fontSize: isBig ? 12 : 11, fontWeight: 700,
                         fontFamily: 'var(--font-sans)', marginBottom: isBig ? 4 : 2,
                     }}>
-                        Q{priceNum}
+                        {price.label}
                     </p>
                 )}
                 <h3 style={{

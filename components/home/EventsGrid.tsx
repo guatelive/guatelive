@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from '
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
-import { formatEventDateTime, eventLocation } from '@/lib/event-display';
+import { formatEventDateTime, eventLocation, priceDisplay } from '@/lib/event-display';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 
 const DURATION = 4000;
@@ -48,6 +48,7 @@ function MainCard({ event }: { event: DbEvent | null }) {
     const badge = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
     const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
     const location = eventLocation(event);
+    const price = priceDisplay(event);
     return (
         <Link href={`/evento/${event.slug}`} style={{
             display: 'flex', flexDirection: 'column',
@@ -76,8 +77,8 @@ function MainCard({ event }: { event: DbEvent | null }) {
             </div>
             <div style={{ padding: '1.25rem' }}>
                 <h3 style={{
-                    fontFamily: 'var(--font-serif)', fontSize: 30, color: '#fff', lineHeight: 1.2,
-                    marginBottom: '0.4rem',
+                    fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 26, color: '#fff', lineHeight: 1.15,
+                    marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '-0.01em',
                     display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                 }}>
                     {event.title}
@@ -86,34 +87,13 @@ function MainCard({ event }: { event: DbEvent | null }) {
                     {formatEventDateTime(event.date_start)}
                     {location && <><br />📍 {location}</>}
                 </p>
-                {event.is_free ? (
+                {price.kind === 'free' ? (
                     <GratisBadge dark size={11} />
-                ) : event.price !== null ? (
+                ) : price.kind === 'priced' ? (
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 600, color: '#fff' }}>
-                        Q{event.price}
+                        {price.label}
                     </p>
                 ) : null}
-                {event.tags.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: '0.5rem' }}>
-                        {event.tags.slice(0, 3).map(tag => (
-                            <span
-                                key={tag}
-                                style={{
-                                    fontFamily: 'var(--font-sans)', fontSize: 11,
-                                    color: 'rgba(255,255,255,0.7)', backgroundColor: 'rgba(255,255,255,0.1)',
-                                    padding: '3px 9px', borderRadius: 999,
-                                }}
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                        {event.tags.length > 3 && (
-                            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: 'rgba(255,255,255,0.45)', padding: '3px 4px' }}>
-                                +{event.tags.length - 3}
-                            </span>
-                        )}
-                    </div>
-                )}
                 <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, color: '#E11D2E', marginTop: '0.5rem' }}>
                     Ver detalles →
                 </p>
@@ -127,6 +107,7 @@ function MediaCard({ event }: { event: DbEvent | null }) {
     const badge = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
     const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
     const location = eventLocation(event);
+    const price = priceDisplay(event);
     return (
         <Link href={`/evento/${event.slug}`} style={{
             display: 'flex', flexDirection: 'column',
@@ -160,7 +141,8 @@ function MediaCard({ event }: { event: DbEvent | null }) {
             </div>
             <div style={{ padding: '0.85rem 0.95rem', flexShrink: 0 }}>
                 <h3 style={{
-                    fontFamily: 'var(--font-serif)', fontSize: 18, color: '#fff', lineHeight: 1.2, marginBottom: 4,
+                    fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: '#fff', lineHeight: 1.2, marginBottom: 4,
+                    textTransform: 'uppercase', letterSpacing: '-0.01em',
                     display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                 }}>
                     {event.title}
@@ -171,9 +153,9 @@ function MediaCard({ event }: { event: DbEvent | null }) {
                 }}>
                     {formatEventDateTime(event.date_start)}{location ? ` · 📍 ${location}` : ''}
                 </p>
-                {!event.is_free && event.price !== null && (
+                {price.kind === 'priced' && (
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, color: '#fff', marginTop: 2 }}>
-                        Q{event.price}
+                        {price.label}
                     </p>
                 )}
             </div>
@@ -301,58 +283,61 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     if (events.length === 0) return null;
 
     return (
-        <section className="mx-auto mt-2 max-w-6xl px-4 sm:px-6">
+        <section className="mx-auto mt-2 max-w-[1400px] px-6 md:px-10">
             {/* ── Header ── */}
-            <div style={{
-                display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-                paddingTop: '0.85rem', paddingBottom: '0.7rem',
-            }}>
-                <div>
-                    <p style={{
-                        fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 600,
-                        color: '#E11D2E', letterSpacing: '0.25em', textTransform: 'uppercase',
-                    }}>
-                        EVENTOS
-                    </p>
-                    <div style={{ width: 28, height: 2, backgroundColor: '#E11D2E', marginTop: 6 }} />
+            <div style={{ paddingTop: '0.85rem', paddingBottom: '0.7rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                        <p style={{
+                            fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 600,
+                            color: '#E11D2E', letterSpacing: '0.25em', textTransform: 'uppercase',
+                        }}>
+                            EVENTOS
+                        </p>
+                        <div style={{ width: 28, height: 2, backgroundColor: '#E11D2E', marginTop: 6 }} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+                        <Link
+                            href="/buscar?tipo=eventos"
+                            style={{
+                                fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600,
+                                color: '#E11D2E', letterSpacing: '0.02em', textDecoration: 'none',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            Ver todos →
+                        </Link>
+                        {navCount > 1 && (
+                            <div className="desktop-only" style={{ gap: 6 }}>
+                                <button
+                                    onClick={() => goTo((navIndex - 1 + navCount) % navCount)}
+                                    aria-label="Anterior"
+                                    style={{
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        width: 26, height: 26, borderRadius: '50%',
+                                        border: '1.5px solid #D4D4D4', background: '#fff', cursor: 'pointer',
+                                    }}
+                                >
+                                    <ChevronLeft size={14} color="#0A0A0A" />
+                                </button>
+                                <button
+                                    onClick={() => goTo((navIndex + 1) % navCount)}
+                                    aria-label="Siguiente"
+                                    style={{
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        width: 26, height: 26, borderRadius: '50%',
+                                        border: '1.5px solid #D4D4D4', background: '#fff', cursor: 'pointer',
+                                    }}
+                                >
+                                    <ChevronRight size={14} color="#0A0A0A" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <Link
-                        href="/buscar?tipo=eventos"
-                        style={{
-                            fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600,
-                            color: '#E11D2E', letterSpacing: '0.02em', textDecoration: 'none',
-                        }}
-                    >
-                        Ver todos →
-                    </Link>
-                    {navCount > 1 && (
-                        <div style={{ display: 'flex', gap: 6 }}>
-                            <button
-                                onClick={() => goTo((navIndex - 1 + navCount) % navCount)}
-                                aria-label="Anterior"
-                                style={{
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    width: 26, height: 26, borderRadius: '50%',
-                                    border: '1.5px solid #D4D4D4', background: '#fff', cursor: 'pointer',
-                                }}
-                            >
-                                <ChevronLeft size={14} color="#0A0A0A" />
-                            </button>
-                            <button
-                                onClick={() => goTo((navIndex + 1) % navCount)}
-                                aria-label="Siguiente"
-                                style={{
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    width: 26, height: 26, borderRadius: '50%',
-                                    border: '1.5px solid #D4D4D4', background: '#fff', cursor: 'pointer',
-                                }}
-                            >
-                                <ChevronRight size={14} color="#0A0A0A" />
-                            </button>
-                        </div>
-                    )}
-                </div>
+                <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: '#666666', marginTop: 8 }}>
+                    Planes con fecha y hora fija — para que no se te pasen.
+                </p>
             </div>
 
             {/* ── Layout de eventos ── */}

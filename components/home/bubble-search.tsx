@@ -5,8 +5,10 @@ import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
 import { EventCardLink } from '@/components/cards/event-card-link';
+import { ActivityCard } from '@/components/cards/activity-card';
 import { EventExplorer } from '@/components/home/EventExplorer';
 import { VisitCounter } from '@/components/home/VisitCounter';
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import {
     normalizeHours,
     openStatusForSelection,
@@ -14,7 +16,7 @@ import {
     type OpenStatus,
 } from '@/lib/hours-utils';
 import { eventMatchesWhen } from '@/lib/event-when';
-import type { DbEvent } from '@/lib/types';
+import type { DbEvent, DbActivity } from '@/lib/types';
 
 type Place = {
     id: string;
@@ -32,7 +34,8 @@ type Place = {
 const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 const TAG_MAP: Record<string, string[]> = {
-    Cenar: ['cena-romantica', 'date-night', 'restaurante', 'almuerzo'],
+    Almuerzo: ['almuerzo', 'restaurante'],
+    Cenar: ['cena-romantica', 'date-night', 'restaurante'],
     'Tomar algo': ['bar', 'bar-completo', 'cocteleria-de-autor', 'cerveza-artesanal'],
     'Desayuno o brunch': ['desayuno', 'brunch', 'cafe', 'desayuno-todo-el-dia', 'abierto-temprano'],
     Trabajar: ['para-trabajar', 'laptop-friendly', 'cafe-especialidad', 'reunion-de-negocios'],
@@ -42,9 +45,10 @@ const TAG_MAP: Record<string, string[]> = {
 };
 
 const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
+    { label: '🌅 Brunch', key: 'Desayuno o brunch' },
+    { label: '🍛 Almuerzo', key: 'Almuerzo' },
     { label: '🍽 Cenar', key: 'Cenar' },
     { label: '☕ Tomar algo', key: 'Tomar algo' },
-    { label: '🌅 Brunch', key: 'Desayuno o brunch' },
     { label: '💻 Trabajar', key: 'Trabajar' },
     { label: '🐶 Con mi perro', key: 'Ir con mi perro' },
     { label: '👨‍👩‍👧 Plan familiar', key: 'Plan familiar' },
@@ -76,16 +80,18 @@ type PersistedSearchState = {
     v: number;
     searchQuery: string;
     bubbleStep: 1 | 2 | 3;
-    placeOrEventTab: 'place' | 'event';
-    searchKind: 'place' | 'event' | null;
+    placeOrEventTab: 'place' | 'event' | 'activity';
+    searchKind: 'place' | 'event' | 'activity' | null;
     activity: string | null;
     eventCategory: string | null;
+    activityCategory: string | null;
     isSurprise: boolean;
     zone: string | null;
     when: string | null;
     zoneFallback: boolean;
     bubbleResults: Place[] | null;
     eventBubbleResults: DbEvent[] | null;
+    activityBubbleResults: DbActivity[] | null;
 };
 
 const WHEN: { label: string; value: string }[] = [
@@ -102,14 +108,15 @@ const STEP_TITLE: Record<1 | 2 | 3, string> = {
     3: '¿Cuándo?',
 };
 
-const TABS: { label: string; value: 'place' | 'event' }[] = [
+const TABS: { label: string; value: 'place' | 'event' | 'activity' }[] = [
     { label: '🍽 Salir a comer', value: 'place' },
     { label: '📅 Eventos', value: 'event' },
+    { label: '✨ Actividades', value: 'activity' },
 ];
 
 // Fila de burbujas con scroll horizontal (mobile) + barra de progreso chica debajo,
 // para que el usuario vea cuánto más le queda por deslizar.
-function BubbleScrollRow({ children }: { children: ReactNode }) {
+function BubbleScrollRow({ children, className }: { children: ReactNode; className?: string }) {
     const ref = useRef<HTMLDivElement>(null);
     const [thumb, setThumb] = useState({ width: 100, left: 0 });
 
@@ -135,7 +142,7 @@ function BubbleScrollRow({ children }: { children: ReactNode }) {
 
     return (
         <>
-            <div ref={ref} onScroll={updateThumb} className="bubble-row no-scrollbar">
+            <div ref={ref} onScroll={updateThumb} className={`bubble-row no-scrollbar ${className ?? ''}`}>
                 {children}
             </div>
             <div className="bubble-scroll-track mobile-only">
@@ -145,7 +152,7 @@ function BubbleScrollRow({ children }: { children: ReactNode }) {
     );
 }
 
-export function BubbleSearch() {
+export function BubbleSearch({ heroImage, heroImageAlt }: { heroImage?: string | null; heroImageAlt?: string }) {
     // ── Text search ──
     const [searchQuery, setSearchQuery] = useState('');
     const [allPlaces, setAllPlaces] = useState<Place[]>([]);
@@ -208,14 +215,16 @@ export function BubbleSearch() {
     // ── Bubble flow ──
     const prefetchRef = useRef<Promise<Place[]> | null>(null);
     const [bubbleStep, setBubbleStep] = useState<1 | 2 | 3>(1);
-    const [placeOrEventTab, setPlaceOrEventTab] = useState<'place' | 'event'>('place');
-    const [searchKind, setSearchKind] = useState<'place' | 'event' | null>(null);
+    const [placeOrEventTab, setPlaceOrEventTab] = useState<'place' | 'event' | 'activity'>('place');
+    const [searchKind, setSearchKind] = useState<'place' | 'event' | 'activity' | null>(null);
     const [activity, setActivity] = useState<string | null>(null);
     const [eventCategory, setEventCategory] = useState<string | null>(null);
+    const [activityCategory, setActivityCategory] = useState<string | null>(null);
     const [isSurprise, setIsSurprise] = useState(false);
     const [zone, setZone] = useState<string | null>(null);
     const [bubbleResults, setBubbleResults] = useState<Place[] | null>(null);
     const [eventBubbleResults, setEventBubbleResults] = useState<DbEvent[] | null>(null);
+    const [activityBubbleResults, setActivityBubbleResults] = useState<DbActivity[] | null>(null);
     const [eventExplorerIndex, setEventExplorerIndex] = useState<number | null>(null);
     const [loadingBubble, setLoadingBubble] = useState(false);
     const [zoneFallback, setZoneFallback] = useState(false);
@@ -236,12 +245,14 @@ export function BubbleSearch() {
             setSearchKind(saved.searchKind);
             setActivity(saved.activity);
             setEventCategory(saved.eventCategory);
+            setActivityCategory(saved.activityCategory ?? null);
             setIsSurprise(saved.isSurprise);
             setZone(saved.zone);
             setWhen(saved.when);
             setZoneFallback(saved.zoneFallback);
             setBubbleResults(saved.bubbleResults);
             setEventBubbleResults(saved.eventBubbleResults);
+            setActivityBubbleResults(saved.activityBubbleResults ?? null);
         } catch {
             // sessionStorage no disponible o JSON corrupto — arranca limpio.
         }
@@ -264,18 +275,20 @@ export function BubbleSearch() {
                 searchKind,
                 activity,
                 eventCategory,
+                activityCategory,
                 isSurprise,
                 zone,
                 when,
                 zoneFallback,
                 bubbleResults,
                 eventBubbleResults,
+                activityBubbleResults,
             };
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
         } catch {
             // sessionStorage no disponible — no persiste, no rompe el componente.
         }
-    }, [searchQuery, bubbleStep, placeOrEventTab, searchKind, activity, eventCategory, isSurprise, zone, when, zoneFallback, bubbleResults, eventBubbleResults]);
+    }, [searchQuery, bubbleStep, placeOrEventTab, searchKind, activity, eventCategory, activityCategory, isSurprise, zone, when, zoneFallback, bubbleResults, eventBubbleResults, activityBubbleResults]);
 
     function handleFocus() {
         setInputFocused(true);
@@ -310,9 +323,20 @@ export function BubbleSearch() {
         setBubbleStep(2);
     }
 
+    function pickActivityActivity(category: string, special = false) {
+        setSearchKind('activity');
+        setActivityCategory(category);
+        setIsSurprise(special);
+        setBubbleStep(2);
+    }
+
     function pickZone(value: string) {
         setZone(value);
-        setBubbleStep(3);
+        if (searchKind === 'activity') {
+            void pickZoneForActivities(value);
+        } else {
+            setBubbleStep(3);
+        }
     }
 
     async function pickWhenForPlaces(selectedWhen: string) {
@@ -403,6 +427,34 @@ export function BubbleSearch() {
         }
     }
 
+    async function pickZoneForActivities(selectedZone: string) {
+        setLoadingBubble(true);
+        setZoneFallback(false);
+        const hasZone = selectedZone !== 'all';
+
+        async function fetchActivities(withZone: boolean): Promise<DbActivity[]> {
+            const params = new URLSearchParams();
+            if (isSurprise) params.set('all', 'true');
+            else params.set('category', activityCategory ?? '');
+            if (withZone && hasZone) params.set('zone', selectedZone);
+            const res = await fetch(`/api/activities/bubble?${params}`);
+            return res.json();
+        }
+
+        try {
+            let data = await fetchActivities(true);
+            if (data.length === 0 && hasZone) {
+                data = await fetchActivities(false);
+                setZoneFallback(true);
+            }
+            setActivityBubbleResults(data);
+        } catch {
+            setActivityBubbleResults([]);
+        } finally {
+            setLoadingBubble(false);
+        }
+    }
+
     async function pickWhen(selectedWhen: string) {
         setWhen(selectedWhen);
         setLoadingBubble(true);
@@ -419,10 +471,11 @@ export function BubbleSearch() {
 
     function bubbleBack() {
         if (bubbleStep === 2) {
-            setPlaceOrEventTab(searchKind === 'event' ? 'event' : 'place');
+            setPlaceOrEventTab(searchKind === 'event' ? 'event' : searchKind === 'activity' ? 'activity' : 'place');
             setBubbleStep(1);
             setActivity(null);
             setEventCategory(null);
+            setActivityCategory(null);
             setIsSurprise(false);
             setSearchKind(null);
         }
@@ -432,10 +485,12 @@ export function BubbleSearch() {
     function resetBubble() {
         setBubbleResults(null);
         setEventBubbleResults(null);
+        setActivityBubbleResults(null);
         setBubbleStep(1);
         setSearchKind(null);
         setActivity(null);
         setEventCategory(null);
+        setActivityCategory(null);
         setIsSurprise(false);
         setZone(null);
         setWhen(null);
@@ -444,108 +499,255 @@ export function BubbleSearch() {
         prefetchRef.current = null;
     }
 
-    const showBubbleFlow = !searchQuery && bubbleResults === null && eventBubbleResults === null && !loadingBubble;
+    const showBubbleFlow = !searchQuery && bubbleResults === null && eventBubbleResults === null && activityBubbleResults === null && !loadingBubble;
 
     return (
         <div>
-            {/* ── Hero: centrado, compacto ── */}
-            <section
-                style={{
-                    padding: '1.1rem 1.5rem 1rem',
-                    textAlign: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '0.65rem',
-                }}
-            >
-                {/* A) Tag superior */}
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                    <span
-                        className="hero-live-dot"
-                        style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: '#E11D2E', display: 'inline-block', flexShrink: 0 }}
-                    />
-                    <span
-                        style={{
-                            fontFamily: 'var(--font-sans)',
-                            fontSize: 'clamp(9px, 2.4vw, 13px)',
-                            fontWeight: 600,
-                            letterSpacing: '0.14em',
-                            color: '#E11D2E',
-                            textTransform: 'uppercase',
-                        }}
-                    >
-                        Todo lo que pasa en Guate, en un solo lugar
-                    </span>
-                </div>
+            {/* ── Hero: split diagonal (home v2) ── */}
+            <section className="mx-auto max-w-[1400px] px-6 pt-3 md:px-10">
+                <div className="grid grid-cols-1 overflow-hidden md:grid-cols-[1.1fr_0.9fr] md:items-stretch">
+                    {/* Columna izquierda */}
+                    <div className="flex flex-col items-center py-6 text-center md:items-start md:py-5 md:pr-10 md:text-left">
+                        {/* A) Tag superior */}
+                        <div style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 16 }}>
+                            <span
+                                style={{
+                                    fontFamily: 'var(--font-sans)',
+                                    fontSize: 'clamp(10px, 2vw, 13px)',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.06em',
+                                    color: '#E11D2E',
+                                    textTransform: 'uppercase',
+                                }}
+                            >
+                                Todo lo que pasa en Guate, en un solo lugar
+                            </span>
+                        </div>
 
-                {/* B) Título */}
-                <h1
-                    className="font-serif"
-                    style={{ fontSize: 'clamp(32px, 8.5vw, 64px)', fontWeight: 700, lineHeight: 1.1, color: '#0A0A0A' }}
-                >
-                    ¿Qué hacemos <em style={{ color: '#E11D2E', fontStyle: 'italic' }}>hoy</em> en Guate?
-                </h1>
-
-                <p
-                    style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: 'clamp(13px, 3.8vw, 20px)',
-                        color: '#666666',
-                        lineHeight: 1.5,
-                    }}
-                >
-                    Encuentra cafés, restaurantes y cosas que hacer.
-                </p>
-
-                <VisitCounter />
-
-                {/* C) Search bar */}
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        border: `0.5px solid ${inputFocused ? '#0A0A0A' : '#D4D4D4'}`,
-                        borderRadius: '100px',
-                        padding: 'clamp(8px, 1.6vw, 11px) clamp(16px, 3vw, 26px)',
-                        backgroundColor: '#FAFAFA',
-                        width: '100%',
-                        maxWidth: '760px',
-                        transition: 'border-color 0.2s ease',
-                    }}
-                >
-                    <Search style={{ width: 'clamp(15px, 3vw, 18px)', height: 'clamp(15px, 3vw, 18px)', color: '#999999', flexShrink: 0 }} />
-                    <input
-                        type="text"
-                        placeholder="Busca cafés, restaurantes, eventos…"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        onFocus={handleFocus}
-                        onBlur={() => setInputFocused(false)}
-                        style={{
-                            flex: 1,
-                            border: 'none',
-                            outline: 'none',
-                            fontSize: 'clamp(13px, 3vw, 16px)',
-                            color: '#0A0A0A',
-                            backgroundColor: 'transparent',
-                        }}
-                    />
-                    {searchQuery && (
-                        <button
-                            onClick={() => setSearchQuery('')}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999999', fontSize: 'clamp(16px, 3vw, 19px)', lineHeight: 1, padding: 0, flexShrink: 0 }}
+                        {/* B) Título */}
+                        <h1
+                            className="font-display"
+                            style={{ fontSize: 'clamp(34px, 5.5vw, 54px)', fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.01em', color: '#111111', margin: '0 0 16px' }}
                         >
-                            ×
-                        </button>
-                    )}
+                            ¿Qué hacemos <span style={{ color: '#E11D2E' }}>hoy</span> en Guate?
+                        </h1>
+
+                        <p
+                            style={{
+                                fontFamily: 'var(--font-sans)',
+                                fontSize: 'clamp(14px, 2vw, 18px)',
+                                color: '#555555',
+                                lineHeight: 1.5,
+                                marginBottom: 18,
+                            }}
+                        >
+                            Encuentra cafés, restaurantes y cosas que hacer.
+                        </p>
+
+                        <div style={{ marginBottom: 22 }}>
+                            <VisitCounter />
+                        </div>
+
+                        {/* C) Search bar */}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                border: '2px solid #111111',
+                                borderRadius: '999px',
+                                padding: 'clamp(10px, 1.6vw, 14px) clamp(16px, 3vw, 22px)',
+                                backgroundColor: '#F4F4F4',
+                                width: '100%',
+                                maxWidth: '560px',
+                                boxShadow: inputFocused ? '0 0 0 3px rgba(17,17,17,0.12)' : 'none',
+                                transition: 'box-shadow 0.2s ease',
+                            }}
+                        >
+                            <Search style={{ width: 'clamp(15px, 3vw, 18px)', height: 'clamp(15px, 3vw, 18px)', color: '#111111', flexShrink: 0 }} />
+                            <input
+                                type="text"
+                                placeholder="Busca cafés, restaurantes, eventos…"
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                onFocus={handleFocus}
+                                onBlur={() => setInputFocused(false)}
+                                style={{
+                                    flex: 1,
+                                    border: 'none',
+                                    outline: 'none',
+                                    fontSize: 'clamp(13px, 3vw, 15px)',
+                                    color: '#0A0A0A',
+                                    backgroundColor: 'transparent',
+                                }}
+                            />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999999', fontSize: 'clamp(16px, 3vw, 19px)', lineHeight: 1, padding: 0, flexShrink: 0 }}
+                                >
+                                    ×
+                                </button>
+                            )}
+                        </div>
+
+                        {/* ── Bubble flow (solo cuando no hay búsqueda de texto) ── */}
+                        {showBubbleFlow && (
+                            <div style={{ width: '100%', maxWidth: '560px', marginTop: '20px' }}>
+                                {/* ── Progress tracker ── */}
+                                <div style={{ marginBottom: '20px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '10px' }}>
+                                        {(['¿Qué?', '¿Dónde?', '¿Cuándo?'] as const).map((label, i) => {
+                                            const stepNum = i + 1;
+                                            const isCompleted = bubbleStep > stepNum;
+                                            const isCurrent = bubbleStep === stepNum;
+                                            return (
+                                                <span
+                                                    key={label}
+                                                    style={{
+                                                        fontSize: 'clamp(11px, 2vw, 14px)',
+                                                        fontWeight: isCurrent || isCompleted ? 700 : 600,
+                                                        color: isCompleted ? '#111111' : isCurrent ? '#666666' : '#AAAAAA',
+                                                        letterSpacing: '0.03em',
+                                                        paddingBottom: isCurrent ? 8 : 0,
+                                                        borderBottom: isCurrent ? '2px solid #E11D2E' : 'none',
+                                                        transition: 'color 0.3s ease',
+                                                    }}
+                                                >
+                                                    {label}
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {bubbleStep > 1 && (
+                                    <button onClick={bubbleBack} className="bubble-back-btn">
+                                        ← Volver
+                                    </button>
+                                )}
+
+                                {/* key fuerza re-animación al cambiar de paso */}
+                                <div key={bubbleStep} className="bubble-step-content">
+                                    {bubbleStep === 1 && (
+                                        <div
+                                            style={{
+                                                display: 'flex', justifyContent: 'center', gap: '24px',
+                                                marginBottom: '16px', borderBottom: '1px solid #EEEEEE',
+                                            }}
+                                        >
+                                            {TABS.map(tab => (
+                                                <button
+                                                    key={tab.value}
+                                                    onClick={() => setPlaceOrEventTab(tab.value)}
+                                                    style={{
+                                                        fontFamily: 'var(--font-sans)', fontSize: 'clamp(13px, 2vw, 14px)', fontWeight: 600,
+                                                        padding: '0 4px 10px', marginBottom: '-1px',
+                                                        background: 'none', cursor: 'pointer',
+                                                        color: placeOrEventTab === tab.value ? '#E11D2E' : '#999999',
+                                                        border: 'none',
+                                                        borderBottom: placeOrEventTab === tab.value ? '2px solid #E11D2E' : '2px solid transparent',
+                                                    }}
+                                                >
+                                                    {tab.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {bubbleStep > 1 && (
+                                        <h2
+                                            className="font-display"
+                                            style={{ fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', fontWeight: 800, color: '#111111', marginBottom: '16px' }}
+                                        >
+                                            {STEP_TITLE[bubbleStep]}
+                                        </h2>
+                                    )}
+
+                                    <div key={nudgeKey} className={nudgeKey > 0 ? 'bubble-nudge' : ''}>
+                                        {bubbleStep === 1 && (
+                                            <BubbleScrollRow className="bubble-row-hero">
+                                                {(placeOrEventTab === 'place' ? ACTIVITIES : EVENT_ACTIVITIES).map(({ label, key, special }) => (
+                                                    <button
+                                                        key={key}
+                                                        onClick={() => {
+                                                            if (placeOrEventTab === 'place') pickPlaceActivity(key, special);
+                                                            else if (placeOrEventTab === 'event') pickEventActivity(key, special);
+                                                            else pickActivityActivity(key, special);
+                                                        }}
+                                                        className="bubble-btn"
+                                                        style={special ? {
+                                                            backgroundColor: '#E11D2E',
+                                                            color: '#ffffff',
+                                                            borderColor: '#E11D2E',
+                                                        } : undefined}
+                                                    >
+                                                        {special && placeOrEventTab === 'activity' ? '🎟 Cualquier actividad' : label}
+                                                    </button>
+                                                ))}
+                                            </BubbleScrollRow>
+                                        )}
+
+                                        {bubbleStep === 2 && (
+                                            <BubbleScrollRow className="bubble-row-hero">
+                                                {zones.map(({ label, value }) => (
+                                                    <button key={value} onClick={() => pickZone(value)} className="bubble-btn">
+                                                        {label}
+                                                    </button>
+                                                ))}
+                                            </BubbleScrollRow>
+                                        )}
+
+                                        {bubbleStep === 3 && (
+                                            <BubbleScrollRow className="bubble-row-hero">
+                                                {WHEN.map(({ label, value }) => (
+                                                    <button key={value} onClick={() => pickWhen(value)} className="bubble-btn">
+                                                        {label}
+                                                    </button>
+                                                ))}
+                                            </BubbleScrollRow>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Columna derecha: imagen diagonal (desktop) */}
+                    <div
+                        className="relative hidden md:block"
+                        style={{ clipPath: 'polygon(12% 0, 100% 0, 100% 100%, 0 100%)', background: '#E11D2E', height: 420, overflow: 'hidden' }}
+                    >
+                        {heroImage && (
+                            <div style={{ position: 'absolute', inset: 0 }}>
+                                <ImageWithSkeleton
+                                    src={heroImage}
+                                    alt={heroImageAlt ?? ''}
+                                    fill
+                                    sizes="45vw"
+                                    className="object-cover"
+                                    style={{ opacity: 0.92 }}
+                                />
+                            </div>
+                        )}
+                        <div
+                            style={{
+                                position: 'absolute', top: 24, right: 24,
+                                background: '#C8E64E', color: '#111111',
+                                fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 14,
+                                padding: '10px 16px', borderRadius: 10,
+                                transform: 'rotate(6deg)', boxShadow: '0 8px 18px rgba(0,0,0,0.25)',
+                            }}
+                        >
+                            ¡ESTA SEMANA!
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* ── Resultados de texto: lugares + eventos ── */}
             {searchQuery && (
-                <section style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 32px 64px' }}>
+                <section className="mx-auto max-w-[1400px] px-6 pb-16 md:px-10">
                     <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#0A0A0A' }}>
                             <input type="checkbox" checked={showTextPlaces} onChange={e => setShowTextPlaces(e.target.checked)} />
@@ -570,7 +772,7 @@ export function BubbleSearch() {
                                             href={`/lugar/${place.slug}`}
                                             className="block hover:opacity-90 transition-opacity"
                                         >
-                                            <PlaceCard place={place} />
+                                            <PlaceCard place={place} titleFont="display" />
                                         </Link>
                                     ))}
                                 </div>
@@ -593,6 +795,7 @@ export function BubbleSearch() {
                                         <EventCardLink
                                             key={event.id}
                                             event={event}
+                                            titleFont="display"
                                             onOpenExplorer={() => setTextExplorerIndex(i)}
                                         />
                                     ))}
@@ -613,132 +816,6 @@ export function BubbleSearch() {
                     initialIndex={textExplorerIndex}
                     onClose={() => setTextExplorerIndex(null)}
                 />
-            )}
-
-            {/* ── Bubble flow (solo cuando no hay búsqueda de texto) ── */}
-            {showBubbleFlow && (
-                <section style={{ maxWidth: '860px', margin: '0 auto', padding: '18px 24px 20px' }}>
-                    {/* ── Progress tracker ── */}
-                    <div style={{ marginBottom: '28px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                            {(['¿Qué?', '¿Dónde?', '¿Cuándo?'] as const).map((label, i) => {
-                                const stepNum = i + 1;
-                                const isCompleted = bubbleStep > stepNum;
-                                const isCurrent = bubbleStep === stepNum;
-                                return (
-                                    <span
-                                        key={label}
-                                        style={{
-                                            fontSize: 'clamp(11px, 2.8vw, 14px)',
-                                            fontWeight: isCurrent ? 700 : 400,
-                                            color: isCompleted ? '#0A0A0A' : isCurrent ? '#E11D2E' : '#CCCCCC',
-                                            letterSpacing: '0.03em',
-                                            transition: 'color 0.3s ease',
-                                        }}
-                                    >
-                                        {label}
-                                    </span>
-                                );
-                            })}
-                        </div>
-                        <div style={{ height: '2px', background: '#E5E5E5', borderRadius: '999px', overflow: 'hidden' }}>
-                            <div
-                                style={{
-                                    height: '100%',
-                                    width: `${(bubbleStep / 3) * 100}%`,
-                                    background: '#E11D2E',
-                                    borderRadius: '999px',
-                                    transition: 'width 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    {bubbleStep > 1 && (
-                        <button onClick={bubbleBack} className="bubble-back-btn">
-                            ← Volver
-                        </button>
-                    )}
-
-                    {/* key fuerza re-animación al cambiar de paso */}
-                    <div key={bubbleStep} className="bubble-step-content">
-                        {bubbleStep === 1 && (
-                            <div
-                                style={{
-                                    display: 'flex', justifyContent: 'center', gap: '24px',
-                                    marginBottom: '20px', borderBottom: '1px solid #E5E5E5',
-                                }}
-                            >
-                                {TABS.map(tab => (
-                                    <button
-                                        key={tab.value}
-                                        onClick={() => setPlaceOrEventTab(tab.value)}
-                                        style={{
-                                            fontFamily: 'var(--font-sans)', fontSize: 'clamp(13px, 3.4vw, 17px)', fontWeight: 600,
-                                            padding: '0 4px 10px', marginBottom: '-1px',
-                                            background: 'none', cursor: 'pointer',
-                                            color: placeOrEventTab === tab.value ? '#E11D2E' : '#999999',
-                                            border: 'none',
-                                            borderBottom: placeOrEventTab === tab.value ? '2px solid #E11D2E' : '2px solid transparent',
-                                        }}
-                                    >
-                                        {tab.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {bubbleStep > 1 && (
-                            <h2
-                                className="font-serif"
-                                style={{ fontSize: 'clamp(1.1rem, 4.5vw, 1.6rem)', fontWeight: 700, color: '#0A0A0A', marginBottom: '20px', textAlign: 'center' }}
-                            >
-                                {STEP_TITLE[bubbleStep]}
-                            </h2>
-                        )}
-
-                        <div key={nudgeKey} className={nudgeKey > 0 ? 'bubble-nudge' : ''}>
-                            {bubbleStep === 1 && (
-                                <BubbleScrollRow>
-                                    {(placeOrEventTab === 'place' ? ACTIVITIES : EVENT_ACTIVITIES).map(({ label, key, special }) => (
-                                        <button
-                                            key={key}
-                                            onClick={() => placeOrEventTab === 'place' ? pickPlaceActivity(key, special) : pickEventActivity(key, special)}
-                                            className="bubble-btn"
-                                            style={special ? {
-                                                backgroundColor: '#E11D2E',
-                                                color: '#ffffff',
-                                                borderColor: '#E11D2E',
-                                            } : undefined}
-                                        >
-                                            {label}
-                                        </button>
-                                    ))}
-                                </BubbleScrollRow>
-                            )}
-
-                            {bubbleStep === 2 && (
-                                <BubbleScrollRow>
-                                    {zones.map(({ label, value }) => (
-                                        <button key={value} onClick={() => pickZone(value)} className="bubble-btn">
-                                            {label}
-                                        </button>
-                                    ))}
-                                </BubbleScrollRow>
-                            )}
-
-                            {bubbleStep === 3 && (
-                                <BubbleScrollRow>
-                                    {WHEN.map(({ label, value }) => (
-                                        <button key={value} onClick={() => pickWhen(value)} className="bubble-btn">
-                                            {label}
-                                        </button>
-                                    ))}
-                                </BubbleScrollRow>
-                            )}
-                        </div>
-                    </div>
-                </section>
             )}
 
             {/* ── Loading bubble ── */}
@@ -774,7 +851,7 @@ export function BubbleSearch() {
                             <path d="M7 32 Q7 36 12 36 Q17 36 17 32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </div>
-                    <p className="font-serif" style={{ fontSize: '1.1rem', color: '#0A0A0A', marginBottom: '14px' }}>
+                    <p className="font-display font-bold" style={{ fontSize: '1.1rem', color: '#0A0A0A', marginBottom: '14px' }}>
                         Buscando tus planes...
                     </p>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '6px' }}>
@@ -787,10 +864,10 @@ export function BubbleSearch() {
 
             {/* ── Resultados bubble: lugares ── */}
             {!searchQuery && searchKind === 'place' && bubbleResults !== null && !loadingBubble && (
-                <section style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 32px 64px' }}>
+                <section className="mx-auto max-w-[1400px] px-6 pb-16 md:px-10">
                     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
                         <div>
-                            <p className="font-serif" style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0A0A0A', marginBottom: '4px' }}>
+                            <p className="font-display" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0A0A0A', marginBottom: '4px' }}>
                                 {isSurprise ? 'Lugares que te van a sorprender' : `Planes para "${activity}"`}
                                 {!zoneFallback && zone && zone !== 'all' ? ` · ${zone}` : ''}
                             </p>
@@ -820,7 +897,7 @@ export function BubbleSearch() {
                                         href={`/lugar/${place.slug}`}
                                         className="block hover:opacity-90 transition-opacity"
                                     >
-                                        <PlaceCard place={place} openNow={openNow} />
+                                        <PlaceCard place={place} openNow={openNow} titleFont="display" />
                                     </Link>
                                 );
                             })}
@@ -840,10 +917,10 @@ export function BubbleSearch() {
 
             {/* ── Resultados bubble: eventos ── */}
             {!searchQuery && searchKind === 'event' && eventBubbleResults !== null && !loadingBubble && (
-                <section style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 32px 64px' }}>
+                <section className="mx-auto max-w-[1400px] px-6 pb-16 md:px-10">
                     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
                         <div>
-                            <p className="font-serif" style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0A0A0A', marginBottom: '4px' }}>
+                            <p className="font-display" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0A0A0A', marginBottom: '4px' }}>
                                 {isSurprise ? 'Eventos para todos los gustos' : `Eventos de "${eventCategory}"`}
                                 {!zoneFallback && zone && zone !== 'all' ? ` · ${zone}` : ''}
                             </p>
@@ -867,6 +944,7 @@ export function BubbleSearch() {
                                 <EventCardLink
                                     key={event.id}
                                     event={event}
+                                    titleFont="display"
                                     onOpenExplorer={() => setEventExplorerIndex(i)}
                                 />
                             ))}
@@ -890,6 +968,54 @@ export function BubbleSearch() {
                     initialIndex={eventExplorerIndex}
                     onClose={() => setEventExplorerIndex(null)}
                 />
+            )}
+
+            {/* ── Resultados bubble: actividades ── */}
+            {!searchQuery && searchKind === 'activity' && activityBubbleResults !== null && !loadingBubble && (
+                <section className="mx-auto max-w-[1400px] px-6 pb-16 md:px-10">
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+                        <div>
+                            <p className="font-display" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0A0A0A', marginBottom: '4px' }}>
+                                {isSurprise ? 'Actividades para todos los gustos' : `Actividades de "${activityCategory}"`}
+                                {!zoneFallback && zone && zone !== 'all' ? ` · ${zone}` : ''}
+                            </p>
+                            <p style={{ fontSize: '13px', color: '#666666' }}>
+                                {activityBubbleResults.length} actividad{activityBubbleResults.length !== 1 ? 'es' : ''} encontrada{activityBubbleResults.length !== 1 ? 's' : ''}
+                                {zoneFallback && zone && zone !== 'all' && (
+                                    <span style={{ color: '#E11D2E', marginLeft: '6px' }}>
+                                        · Sin resultados en {zone}, mostrando de toda Guatemala
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                        <button onClick={resetBubble} className="bubble-reset-btn">
+                            Nueva búsqueda
+                        </button>
+                    </div>
+
+                    {activityBubbleResults.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {activityBubbleResults.map(a => (
+                                <Link
+                                    key={a.id}
+                                    href={`/actividad/${a.slug}`}
+                                    className="block hover:opacity-90 transition-opacity"
+                                >
+                                    <ActivityCard activity={a} titleFont="display" />
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                            <p style={{ color: '#666666', fontSize: '14px', marginBottom: '16px' }}>
+                                No encontramos actividades que coincidan. Probá con otra selección.
+                            </p>
+                            <button onClick={resetBubble} className="bubble-reset-btn">
+                                Intentar de nuevo
+                            </button>
+                        </div>
+                    )}
+                </section>
             )}
         </div>
     );

@@ -7,6 +7,7 @@ import { X, ChevronUp, ChevronDown, ExternalLink, Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 import { formatDateLong } from '@/lib/format-event-date';
+import { priceDisplay } from '@/lib/event-display';
 
 const NAV_BTN: React.CSSProperties = {
   display: 'flex',
@@ -96,6 +97,7 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
         {events.map((event, i) => {
           const colors = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
           const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
+          const price = priceDisplay(event);
 
           return (
             <div key={event.id} style={{ height: '100vh', position: 'relative', flexShrink: 0, backgroundColor: '#111' }}>
@@ -144,13 +146,13 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
 
                 {/* Price */}
                 <div style={{ marginBottom: 10 }}>
-                  {event.is_free ? (
+                  {price.kind === 'free' ? (
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 700, color: '#6EC44A' }}>
                       Gratis
                     </span>
-                  ) : event.price !== null ? (
+                  ) : price.kind === 'priced' ? (
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: 22, fontWeight: 700, color: '#fff' }}>
-                      Q{event.price}
+                      {price.label}
                     </span>
                   ) : null}
                 </div>

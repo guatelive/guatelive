@@ -24,14 +24,20 @@ export function PromoDetailModal({
     description,
     validUntilLabel,
     onClose,
+    variant = 'default',
 }: {
     promo: DbBankPromotion;
     places: PromoPlaceLink[];
     description: string;
     validUntilLabel: string | null;
     onClose: () => void;
+    // 'v2': lo usa el home (Bricolage Grotesque + badge de descuento lima, ver
+    // design_handoff_home_v2/README.md). /promos y /lugar/[slug] se quedan en
+    // 'default' — este modal es compartido, no exclusivo del home.
+    variant?: 'default' | 'v2';
 }) {
     const brand = getBankBrand(promo.bank);
+    const isV2 = variant === 'v2';
 
     useEffect(() => {
         function onKeyDown(e: KeyboardEvent) {
@@ -52,7 +58,7 @@ export function PromoDetailModal({
                         // eslint-disable-next-line @next/next/no-img-element -- dominio del CDN de BAC no está en next.config images.remotePatterns
                         <img src={promo.image_url} alt={promo.merchant_name} className="h-full w-full object-cover" />
                     ) : (
-                        <div className="flex h-full w-full items-center justify-center px-4 text-center font-serif text-lg text-white/60">
+                        <div className={`flex h-full w-full items-center justify-center px-4 text-center text-lg text-white/60 ${isV2 ? 'font-display font-bold' : 'font-serif'}`}>
                             {promo.merchant_name}
                         </div>
                     )}
@@ -71,17 +77,17 @@ export function PromoDetailModal({
                     </div>
                     {promo.discount_pct !== null && (
                         <div
-                            className="absolute bottom-3 left-3 max-w-[80%] rounded-xl px-3 py-1.5 text-white"
-                            style={{ backgroundColor: brand.accent }}
+                            className={`absolute bottom-3 left-3 max-w-[80%] rounded-xl px-3 py-1.5 ${isV2 ? 'text-[#111111]' : 'text-white'}`}
+                            style={{ backgroundColor: isV2 ? '#C8E64E' : brand.accent }}
                         >
-                            <span className="font-serif text-2xl font-semibold leading-none">{promo.discount_pct}%</span>
+                            <span className={`text-2xl font-semibold leading-none ${isV2 ? 'font-display font-extrabold' : 'font-serif'}`}>{promo.discount_pct}%</span>
                             <span className="ml-1 text-xs font-medium">OFF</span>
                         </div>
                     )}
                 </div>
 
                 <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-5">
-                    <h2 className="font-serif text-xl leading-snug text-white">{promo.merchant_name}</h2>
+                    <h2 className={`text-xl leading-snug text-white ${isV2 ? 'font-display font-extrabold' : 'font-serif'}`}>{promo.merchant_name}</h2>
                     <p className="text-sm text-white/70">{description}</p>
 
                     {promo.terms && (

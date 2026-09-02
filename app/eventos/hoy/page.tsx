@@ -20,7 +20,7 @@ export default async function EventosHoyPage() {
         .from('events')
         .select(`
             id, title, slug, description, category, zone, venue_name,
-            place_id, date_start, date_end, price, is_free, image_url, contact_link,
+            place_id, date_start, date_end, price, is_free, price_tiers, image_url, contact_link,
             sponsored, featured, tags, status
         `)
         .eq('status', 'published')
@@ -38,7 +38,8 @@ export default async function EventosHoyPage() {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
         itemListElement: events.map((event, i) => {
-            const priceUnknown = !event.is_free && event.price === null;
+            const hasPriceTiers = event.price_tiers.length > 0;
+            const priceUnknown = !event.is_free && event.price === null && !hasPriceTiers;
             return {
                 '@type': 'ListItem',
                 position: i + 1,
@@ -56,13 +57,23 @@ export default async function EventosHoyPage() {
                     ...(event.image_url ? { image: event.image_url } : {}),
                     ...(event.description ? { description: event.description } : {}),
                     // Si no sabemos el precio, no inventamos un 0 — se omite offers.
+                    // Con precios múltiples, un Offer por tier es más correcto que
+                    // inventar un único precio "desde".
                     ...(priceUnknown ? {} : {
-                        offers: {
-                            '@type': 'Offer',
-                            price: event.is_free ? 0 : event.price,
-                            priceCurrency: 'GTQ',
-                            ...(event.contact_link ? { url: event.contact_link } : {}),
-                        },
+                        offers: hasPriceTiers
+                            ? event.price_tiers.map(tier => ({
+                                '@type': 'Offer',
+                                name: tier.label,
+                                price: tier.price,
+                                priceCurrency: 'GTQ',
+                                ...(event.contact_link ? { url: event.contact_link } : {}),
+                            }))
+                            : {
+                                '@type': 'Offer',
+                                price: event.is_free ? 0 : event.price,
+                                priceCurrency: 'GTQ',
+                                ...(event.contact_link ? { url: event.contact_link } : {}),
+                            },
                     }),
                 },
             };

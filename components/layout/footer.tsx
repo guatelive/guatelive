@@ -5,25 +5,27 @@ export async function Footer() {
   const zones = await getPublishedPlaceZones();
 
   return (
-    <footer className="mt-24 hidden border-t border-border bg-background pb-10 pt-16 md:block">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-10 md:grid-cols-2">
+    <footer className="mt-24 hidden border-t border-[#EEEEEE] bg-background pb-10 pt-16 md:block">
+      <div className="mx-auto max-w-[1400px] px-10">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
-            <div className="font-serif text-2xl text-primary">GuateLive</div>
-            <p className="mt-3 text-sm text-muted-foreground">
+            <div className="font-display text-[22px] font-extrabold text-[#111111]">
+              Guate<span className="text-[#E11D2E]">Live</span>
+            </div>
+            <p className="mt-2.5 text-sm text-[#777777]">
               Todo lo que pasa en Guate, en un solo lugar.
             </p>
           </div>
           <div>
-            <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <div className="mb-3.5 text-xs font-bold uppercase tracking-[0.08em] text-[#999999]">
               Zonas
             </div>
-            <ul className="space-y-2 text-sm">
+            <ul className="flex flex-col gap-2.5 text-sm">
               {zones.slice(0, 6).map((z) => (
                 <li key={z.slug}>
                   <Link
                     href={`/zona/${z.slug}/restaurantes`}
-                    className="text-foreground/80 hover:text-primary"
+                    className="text-[#333333] hover:text-[#E11D2E]"
                   >
                     Lugares en {z.zone}
                   </Link>

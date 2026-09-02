@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { DbBankPromotion } from '@/lib/types';
 import type { PromoPlaceLink } from '@/lib/promo-place-match';
-import { PromoCard } from '@/components/cards/promo-card';
+import { PromoDetailModal } from '@/components/cards/promo-detail-modal';
+import { promoDescription } from '@/lib/promo-title';
+import { getBankBrand } from '@/lib/bank-brand';
 import { interleaveByBank } from '@/lib/promo-order';
 
 const DURATION = 4000;
@@ -17,6 +19,92 @@ const arrowButtonStyle: CSSProperties = {
     width: 26, height: 26, borderRadius: '50%',
     border: '1.5px solid #D4D4D4', background: '#fff', cursor: 'pointer',
 };
+
+// Coupon card (home v2): línea de perforación + badge de descuento rotado —
+// ver design_handoff_home_v2/README.md sección 6. Vive acá (no en
+// components/cards/promo-card.tsx) porque ese componente lo sigue usando
+// /promos con su propio lenguaje visual, fuera del alcance de este rediseño.
+function CouponCard({ promo }: { promo: PromoWithPlaces }) {
+    const [detailOpen, setDetailOpen] = useState(false);
+    const brand = getBankBrand(promo.bank);
+    const description = promoDescription(promo.title);
+    const validUntilLabel = promo.valid_until
+        ? new Date(promo.valid_until).toLocaleDateString('es-GT', { day: 'numeric', month: 'short' })
+        : null;
+
+    return (
+        <>
+            <button
+                onClick={() => setDetailOpen(true)}
+                style={{
+                    display: 'flex', flexDirection: 'column', width: '100%', height: 380,
+                    background: '#fff', borderRadius: 12, overflow: 'hidden', cursor: 'pointer',
+                    boxShadow: '0 6px 16px rgba(0,0,0,0.12)', textAlign: 'left', border: 'none', padding: 0,
+                }}
+            >
+                {/* Altura del 62% (en vez de 56%) — muchas de las imágenes que mandan los
+                    bancos (sobre todo Promerica) son gráficos cuadrados, no fotos panorámicas;
+                    un marco menos alargado recorta menos el gráfico. */}
+                <div style={{ position: 'relative', height: '62%', flexShrink: 0, background: '#F4F4F4' }}>
+                    {promo.image_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- dominio del CDN del banco no está en next.config images.remotePatterns, mismo criterio que components/cards/promo-card.tsx
+                        <img
+                            src={promo.image_url}
+                            alt={promo.merchant_name}
+                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    ) : (
+                        <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, color: '#999', padding: '0 16px', textAlign: 'center' }}>
+                            {promo.merchant_name}
+                        </div>
+                    )}
+                    <div style={{ position: 'absolute', top: 10, right: 10, background: '#fff', color: brand.accent, fontSize: 10, fontWeight: 700, padding: '4px 8px', borderRadius: 4 }}>
+                        {brand.label}
+                    </div>
+                </div>
+
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                    <div style={{ flex: 1, borderTop: '2px dashed #333' }} />
+                    <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#fff', margin: '0 -8px' }} />
+                    <div style={{
+                        background: '#C8E64E', color: '#111', fontFamily: 'var(--font-display)', fontWeight: 800,
+                        fontSize: promo.discount_pct !== null ? 18 : 12, padding: '8px 14px', borderRadius: 8,
+                        transform: 'rotate(-4deg)', margin: '0 10px', boxShadow: '0 4px 10px rgba(0,0,0,0.15)', whiteSpace: 'nowrap',
+                    }}>
+                        {promo.discount_pct !== null ? `-${promo.discount_pct}%` : promo.discount_label}
+                    </div>
+                    <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#fff', margin: '0 -8px' }} />
+                    <div style={{ flex: 1, borderTop: '2px dashed #333' }} />
+                </div>
+
+                <div style={{ background: '#141414', color: '#fff', padding: 16, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
+                    <div className="line-clamp-2" style={{ fontWeight: 700, fontSize: 15, lineHeight: 1.25, marginBottom: 6 }}>
+                        {promo.merchant_name}
+                    </div>
+                    <div className="line-clamp-2" style={{ color: '#bbb', fontSize: 12 }}>
+                        {description}
+                    </div>
+                    {validUntilLabel && (
+                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginTop: 6 }}>
+                            Vence {validUntilLabel}
+                        </div>
+                    )}
+                </div>
+            </button>
+
+            {detailOpen && (
+                <PromoDetailModal
+                    promo={promo}
+                    places={promo.places}
+                    description={description}
+                    validUntilLabel={validUntilLabel}
+                    onClose={() => setDetailOpen(false)}
+                    variant="v2"
+                />
+            )}
+        </>
+    );
+}
 
 export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promos: PromoWithPlaces[]; lastUpdatedLabel?: string }) {
     // Reordenado solo para display — evita que el orden real (discount_pct
@@ -105,7 +193,7 @@ export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promo
     if (promos.length === 0) return null;
 
     return (
-        <section className="mx-auto mt-2 max-w-6xl px-4 sm:px-6">
+        <section className="mx-auto mt-2 max-w-[1400px] px-6 md:px-10">
             {/* ── Header ── */}
             <div style={{
                 display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
@@ -159,9 +247,9 @@ export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promo
                 {promos.map(promo => (
                     <div
                         key={promo.id}
-                        style={{ width: '82vw', maxWidth: 300, flexShrink: 0, scrollSnapAlign: 'start' }}
+                        style={{ width: '82vw', maxWidth: 350, flexShrink: 0, scrollSnapAlign: 'start' }}
                     >
-                        <PromoCard promo={promo} places={promo.places} />
+                        <CouponCard promo={promo} />
                     </div>
                 ))}
             </div>
