@@ -1,11 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
+import { GalleryCarousel } from '@/components/gallery-carousel';
 import { MapPin, ExternalLink, Star } from 'lucide-react';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { buildBreadcrumbSchema } from '@/lib/schema-builders';
+import { Breadcrumb } from '@/components/breadcrumb';
 import { ShareButton } from '@/components/evento/share-button';
 import { SITE_URL } from '@/lib/site-config';
 import { priceDisplay } from '@/lib/event-display';
@@ -35,7 +36,7 @@ export async function generateMetadata(props: { params: Params }) {
     const supabase = createSb();
     const { data: activity } = await supabase
         .from('activities')
-        .select('title, description, category, zone, image_url')
+        .select('title, description, category, zone, image_url, photo_urls')
         .eq('slug', slug)
         .eq('status', 'published')
         .single();
@@ -43,6 +44,9 @@ export async function generateMetadata(props: { params: Params }) {
     if (!activity) return { title: 'Actividad no encontrada' };
 
     const description = activity.description ?? `${activity.category} en ${activity.zone} — GuateLive`;
+    const ogImages = [activity.image_url, ...(activity.photo_urls ?? [])]
+        .filter((url): url is string => !!url)
+        .map(url => ({ url }));
 
     return {
         title: `${activity.title} — GuateLive`,
@@ -51,7 +55,7 @@ export async function generateMetadata(props: { params: Params }) {
         openGraph: {
             title: activity.title,
             description,
-            images: activity.image_url ? [{ url: activity.image_url }] : [],
+            images: ogImages,
             type: 'website',
         },
     };
@@ -76,44 +80,38 @@ export default async function ActividadPage(props: { params: Params }) {
     const price = priceDisplay(activity);
     const url = `${SITE_URL}/actividad/${activity.slug}`;
 
+    const seenPhotoUrls = new Set<string>();
+    const galleryPhotos = [activity.image_url, ...(activity.photo_urls ?? [])]
+        .filter((u): u is string => !!u && !seenPhotoUrls.has(u) && !!seenPhotoUrls.add(u))
+        .map(photoUrl => ({ url: photoUrl }));
+
     // Sin `@type: Event` acá — una actividad evergreen no tiene startDate real, y
     // schema.org lo exige para Event. BreadcrumbList no fabrica nada. Ver ADR-023.
-    const breadcrumbSchema = buildBreadcrumbSchema([
+    const breadcrumbItems = [
         { name: 'Inicio', url: SITE_URL },
         { name: 'Actividades', url: `${SITE_URL}/actividades` },
         { name: activity.title, url },
-    ]);
+    ];
+    const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
 
     return (
         <div className="min-h-screen bg-white">
             <SchemaMarkup schema={breadcrumbSchema} />
             <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-                <div className="mb-6 flex items-center gap-4">
-                    <Link
-                        href="/actividades"
-                        className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] transition-colors"
-                    >
-                        ← Seguir explorando
-                    </Link>
-                </div>
+                <Breadcrumb items={breadcrumbItems} className="mb-6" />
 
-                {/* Imagen hero — una sola imagen, no la galería multi-foto de lugares */}
-                <div className="relative mb-6 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80">
-                    {activity.image_url ? (
-                        <ImageWithSkeleton
-                            src={activity.image_url}
-                            alt={activity.title}
-                            fill
-                            priority
-                            sizes="(max-width: 768px) 100vw, 768px"
-                            className="object-cover"
-                        />
-                    ) : (
+                {/* Galería — carrusel con crossfade/swipe en mobile, collage en desktop,
+                    igual que /lugar/[slug] (GalleryCarousel). Sin foto: placeholder de
+                    ícono de categoría, igual que antes. */}
+                {galleryPhotos.length > 0 ? (
+                    <GalleryCarousel photos={galleryPhotos} altLabel="actividad" />
+                ) : (
+                    <div className="relative mb-6 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80">
                         <div className="flex h-full items-center justify-center">
                             <PlaceholderIcon className="h-16 w-16" style={{ color: 'rgba(255,255,255,0.15)' }} />
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
 
                 {/* Badges */}
                 <div className="mb-3 flex flex-wrap items-center gap-2">

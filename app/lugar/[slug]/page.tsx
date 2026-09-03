@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { MapPin } from 'lucide-react';
-import GalleryClient from './GalleryClient';
+import { GalleryCarousel } from '@/components/gallery-carousel';
+import { Breadcrumb } from '@/components/breadcrumb';
 import { TagsBadges } from './TagsBadges';
 import { HorariosAccordion } from './HorariosAccordion';
 import { ContactSidebar } from './ContactSidebar';
@@ -253,10 +253,11 @@ export default async function LugarPage(props: { params: Params }) {
 
     const tags = (place.tags ?? []) as string[];
     const schema = buildPlaceSchema(place, galleryPhotos[0]?.url ?? null);
-    const breadcrumbSchema = buildBreadcrumbSchema([
+    const breadcrumbItems = [
         { name: 'Inicio', url: SITE_URL },
         { name: place.name, url: `${SITE_URL}/lugar/${slug}` },
-    ]);
+    ];
+    const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
     const offerSchema = activePromo
         ? buildOfferSchema(activePromo, { name: place.name, slug: place.slug, primary_category: place.primary_category })
         : null;
@@ -266,15 +267,10 @@ export default async function LugarPage(props: { params: Params }) {
             <SchemaMarkup schema={[schema, breadcrumbSchema, ...(offerSchema ? [offerSchema] : [])]} />
             <div className="mx-auto px-8 py-8" style={{ maxWidth: '1150px' }}>
 
-                <Link
-                    href="/"
-                    className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] mb-8 transition-colors"
-                >
-                    ← Seguir explorando
-                </Link>
+                <Breadcrumb items={breadcrumbItems} className="mb-8" />
 
                 {/* GALERÍA — full width, collage */}
-                <GalleryClient photos={galleryPhotos} />
+                <GalleryCarousel photos={galleryPhotos} altLabel="lugar" />
 
                 {/* IDENTIDAD — full width */}
                 {place.primary_category && (

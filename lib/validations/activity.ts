@@ -15,6 +15,7 @@ export const activitySchema = z.object({
     is_free: z.boolean(),
     price_tiers: priceTiersSchema.default([]),
     image_url: z.string().url().optional(),
+    photo_urls: z.array(z.string().url()).default([]),
     contact_link: z.string().url().optional(),
     sponsored: z.boolean(),
     featured: z.boolean(),

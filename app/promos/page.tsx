@@ -1,6 +1,7 @@
 import { SiteLayout } from '@/components/layout/site-layout';
 import { PromoCard } from '@/components/cards/promo-card';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
+import { Breadcrumb } from '@/components/breadcrumb';
 import { buildBreadcrumbSchema, buildOfferSchema } from '@/lib/schema-builders';
 import { createBuildTimeClient } from '@/lib/supabase/server';
 import { SITE_URL } from '@/lib/site-config';
@@ -34,10 +35,11 @@ export default async function PromosPage() {
     const updatedLabel = formatUpdatedLabel(promos);
     const promoPlaces = resolvePromoPlaces(promos, placesData ?? []);
 
-    const breadcrumbSchema = buildBreadcrumbSchema([
+    const breadcrumbItems = [
         { name: 'Inicio', url: SITE_URL },
         { name: 'Promos bancarias', url: `${SITE_URL}/promos` },
-    ]);
+    ];
+    const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
 
     const itemListSchema = promos.length > 0 ? {
         '@context': 'https://schema.org',
@@ -53,6 +55,7 @@ export default async function PromosPage() {
         <SiteLayout>
             <SchemaMarkup schema={[breadcrumbSchema, ...(itemListSchema ? [itemListSchema] : [])]} />
             <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+                <Breadcrumb items={breadcrumbItems} className="mb-6" />
                 <div className="mb-10">
                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#E11D2E]">
                         Descuentos

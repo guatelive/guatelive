@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { TagPicker } from './tag-picker';
 import { PriceTiersInput } from './price-tiers-input';
+import { ActivityGalleryEditor } from './activity-gallery-editor';
 import { ImageCropper } from './image-cropper';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { EVENT_TAG_GROUPS } from '@/lib/event-tags';
@@ -240,6 +241,15 @@ export function ActivityForm({ mode, activity, initialPlaceName, action }: Props
                     className="hidden"
                 />
                 <input type="hidden" name="remove_image" value={imageRemoved ? '1' : ''} />
+            </div>
+
+            <div>
+                <label className="mb-1 block text-sm text-[#666666]">Galería (opcional)</label>
+                <p className="mb-2 text-xs text-[#999999]">
+                    Fotos adicionales para el carrusel de la página de detalle — no reemplazan
+                    la imagen de portada de arriba, se suman a ella.
+                </p>
+                <ActivityGalleryEditor defaultValue={activity?.photo_urls ?? []} />
             </div>
 
             <div>

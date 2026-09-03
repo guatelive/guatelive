@@ -4,6 +4,7 @@ import { PlaceCard } from '@/components/cards/place-card';
 import { createBuildTimeClient } from '@/lib/supabase/server';
 import { getPublishedPlaceZones } from '@/lib/zones';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
+import { Breadcrumb } from '@/components/breadcrumb';
 import { buildBreadcrumbSchema, buildFAQSchema, buildPlaceListSchema } from '@/lib/schema-builders';
 import { SITE_URL } from '@/lib/site-config';
 
@@ -85,16 +86,18 @@ export default async function ZonaRestaurantesPage(props: { params: Params }) {
         });
     }
 
-    const breadcrumbSchema = buildBreadcrumbSchema([
+    const breadcrumbItems = [
         { name: 'Inicio', url: SITE_URL },
         { name: zoneInfo.zone, url: `${SITE_URL}/zona/${zoneInfo.slug}/restaurantes` },
-    ]);
+    ];
+    const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
     const faqSchema = buildFAQSchema(faqs);
     const placeListSchema = buildPlaceListSchema(places);
 
     return (
         <div className="container mx-auto px-4 py-12">
             <SchemaMarkup schema={[breadcrumbSchema, ...(faqSchema ? [faqSchema] : []), ...(placeListSchema ? [placeListSchema] : [])]} />
+            <Breadcrumb items={breadcrumbItems} className="mb-6" />
             <h1 className="text-4xl font-bold mb-2">
                 Restaurantes, cafés y bares en {zoneInfo.zone}
             </h1>
