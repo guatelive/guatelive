@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { SiteLayout } from '@/components/layout/site-layout';
 import { AdaptivePhotoCard } from '@/components/editorial/adaptive-photo-card';
 import { SITE_URL } from '@/lib/site-config';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
+import { Breadcrumb } from '@/components/breadcrumb';
 import { buildBreadcrumbSchema, buildEditionReviewSchema, buildEditionItemListSchema } from '@/lib/schema-builders';
 
 function getSupabase() {
@@ -124,11 +124,12 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
         })
         : null;
 
-    const breadcrumbSchema = buildBreadcrumbSchema([
+    const breadcrumbItems = [
         { name: 'Inicio', url: SITE_URL },
         { name: 'Ediciones', url: `${SITE_URL}/edicion` },
         { name: edition.title, url: `${SITE_URL}/edicion/${slug}` },
-    ]);
+    ];
+    const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
     const reviewSchema = buildEditionReviewSchema(edition, highlighted[0]?.places as any);
     const itemListSchema = buildEditionItemListSchema((editionPlaces || []) as any);
     const editionSchemas = [breadcrumbSchema, reviewSchema, itemListSchema].filter(
@@ -139,13 +140,7 @@ export default async function EditionPage({ params }: { params: Promise<{ slug: 
         <SiteLayout>
             <SchemaMarkup schema={editionSchemas} />
             <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-                <Link
-                    href="/"
-                    className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                    Volver al inicio
-                </Link>
+                <Breadcrumb items={breadcrumbItems} className="mb-8" />
 
                 {/* Header — label + título ancho completo */}
                 <div className="mb-6">

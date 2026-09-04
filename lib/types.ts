@@ -40,6 +40,7 @@ export type DbActivity = {
   is_free: boolean;
   price_tiers: PriceTier[];
   image_url: string | null;
+  photo_urls: string[];
   contact_link: string | null;
   sponsored: boolean;
   featured: boolean;

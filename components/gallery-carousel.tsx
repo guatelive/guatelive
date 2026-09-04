@@ -2,14 +2,20 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-type Photo = { url: string; is_primary: boolean; order_index: number };
+type Photo = { url: string };
 
 const DESKTOP_H = 400;
 const MOBILE_H  = 320;
 const AUTO_MS   = 3500;
 const SWIPE_THRESHOLD = 50;
 
-export default function GalleryClient({ photos }: { photos: Photo[] }) {
+interface Props {
+    photos: Photo[];
+    /** Sustantivo usado en los `alt` de las fotos (ej. "lugar", "actividad"). */
+    altLabel: string;
+}
+
+export function GalleryCarousel({ photos, altLabel }: Props) {
     const [mobileActive,  setMobileActive]  = useState(0);
     const [desktopActive, setDesktopActive] = useState(0);
     const [mobileLoaded,  setMobileLoaded]  = useState(false);
@@ -65,7 +71,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                     <img
                         key={`${i}-${photo.url}`}
                         src={photo.url}
-                        alt={i === 0 ? 'Foto principal del lugar' : 'Foto del lugar'}
+                        alt={i === 0 ? `Foto principal del ${altLabel}` : `Foto del ${altLabel}`}
                         style={{
                             position: 'absolute',
                             inset: 0,
@@ -105,7 +111,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
             {/* ── DESKTOP: 1 foto ── */}
             {n === 1 && (
                 <div className={`hidden md:block${desktopLoaded ? '' : ' skeleton-shimmer'}`} style={{ height: `${DESKTOP_H}px`, borderRadius: '16px', overflow: 'hidden', marginBottom: '32px', background: desktopLoaded ? '#E5E5E5' : undefined }}>
-                    <img src={big.url} alt="Foto del lugar"
+                    <img src={big.url} alt={`Foto del ${altLabel}`}
                         style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
                         fetchPriority="high"
                         onLoad={() => setDesktopLoaded(true)}
@@ -120,7 +126,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', height: `${DESKTOP_H}px` }}>
                         <div className={desktopLoaded ? '' : 'skeleton-shimmer'} style={{ flex: '0 0 60%', borderRadius: '16px', overflow: 'hidden', background: desktopLoaded ? '#E5E5E5' : undefined, position: 'relative' }}>
                             {photos.slice(0, 2).map((photo, i) => (
-                                <img key={`${i}-${photo.url}`} src={i === 0 ? big.url : top.url} alt="Foto del lugar"
+                                <img key={`${i}-${photo.url}`} src={i === 0 ? big.url : top.url} alt={`Foto del ${altLabel}`}
                                     style={{
                                         position: 'absolute', inset: 0,
                                         display: 'block', width: '100%', height: '100%', objectFit: 'cover',
@@ -154,7 +160,7 @@ export default function GalleryClient({ photos }: { photos: Photo[] }) {
                                 <img
                                     key={`${i}-${photo.url}`}
                                     src={photo.url}
-                                    alt={i === 0 ? 'Foto principal del lugar' : ''}
+                                    alt={i === 0 ? `Foto principal del ${altLabel}` : ''}
                                     style={{
                                         position: 'absolute',
                                         inset: 0,

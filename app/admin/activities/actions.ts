@@ -40,22 +40,27 @@ function extractStoragePath(imageUrl: string): string | null {
 
 async function deleteActivityImage(supabase: SupabaseClient, imageUrl: string | null) {
     if (!imageUrl) return;
-    const path = extractStoragePath(imageUrl);
-    if (!path) return;
-    const { data, error } = await supabase.storage.from('images').remove([path]);
+    await deleteActivityImages(supabase, [imageUrl]);
+}
+
+async function deleteActivityImages(supabase: SupabaseClient, imageUrls: string[]) {
+    const paths = imageUrls.map(extractStoragePath).filter((p): p is string => !!p);
+    if (paths.length === 0) return;
+    const { data, error } = await supabase.storage.from('images').remove(paths);
     if (error) {
-        console.error('No se pudo borrar la imagen huérfana:', error.message);
-    } else if (!data || data.length === 0) {
+        console.error('No se pudo borrar imagen(es) huérfana(s):', error.message);
+    } else if (!data || data.length < paths.length) {
         // Supabase Storage no tira error si RLS filtra el archivo silenciosamente
         // (ej. falta política de SELECT) — sin este check, la imagen queda huérfana
         // sin ninguna señal de que algo salió mal.
-        console.error(`No se pudo borrar la imagen huérfana (0 archivos removidos, ¿falta política RLS de SELECT?): ${path}`);
+        console.error(`No se pudieron borrar todas las imágenes huérfanas (${data?.length ?? 0}/${paths.length} removidas, ¿falta política RLS de SELECT?): ${paths.join(', ')}`);
     }
 }
 
-async function uploadActivityImage(supabase: SupabaseClient, file: File, slug: string): Promise<string> {
+async function uploadActivityImage(supabase: SupabaseClient, file: File, slug: string, index?: number): Promise<string> {
     const ext = file.name.split('.').pop() || 'jpg';
-    const path = `activities/${slug}-${Date.now()}.${ext}`;
+    const suffix = index === undefined ? '' : `-${index}`;
+    const path = `activities/${slug}-${Date.now()}${suffix}.${ext}`;
     const { error } = await supabase.storage.from('images').upload(path, file);
     if (error) throw new Error(`No se pudo subir la imagen: ${error.message}`);
     const { data } = supabase.storage.from('images').getPublicUrl(path);
@@ -70,6 +75,39 @@ function parsePriceTiers(formData: FormData): unknown {
     } catch {
         return [];
     }
+}
+
+type PhotoUrlMeta = { url: string | null };
+
+function parsePhotoUrlsMeta(formData: FormData): PhotoUrlMeta[] {
+    const raw = formData.get('photo_urls_meta');
+    if (typeof raw !== 'string') return [];
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+}
+
+// Para cada slot del editor: si trae un archivo nuevo (`activity_gallery_{i}`) lo sube;
+// si no, conserva la `url` existente del slot. Slots sin archivo ni url se descartan.
+async function resolveGalleryPhotos(
+    supabase: SupabaseClient,
+    formData: FormData,
+    meta: PhotoUrlMeta[],
+    slug: string
+): Promise<string[]> {
+    const urls: string[] = [];
+    for (let i = 0; i < meta.length; i++) {
+        const file = formData.get(`activity_gallery_${i}`);
+        if (file instanceof File && file.size > 0) {
+            urls.push(await uploadActivityImage(supabase, file, slug, i));
+        } else if (meta[i]?.url) {
+            urls.push(meta[i].url as string);
+        }
+    }
+    return urls;
 }
 
 function parseActivityForm(formData: FormData) {
@@ -114,10 +152,13 @@ export async function createActivity(formData: FormData) {
         imageUrl = await uploadActivityImage(supabase, imageFile, slug);
     }
 
+    const photoUrls = await resolveGalleryPhotos(supabase, formData, parsePhotoUrlsMeta(formData), slug);
+
     const { error } = await supabase.from('activities').insert({
         ...parsed,
         slug,
         image_url: imageUrl,
+        photo_urls: photoUrls,
         venue_name: parsed.venue_name ?? null,
         place_id: parsed.place_id ?? null,
         description: parsed.description ?? null,
@@ -141,7 +182,7 @@ export async function updateActivity(id: string, formData: FormData) {
 
     const { data: existing } = await supabase
         .from('activities')
-        .select('image_url')
+        .select('image_url, photo_urls')
         .eq('id', id)
         .single();
 
@@ -158,12 +199,22 @@ export async function updateActivity(id: string, formData: FormData) {
         imageUrl = null;
     }
 
+    const photoUrls = await resolveGalleryPhotos(supabase, formData, parsePhotoUrlsMeta(formData), slug);
+
+    // Limpieza de huérfanos: diff contra lo que ya había en la DB, no un flag del
+    // cliente — cualquier URL que estaba antes y ya no está en el resultado final se borra.
+    const existingPhotoUrls: string[] = existing?.photo_urls ?? [];
+    const keptOrNew = new Set(photoUrls);
+    const removedPhotoUrls = existingPhotoUrls.filter(u => !keptOrNew.has(u));
+    if (removedPhotoUrls.length > 0) await deleteActivityImages(supabase, removedPhotoUrls);
+
     const { error } = await supabase
         .from('activities')
         .update({
             ...parsed,
             slug,
             image_url: imageUrl,
+            photo_urls: photoUrls,
             venue_name: parsed.venue_name ?? null,
             place_id: parsed.place_id ?? null,
             description: parsed.description ?? null,
@@ -186,7 +237,7 @@ export async function deleteActivity(id: string) {
     const supabase = await createClient();
     const { data: existing } = await supabase
         .from('activities')
-        .select('image_url')
+        .select('image_url, photo_urls')
         .eq('id', id)
         .single();
 
@@ -194,6 +245,7 @@ export async function deleteActivity(id: string) {
     if (error) throw new Error(error.message);
 
     await deleteActivityImage(supabase, existing?.image_url ?? null);
+    await deleteActivityImages(supabase, existing?.photo_urls ?? []);
 
     revalidatePath('/admin/activities');
     revalidatePath('/actividades');

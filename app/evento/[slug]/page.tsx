@@ -7,6 +7,8 @@ import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@
 import { formatDateLong } from '@/lib/format-event-date';
 import { priceDisplay } from '@/lib/event-display';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
+import { Breadcrumb } from '@/components/breadcrumb';
+import { buildBreadcrumbSchema } from '@/lib/schema-builders';
 import { ShareButton } from '@/components/evento/share-button';
 import { SITE_URL } from '@/lib/site-config';
 import type { DbEvent } from '@/lib/types';
@@ -114,18 +116,21 @@ export default async function EventoPage(props: { params: Params }) {
         }),
     };
 
+    // Sin BreadcrumbList antes: esta página usa `@type: Event` como schema principal
+    // (offers, startDate, etc.) — se suma el breadcrumb como schema aparte, mismo
+    // patrón que /actividad/[slug], para tener el mismo componente visual sitewide.
+    const breadcrumbItems = [
+        { name: 'Inicio', url: SITE_URL },
+        { name: 'Eventos', url: `${SITE_URL}/eventos/hoy` },
+        { name: event.title, url },
+    ];
+    const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
+
     return (
         <div className="min-h-screen bg-white">
-            <SchemaMarkup schema={schema} />
+            <SchemaMarkup schema={[schema, breadcrumbSchema]} />
             <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-                <div className="mb-6 flex items-center gap-4">
-                    <Link
-                        href="/"
-                        className="inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] transition-colors"
-                    >
-                        ← Seguir explorando
-                    </Link>
-                </div>
+                <Breadcrumb items={breadcrumbItems} className="mb-6" />
 
                 {/* Imagen hero — una sola imagen, no la galería multi-foto de lugares */}
                 <div className="relative mb-6 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80">

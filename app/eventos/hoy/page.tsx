@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { EventGridClient } from '@/components/eventos-hoy/event-grid-client';
@@ -83,6 +84,13 @@ export default async function EventosHoyPage() {
     return (
         <div className="mx-auto max-w-6xl px-6 py-10">
             <SchemaMarkup schema={itemListSchema} />
+
+            <Link
+                href="/"
+                className="mb-4 inline-flex items-center gap-1 text-sm text-[#666666] hover:text-[#0A0A0A] transition-colors"
+            >
+                ← Volver a inicio
+            </Link>
 
             <h1 className="font-serif text-3xl font-bold text-[#0A0A0A] mb-2">
                 Eventos hoy en Guatemala
