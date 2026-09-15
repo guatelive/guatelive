@@ -368,30 +368,21 @@ export function BubbleSearch({ heroImage, heroImageAlt }: { heroImage?: string |
 
         try {
             let data: Place[];
-            // For non-surprise: try the speculative prefetch first (likely already resolved)
-            const prefetched = !isSurprise && prefetchRef.current !== null
-                ? await prefetchRef.current
-                : null;
-
-            if (prefetched && prefetched.length > 0) {
-                if (!hasZone) {
-                    data = prefetched;
-                } else {
-                    const zoneFiltered = prefetched.filter(p => p.zone === zone);
-                    if (zoneFiltered.length === 0) {
-                        setZoneFallback(true);
-                        data = prefetched;
-                    } else {
-                        data = zoneFiltered;
-                    }
-                }
-            } else {
-                // Surprise mode or prefetch failed → regular sequential calls
+            if (hasZone) {
+                // Con zona seleccionada, el pool de prefetch (top nacional por rating,
+                // sin zona) no representa la zona real — siempre pedir la query real.
                 data = await fetchFresh(true);
-                if (data.length === 0 && hasZone) {
+                if (data.length === 0) {
                     data = await fetchFresh(false);
                     setZoneFallback(true);
                 }
+            } else {
+                // Sin zona: el prefetch especulativo ya cubre este caso (mismo pool
+                // nacional que traería la query real sin zona).
+                const prefetched = !isSurprise && prefetchRef.current !== null
+                    ? await prefetchRef.current
+                    : null;
+                data = prefetched && prefetched.length > 0 ? prefetched : await fetchFresh(false);
             }
             setBubbleResults(sortByWhen(data));
         } catch {

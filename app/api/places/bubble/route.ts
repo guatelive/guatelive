@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
 
     query = query.order('rating', { ascending: false });
 
-    const limit = preload ? 60 : 12;
+    const limit = preload ? 60 : (zone ? 50 : 12);
     const { data, error } = await query.limit(limit);
 
     if (error) {
