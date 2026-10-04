@@ -152,7 +152,23 @@ function BubbleScrollRow({ children, className }: { children: ReactNode; classNa
     );
 }
 
-export function BubbleSearch({ heroImage, heroImageAlt }: { heroImage?: string | null; heroImageAlt?: string }) {
+export type HeroCandidate = { image: string; alt: string; badge: string; href: string; cta: string };
+
+export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
+    // ── Hero: carrusel automático entre las fotos candidatas ──
+    const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+    const heroPausedRef = useRef(false);
+    const heroPhotoCount = heroPhotos?.length ?? 0;
+
+    useEffect(() => {
+        if (heroPhotoCount <= 1) return;
+        const id = setInterval(() => {
+            if (heroPausedRef.current) return;
+            setActiveHeroIndex(i => (i + 1) % heroPhotoCount);
+        }, 4000);
+        return () => clearInterval(id);
+    }, [heroPhotoCount]);
+
     // ── Text search ──
     const [searchQuery, setSearchQuery] = useState('');
     const [allPlaces, setAllPlaces] = useState<Place[]>([]);
@@ -705,22 +721,33 @@ export function BubbleSearch({ heroImage, heroImageAlt }: { heroImage?: string |
                     </div>
 
                     {/* Columna derecha: imagen diagonal (desktop) */}
-                    <div
-                        className="relative hidden md:block"
-                        style={{ clipPath: 'polygon(12% 0, 100% 0, 100% 100%, 0 100%)', background: '#E11D2E', height: 420, overflow: 'hidden' }}
+                    <Link
+                        href={heroPhotos?.[activeHeroIndex]?.href ?? '/'}
+                        className="relative hidden h-full md:block"
+                        style={{
+                            clipPath: 'polygon(12% 0, 100% 0, 100% 100%, 0 100%)',
+                            background: '#0A0A0A',
+                            minHeight: 420,
+                            overflow: 'hidden',
+                            transition: 'height 0.3s ease',
+                        }}
+                        onMouseEnter={() => { heroPausedRef.current = true; }}
+                        onMouseLeave={() => { heroPausedRef.current = false; }}
                     >
-                        {heroImage && (
-                            <div style={{ position: 'absolute', inset: 0 }}>
+                        {heroPhotos?.map((photo, i) => (
+                            <div key={photo.image} style={{ position: 'absolute', inset: 0, opacity: i === activeHeroIndex ? 1 : 0, transition: 'opacity 300ms ease-in-out' }}>
                                 <ImageWithSkeleton
-                                    src={heroImage}
-                                    alt={heroImageAlt ?? ''}
+                                    src={photo.image}
+                                    alt={photo.alt}
                                     fill
                                     sizes="45vw"
                                     className="object-cover"
                                     style={{ opacity: 0.92 }}
+                                    priority={i === 0}
                                 />
                             </div>
-                        )}
+                        ))}
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.65), transparent 45%)', pointerEvents: 'none' }} />
                         <div
                             style={{
                                 position: 'absolute', top: 24, right: 24,
@@ -730,9 +757,12 @@ export function BubbleSearch({ heroImage, heroImageAlt }: { heroImage?: string |
                                 transform: 'rotate(6deg)', boxShadow: '0 8px 18px rgba(0,0,0,0.25)',
                             }}
                         >
-                            ¡ESTA SEMANA!
+                            {heroPhotos?.[activeHeroIndex]?.badge ?? '¡ESTA SEMANA!'}
                         </div>
-                    </div>
+                        <div style={{ position: 'absolute', bottom: 24, left: 24, fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 700, color: '#E11D2E' }}>
+                            {heroPhotos?.[activeHeroIndex]?.cta ?? 'Ver más'} →
+                        </div>
+                    </Link>
                 </div>
             </section>
 

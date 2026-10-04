@@ -3,7 +3,7 @@ import { ImageWithSkeleton } from "@/components/ui/image-with-skeleton";
 import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/layout/site-layout";
 import { createClient } from "@/lib/supabase/server";
-import { BubbleSearch } from "@/components/home/bubble-search";
+import { BubbleSearch, type HeroCandidate } from "@/components/home/bubble-search";
 import { MarqueeTicker } from "@/components/home/marquee-ticker";
 import { EditionPeekTab } from "@/components/home/EditionPeekTab";
 import { EventsGrid } from "@/components/home/EventsGrid";
@@ -12,7 +12,7 @@ import { guatNow } from "@/lib/hours-utils";
 import type { DbEvent, DbActivity, DbBankPromotion } from "@/lib/types";
 import { PromosCarousel } from "@/components/home/PromosCarousel";
 import { resolvePromoPlaces } from "@/lib/promo-place-match";
-import { sortByDiscountWithDailyVariation } from "@/lib/promo-order";
+import { sortByDiscountWithDailyVariation, shuffleByDay } from "@/lib/promo-order";
 import { formatUpdatedLabel } from "@/lib/promo-freshness";
 import { SchemaMarkup } from "@/components/seo/schema-markup";
 import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/schema-builders";
@@ -84,10 +84,43 @@ export default async function HomePage() {
   }));
   const promosUpdatedLabel = formatUpdatedLabel(shuffledPromos);
 
+  const heroCandidates: HeroCandidate[] = [];
+  if (latestEdition?.cover_image_url) {
+    heroCandidates.push({
+      image: latestEdition.cover_image_url,
+      alt: latestEdition.title ?? '',
+      badge: '¡ESTA SEMANA!',
+      href: `/edicion/${latestEdition.slug}`,
+      cta: 'Leer la edición',
+    });
+  }
+  const featuredEvent = upcomingEvents?.[0];
+  if (featuredEvent?.image_url) {
+    heroCandidates.push({
+      image: featuredEvent.image_url,
+      alt: featuredEvent.title,
+      badge: '¡EVENTO DESTACADO!',
+      href: `/evento/${featuredEvent.slug}`,
+      cta: 'Ver el evento',
+    });
+  }
+  const featuredActivity = activities?.[0];
+  if (featuredActivity?.image_url) {
+    heroCandidates.push({
+      image: featuredActivity.image_url,
+      alt: featuredActivity.title,
+      badge: 'TAMBIÉN EN GUATE',
+      href: `/actividad/${featuredActivity.slug}`,
+      cta: 'Ver la actividad',
+    });
+  }
+
+  const heroPhotos = shuffleByDay(heroCandidates, guatNow());
+
   return (
     <SiteLayout>
       <SchemaMarkup schema={[buildOrganizationSchema(), buildWebSiteSchema()]} />
-      <BubbleSearch heroImage={latestEdition?.cover_image_url ?? null} heroImageAlt={latestEdition?.title ?? ''} />
+      <BubbleSearch heroPhotos={heroPhotos} />
       <MarqueeTicker />
 
       <EventsGrid events={(upcomingEvents ?? []) as DbEvent[]} />
