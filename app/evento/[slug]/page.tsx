@@ -2,10 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
-import { MapPin, ExternalLink, Star } from 'lucide-react';
+import { MapPin, ExternalLink, Star, CalendarDays, Clock, Ticket } from 'lucide-react';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
-import { formatDateLong } from '@/lib/format-event-date';
-import { priceDisplay } from '@/lib/event-display';
+import { formatDateParts } from '@/lib/format-event-date';
+import { DetailInfoCard, priceRowContent, type InfoRow } from '@/components/detail-info-card';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { buildBreadcrumbSchema } from '@/lib/schema-builders';
@@ -78,7 +78,29 @@ export default async function EventoPage(props: { params: Params }) {
     const isFree = event.is_free;
     const priceUnknown = !isFree && event.price === null && event.price_tiers.length === 0;
     const hasPriceTiers = event.price_tiers.length > 0;
-    const price = priceDisplay(event);
+    const { date: dateLabel, time: timeLabel } = formatDateParts(event.date_start, event.date_end);
+    const priceContent = priceRowContent(event);
+    const infoRows: InfoRow[] = [
+        { icon: CalendarDays, label: 'Fecha', content: dateLabel },
+        { icon: Clock, label: 'Hora', content: timeLabel },
+        {
+            icon: MapPin,
+            label: 'Lugar',
+            content: (
+                <>
+                    {event.places ? (
+                        <Link href={`/lugar/${event.places.slug}`} className="font-medium hover:underline">
+                            {event.places.name}
+                        </Link>
+                    ) : event.venue_name ? (
+                        <span className="font-medium">{event.venue_name}</span>
+                    ) : null}
+                    <span className="block text-[#666666]">{event.zone}</span>
+                </>
+            ),
+        },
+        ...(priceContent ? [{ icon: Ticket, label: hasPriceTiers ? 'Precios' : 'Precio', content: priceContent }] : []),
+    ];
     const url = `${SITE_URL}/evento/${event.slug}`;
 
     const schema = {
@@ -129,18 +151,18 @@ export default async function EventoPage(props: { params: Params }) {
     return (
         <div className="min-h-screen bg-white">
             <SchemaMarkup schema={[schema, breadcrumbSchema]} />
-            <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+            <article className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
                 <Breadcrumb items={breadcrumbItems} className="mb-6" />
 
                 {/* Imagen hero — una sola imagen, no la galería multi-foto de lugares */}
-                <div className="relative mb-6 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80">
+                <div className="relative mb-8 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80 lg:h-[440px]">
                     {event.image_url ? (
                         <ImageWithSkeleton
                             src={event.image_url}
                             alt={event.title}
                             fill
                             priority
-                            sizes="(max-width: 768px) 100vw, 768px"
+                            sizes="(max-width: 1152px) 100vw, 1152px"
                             className="object-cover"
                         />
                     ) : (
@@ -150,93 +172,85 @@ export default async function EventoPage(props: { params: Params }) {
                     )}
                 </div>
 
-                {/* Badges */}
-                <div className="mb-3 flex flex-wrap items-center gap-2">
-                    <span
-                        className="rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide"
-                        style={{ backgroundColor: colors.bg, color: colors.fg }}
-                    >
-                        {event.category}
-                    </span>
-                    {event.featured && (
-                        <span className="rounded bg-[#FBEFD8] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[#8A5A00]">
-                            Destacado
-                        </span>
-                    )}
-                    {event.sponsored && (
-                        <span className="rounded bg-[#E11D2E] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                            Patrocinado
-                        </span>
-                    )}
-                </div>
-
-                <h1 className="font-serif text-3xl font-bold text-[#0A0A0A] leading-tight mb-3">
-                    {event.title}
-                </h1>
-
-                <p className="text-sm text-[#666666] mb-2">
-                    {formatDateLong(event.date_start, event.date_end)}
-                </p>
-
-                <div className="mb-3">
-                    {price.kind === 'free' ? (
-                        <span className="inline-block rounded bg-[#EFF4E8] px-2.5 py-1 text-sm font-semibold text-[#3B6D11]">
-                            Gratis
-                        </span>
-                    ) : price.kind === 'priced' ? (
-                        <span className="text-xl font-bold text-[#0A0A0A]">{price.label}</span>
-                    ) : null}
-                </div>
-
-                <div className="flex items-center gap-1.5 text-sm text-[#666666] mb-6">
-                    <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span>
-                        {event.places ? (
-                            <Link href={`/lugar/${event.places.slug}`} className="hover:text-[#0A0A0A] hover:underline">
-                                {event.places.name}
-                            </Link>
-                        ) : event.venue_name ? (
-                            event.venue_name
-                        ) : null}
-                        {(event.places || event.venue_name) ? ' · ' : ''}
-                        {event.zone}
-                    </span>
-                </div>
-
-                {event.description && (
-                    <div className="mb-6 border-t border-[#E5E5E5] pt-6">
-                        <h2 className="mb-3 text-base font-semibold text-[#0A0A0A]">Sobre el evento</h2>
-                        <p className="whitespace-pre-line text-sm leading-relaxed text-[#333333]">
-                            {event.description}
-                        </p>
-                    </div>
-                )}
-
-                {event.tags.length > 0 && (
-                    <div className="mb-8 flex flex-wrap gap-2">
-                        {event.tags.map(tag => (
+                {/* Desktop: contenido a la izquierda, ficha sticky a la derecha.
+                    Mobile: título → ficha → descripción, apilado. */}
+                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-x-12 lg:gap-y-8">
+                    <header className="lg:col-start-1 lg:row-start-1">
+                        {/* Badges */}
+                        <div className="mb-3 flex flex-wrap items-center gap-2">
                             <span
-                                key={tag}
-                                className="rounded-full border border-[#E5E5E5] px-3 py-1 text-xs text-[#666666]"
+                                className="rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide"
+                                style={{ backgroundColor: colors.bg, color: colors.fg }}
                             >
-                                {tag}
+                                {event.category}
                             </span>
-                        ))}
-                    </div>
-                )}
+                            {event.featured && (
+                                <span className="rounded bg-[#FBEFD8] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[#8A5A00]">
+                                    Destacado
+                                </span>
+                            )}
+                            {event.sponsored && (
+                                <span className="rounded bg-[#E11D2E] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                                    Patrocinado
+                                </span>
+                            )}
+                        </div>
 
-                <div className="flex flex-wrap items-center gap-3 border-t border-[#E5E5E5] pt-6">
-                    {event.contact_link && (
-                        <a
-                            href={event.contact_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-lg bg-[#E11D2E] px-6 py-3 text-sm font-semibold text-white hover:bg-[#c91827]"
-                        >
-                            Más información <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                    )}
-                    <ShareButton url={url} title={event.title} />
+                        <h1 className="font-serif text-3xl font-bold leading-tight text-[#0A0A0A] lg:text-5xl">
+                            {event.title}
+                        </h1>
+                    </header>
+
+                    <aside className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+                        <div className="lg:sticky lg:top-24">
+                            <DetailInfoCard
+                                rows={infoRows}
+                                footer={
+                                    <>
+                                        {event.contact_link && (
+                                            <a
+                                                href={event.contact_link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#E11D2E] px-6 py-3 text-sm font-semibold text-white hover:bg-[#c91827]"
+                                            >
+                                                Más información <ExternalLink className="h-3.5 w-3.5" />
+                                            </a>
+                                        )}
+                                        <ShareButton
+                                            url={url}
+                                            title={event.title}
+                                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#E5E5E5] px-6 py-3 text-sm font-semibold text-[#0A0A0A] hover:bg-[#FAFAFA]"
+                                        />
+                                    </>
+                                }
+                            />
+                        </div>
+                    </aside>
+
+                    <div className="lg:col-start-1 lg:row-start-2">
+                        {event.description && (
+                            <section className="mb-6">
+                                <h2 className="mb-3 font-serif text-xl font-bold text-[#0A0A0A]">Sobre el evento</h2>
+                                <p className="whitespace-pre-line text-[15px] leading-7 text-[#333333]">
+                                    {event.description}
+                                </p>
+                            </section>
+                        )}
+
+                        {event.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {event.tags.map(tag => (
+                                    <span
+                                        key={tag}
+                                        className="rounded-full border border-[#E5E5E5] px-3 py-1 text-xs text-[#666666]"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </article>
         </div>

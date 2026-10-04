@@ -2,14 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { GalleryCarousel } from '@/components/gallery-carousel';
-import { MapPin, ExternalLink, Star } from 'lucide-react';
+import { MapPin, ExternalLink, Star, Repeat, Ticket } from 'lucide-react';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { buildBreadcrumbSchema } from '@/lib/schema-builders';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { ShareButton } from '@/components/evento/share-button';
 import { SITE_URL } from '@/lib/site-config';
-import { priceDisplay } from '@/lib/event-display';
+import { DetailInfoCard, priceRowContent, type InfoRow } from '@/components/detail-info-card';
 import type { DbActivity } from '@/lib/types';
 
 export const revalidate = 3600;
@@ -77,7 +77,27 @@ export default async function ActividadPage(props: { params: Params }) {
     const activity = data as ActivityWithPlace;
     const colors = EVENT_CATEGORY_BADGE[activity.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
     const PlaceholderIcon = EVENT_CATEGORY_ICON[activity.category as EventCategory] ?? Star;
-    const price = priceDisplay(activity);
+    const priceContent = priceRowContent(activity);
+    const infoRows: InfoRow[] = [
+        ...(activity.recurrence_text ? [{ icon: Repeat, label: 'Cuándo', content: activity.recurrence_text }] : []),
+        {
+            icon: MapPin,
+            label: 'Lugar',
+            content: (
+                <>
+                    {activity.places ? (
+                        <Link href={`/lugar/${activity.places.slug}`} className="font-medium hover:underline">
+                            {activity.places.name}
+                        </Link>
+                    ) : activity.venue_name ? (
+                        <span className="font-medium">{activity.venue_name}</span>
+                    ) : null}
+                    <span className="block text-[#666666]">{activity.zone}</span>
+                </>
+            ),
+        },
+        ...(priceContent ? [{ icon: Ticket, label: activity.price_tiers.length > 0 ? 'Precios' : 'Precio', content: priceContent }] : []),
+    ];
     const url = `${SITE_URL}/actividad/${activity.slug}`;
 
     const seenPhotoUrls = new Set<string>();
@@ -97,7 +117,7 @@ export default async function ActividadPage(props: { params: Params }) {
     return (
         <div className="min-h-screen bg-white">
             <SchemaMarkup schema={breadcrumbSchema} />
-            <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+            <article className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
                 <Breadcrumb items={breadcrumbItems} className="mb-6" />
 
                 {/* Galería — carrusel con crossfade/swipe en mobile, collage en desktop,
@@ -113,95 +133,85 @@ export default async function ActividadPage(props: { params: Params }) {
                     </div>
                 )}
 
-                {/* Badges */}
-                <div className="mb-3 flex flex-wrap items-center gap-2">
-                    <span
-                        className="rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide"
-                        style={{ backgroundColor: colors.bg, color: colors.fg }}
-                    >
-                        {activity.category}
-                    </span>
-                    {activity.featured && (
-                        <span className="rounded bg-[#FBEFD8] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[#8A5A00]">
-                            Destacado
-                        </span>
-                    )}
-                    {activity.sponsored && (
-                        <span className="rounded bg-[#E11D2E] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                            Patrocinado
-                        </span>
-                    )}
-                </div>
-
-                <h1 className="font-serif text-3xl font-bold text-[#0A0A0A] leading-tight mb-3">
-                    {activity.title}
-                </h1>
-
-                {activity.recurrence_text && (
-                    <p className="text-sm text-[#666666] mb-2">
-                        {activity.recurrence_text}
-                    </p>
-                )}
-
-                <div className="mb-3">
-                    {price.kind === 'free' ? (
-                        <span className="inline-block rounded bg-[#EFF4E8] px-2.5 py-1 text-sm font-semibold text-[#3B6D11]">
-                            Gratis
-                        </span>
-                    ) : price.kind === 'priced' ? (
-                        <span className="text-xl font-bold text-[#0A0A0A]">{price.label}</span>
-                    ) : null}
-                </div>
-
-                <div className="flex items-center gap-1.5 text-sm text-[#666666] mb-6">
-                    <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span>
-                        {activity.places ? (
-                            <Link href={`/lugar/${activity.places.slug}`} className="hover:text-[#0A0A0A] hover:underline">
-                                {activity.places.name}
-                            </Link>
-                        ) : activity.venue_name ? (
-                            activity.venue_name
-                        ) : null}
-                        {(activity.places || activity.venue_name) ? ' · ' : ''}
-                        {activity.zone}
-                    </span>
-                </div>
-
-                {activity.description && (
-                    <div className="mb-6 border-t border-[#E5E5E5] pt-6">
-                        <h2 className="mb-3 text-base font-semibold text-[#0A0A0A]">Sobre la actividad</h2>
-                        <p className="whitespace-pre-line text-sm leading-relaxed text-[#333333]">
-                            {activity.description}
-                        </p>
-                    </div>
-                )}
-
-                {activity.tags.length > 0 && (
-                    <div className="mb-8 flex flex-wrap gap-2">
-                        {activity.tags.map(tag => (
+                {/* Desktop: contenido a la izquierda, ficha sticky a la derecha.
+                    Mobile: título → ficha → descripción, apilado. */}
+                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-x-12 lg:gap-y-8">
+                    <header className="lg:col-start-1 lg:row-start-1">
+                        {/* Badges */}
+                        <div className="mb-3 flex flex-wrap items-center gap-2">
                             <span
-                                key={tag}
-                                className="rounded-full border border-[#E5E5E5] px-3 py-1 text-xs text-[#666666]"
+                                className="rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide"
+                                style={{ backgroundColor: colors.bg, color: colors.fg }}
                             >
-                                {tag}
+                                {activity.category}
                             </span>
-                        ))}
-                    </div>
-                )}
+                            {activity.featured && (
+                                <span className="rounded bg-[#FBEFD8] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[#8A5A00]">
+                                    Destacado
+                                </span>
+                            )}
+                            {activity.sponsored && (
+                                <span className="rounded bg-[#E11D2E] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                                    Patrocinado
+                                </span>
+                            )}
+                        </div>
 
-                <div className="flex flex-wrap items-center gap-3 border-t border-[#E5E5E5] pt-6">
-                    {activity.contact_link && (
-                        <a
-                            href={activity.contact_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-lg bg-[#E11D2E] px-6 py-3 text-sm font-semibold text-white hover:bg-[#c91827]"
-                        >
-                            Más información <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                    )}
-                    <ShareButton url={url} title={activity.title} />
+                        <h1 className="font-serif text-3xl font-bold leading-tight text-[#0A0A0A] lg:text-5xl">
+                            {activity.title}
+                        </h1>
+                    </header>
+
+                    <aside className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+                        <div className="lg:sticky lg:top-24">
+                            <DetailInfoCard
+                                rows={infoRows}
+                                footer={
+                                    <>
+                                        {activity.contact_link && (
+                                            <a
+                                                href={activity.contact_link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#E11D2E] px-6 py-3 text-sm font-semibold text-white hover:bg-[#c91827]"
+                                            >
+                                                Más información <ExternalLink className="h-3.5 w-3.5" />
+                                            </a>
+                                        )}
+                                        <ShareButton
+                                            url={url}
+                                            title={activity.title}
+                                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#E5E5E5] px-6 py-3 text-sm font-semibold text-[#0A0A0A] hover:bg-[#FAFAFA]"
+                                        />
+                                    </>
+                                }
+                            />
+                        </div>
+                    </aside>
+
+                    <div className="lg:col-start-1 lg:row-start-2">
+                        {activity.description && (
+                            <section className="mb-6">
+                                <h2 className="mb-3 font-serif text-xl font-bold text-[#0A0A0A]">Sobre la actividad</h2>
+                                <p className="whitespace-pre-line text-[15px] leading-7 text-[#333333]">
+                                    {activity.description}
+                                </p>
+                            </section>
+                        )}
+
+                        {activity.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {activity.tags.map(tag => (
+                                    <span
+                                        key={tag}
+                                        className="rounded-full border border-[#E5E5E5] px-3 py-1 text-xs text-[#666666]"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </article>
         </div>
