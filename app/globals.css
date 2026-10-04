@@ -264,9 +264,10 @@
 
   .bubble-back-btn {
     display: block;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     color: #666666;
-    font-size: 17px;
+    font-size: 13px;
+    font-weight: 600;
     background: none;
     border: none;
     cursor: pointer;
@@ -321,7 +322,7 @@
   }
 
   .bubble-btn {
-    padding: 5px 11px;
+    padding: 11px 14px;
     font-size: 11px;
   }
 }
@@ -378,5 +379,66 @@
   /* bubble-row alineado a la izquierda dentro del hero split (desktop) */
   .bubble-row-hero {
     justify-content: flex-start !important;
+  }
+}
+/* Hero del home en mobile: fondo negro con confeti que cae lento y desenfocado
+   (diseño "M · Confeti lento difuminado"), hasta el contador de planes. Las piezas
+   viven en components/home/hero-confetti.tsx. Viñeta oscura al centro para que el
+   título se lea. Full-bleed vía márgenes negativos en el JSX. En desktop no aplica. */
+@media (max-width: 767px) {
+  .hero-confetti {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+  }
+  .hero-confetti::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0, 0, 0, 0.5) 0, transparent 75%);
+  }
+  .hero-confetti > :not(.hero-confetti-layer) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.hero-confetti-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hero-confetti-piece {
+  position: absolute;
+  top: -30px;
+  animation-name: hero-confetti-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.hero-confetti-piece > i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  animation-name: hero-confetti-spin;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes hero-confetti-fall {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(var(--dx), 500px, 0); }
+}
+
+@keyframes hero-confetti-spin {
+  from { transform: rotateX(0) rotateZ(0); }
+  to { transform: rotateX(360deg) rotateZ(120deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-confetti-piece,
+  .hero-confetti-piece > i {
+    animation: none;
   }
 }

@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/layout/site-layout";
 import { createClient } from "@/lib/supabase/server";
 import { BubbleSearch, type HeroCandidate } from "@/components/home/bubble-search";
-import { MarqueeTicker } from "@/components/home/marquee-ticker";
+// import { MarqueeTicker } from "@/components/home/marquee-ticker";
 import { EditionPeekTab } from "@/components/home/EditionPeekTab";
 import { EventsGrid } from "@/components/home/EventsGrid";
 import { ActivitiesGrid } from "@/components/home/ActivitiesGrid";
@@ -121,7 +121,9 @@ export default async function HomePage() {
     <SiteLayout>
       <SchemaMarkup schema={[buildOrganizationSchema(), buildWebSiteSchema()]} />
       <BubbleSearch heroPhotos={heroPhotos} />
-      <MarqueeTicker />
+      {/* Escondido a propósito (2026-10-04): con el confeti del hero, la barra
+         animada quedaba de más y empujaba Eventos hacia abajo. */}
+      {/* <MarqueeTicker /> */}
 
       <EventsGrid events={(upcomingEvents ?? []) as DbEvent[]} />
       <ActivitiesGrid activities={(activities ?? []) as DbActivity[]} />

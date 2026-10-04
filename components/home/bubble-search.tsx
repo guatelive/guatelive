@@ -8,6 +8,7 @@ import { EventCardLink } from '@/components/cards/event-card-link';
 import { ActivityCard } from '@/components/cards/activity-card';
 import { EventExplorer } from '@/components/home/EventExplorer';
 import { VisitCounter } from '@/components/home/VisitCounter';
+import { HeroConfetti } from '@/components/home/hero-confetti';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import {
     normalizeHours,
@@ -101,12 +102,6 @@ const WHEN: { label: string; value: string }[] = [
     { label: '📅 Este fin de semana', value: 'weekend' },
     { label: '🕐 Cuando sea', value: 'anytime' },
 ];
-
-const STEP_TITLE: Record<1 | 2 | 3, string> = {
-    1: '¿Qué querés hacer?',
-    2: '¿En qué zona?',
-    3: '¿Cuándo?',
-};
 
 const TABS: { label: string; value: 'place' | 'event' | 'activity' }[] = [
     { label: '🍽 Salir a comer', value: 'place' },
@@ -512,9 +507,14 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
         <div>
             {/* ── Hero: split diagonal (home v2) ── */}
             <section className="mx-auto max-w-[1400px] px-6 pt-3 md:px-10">
-                <div className="grid grid-cols-1 overflow-hidden md:grid-cols-[1.1fr_0.9fr] md:items-stretch">
+                <div className="grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] md:items-stretch md:overflow-hidden">
                     {/* Columna izquierda */}
                     <div className="flex flex-col items-center py-6 text-center md:items-start md:py-5 md:pr-10 md:text-left">
+                        {/* Mobile: textos sobre fondo negro con confeti lento (hero-confetti en
+                            globals.css + HeroConfetti), full-bleed. Desde el buscador hacia
+                            abajo, blanco. En desktop el bloque es transparente, sin cambios. */}
+                        <div className="hero-confetti -mx-6 -mt-9 mb-6 flex w-[calc(100%+3rem)] flex-col items-center self-stretch px-6 pb-10 pt-12 md:m-0 md:w-auto md:items-start md:p-0">
+                        <HeroConfetti />
                         {/* A) Tag superior */}
                         <div style={{ display: 'inline-flex', alignItems: 'center', marginBottom: 16 }}>
                             <span
@@ -533,17 +533,17 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
 
                         {/* B) Título */}
                         <h1
-                            className="font-display"
-                            style={{ fontSize: 'clamp(34px, 5.5vw, 54px)', fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.01em', color: '#111111', margin: '0 0 16px' }}
+                            className="font-display text-white md:text-[#111111]"
+                            style={{ fontSize: 'clamp(34px, 5.5vw, 54px)', fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.01em', margin: '0 0 16px' }}
                         >
                             ¿Qué hacemos <span style={{ color: '#E11D2E' }}>hoy</span> en Guate?
                         </h1>
 
                         <p
+                            className="text-white/80 md:text-[#555555]"
                             style={{
                                 fontFamily: 'var(--font-sans)',
                                 fontSize: 'clamp(14px, 2vw, 18px)',
-                                color: '#555555',
                                 lineHeight: 1.5,
                                 marginBottom: 18,
                             }}
@@ -551,8 +551,9 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                             Encuentra cafés, restaurantes y cosas que hacer.
                         </p>
 
-                        <div style={{ marginBottom: 22 }}>
+                        <div className="md:mb-[22px]">
                             <VisitCounter />
+                        </div>
                         </div>
 
                         {/* C) Search bar */}
@@ -606,21 +607,42 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                                     <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '10px' }}>
                                         {(['¿Qué?', '¿Dónde?', '¿Cuándo?'] as const).map((label, i) => {
                                             const stepNum = i + 1;
-                                            const isCompleted = bubbleStep > stepNum;
                                             const isCurrent = bubbleStep === stepNum;
                                             return (
                                                 <span
                                                     key={label}
+                                                    aria-current={isCurrent ? 'step' : undefined}
                                                     style={{
-                                                        fontSize: 'clamp(11px, 2vw, 14px)',
-                                                        fontWeight: isCurrent || isCompleted ? 700 : 600,
-                                                        color: isCompleted ? '#111111' : isCurrent ? '#666666' : '#AAAAAA',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: 5,
+                                                        // El paso actual hace las veces de título de la etapa
+                                                        // (sin subtítulo aparte abajo): un poco más grande y grueso.
+                                                        fontSize: isCurrent ? 'clamp(14px, 2.4vw, 17px)' : 'clamp(11px, 2vw, 14px)',
+                                                        fontWeight: isCurrent ? 800 : 600,
+                                                        // Solo el paso actual va en negro: los ya pasados y los que
+                                                        // faltan quedan en gris para que se vea por dónde va el usuario.
+                                                        color: isCurrent ? '#111111' : '#AAAAAA',
                                                         letterSpacing: '0.03em',
                                                         paddingBottom: isCurrent ? 8 : 0,
                                                         borderBottom: isCurrent ? '2px solid #E11D2E' : 'none',
-                                                        transition: 'color 0.3s ease',
+                                                        transition: 'color 0.3s ease, font-size 0.3s ease',
                                                     }}
                                                 >
+                                                    {/* Número chico: guía el orden sin romper la armonía del hero */}
+                                                    <span
+                                                        aria-hidden="true"
+                                                        style={{
+                                                            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                                            width: isCurrent ? 18 : 15, height: isCurrent ? 18 : 15, borderRadius: '50%',
+                                                            fontSize: isCurrent ? 10 : 9, fontWeight: 700, letterSpacing: 0,
+                                                            backgroundColor: isCurrent ? '#E11D2E' : 'transparent',
+                                                            color: isCurrent ? '#FFFFFF' : 'inherit',
+                                                            border: isCurrent ? 'none' : '1px solid currentColor',
+                                                        }}
+                                                    >
+                                                        {stepNum}
+                                                    </span>
                                                     {label}
                                                 </span>
                                             );
@@ -662,14 +684,6 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                                         </div>
                                     )}
 
-                                    {bubbleStep > 1 && (
-                                        <h2
-                                            className="font-display"
-                                            style={{ fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', fontWeight: 800, color: '#111111', marginBottom: '16px' }}
-                                        >
-                                            {STEP_TITLE[bubbleStep]}
-                                        </h2>
-                                    )}
 
                                     <div key={nudgeKey} className={nudgeKey > 0 ? 'bubble-nudge' : ''}>
                                         {bubbleStep === 1 && (
