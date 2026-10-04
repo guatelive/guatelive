@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
 import { formatEventDateTime, eventLocation, priceDisplay } from '@/lib/event-display';
+import { showtimesLabel } from '@/lib/event-showtimes';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 
 const DURATION = 4000;
@@ -49,6 +50,7 @@ function MainCard({ event }: { event: DbEvent | null }) {
     const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
     const location = eventLocation(event);
     const price = priceDisplay(event);
+    const extraCount = event.extra_dates?.length ?? 0;
     return (
         <Link href={`/evento/${event.slug}`} style={{
             display: 'flex', flexDirection: 'column',
@@ -85,6 +87,7 @@ function MainCard({ event }: { event: DbEvent | null }) {
                 </h3>
                 <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: '#aaa', lineHeight: 1.6, marginBottom: '0.5rem' }}>
                     {formatEventDateTime(event.date_start)}
+                    {extraCount > 0 && <strong style={{ color: '#fff' }}>{` · ${showtimesLabel(extraCount)}`}</strong>}
                     {location && <><br />📍 {location}</>}
                 </p>
                 {price.kind === 'free' ? (
@@ -108,6 +111,7 @@ function MediaCard({ event }: { event: DbEvent | null }) {
     const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
     const location = eventLocation(event);
     const price = priceDisplay(event);
+    const extraCount = event.extra_dates?.length ?? 0;
     return (
         <Link href={`/evento/${event.slug}`} style={{
             display: 'flex', flexDirection: 'column',
@@ -151,7 +155,9 @@ function MediaCard({ event }: { event: DbEvent | null }) {
                     fontFamily: 'var(--font-sans)', fontSize: 12, color: '#aaa', lineHeight: 1.35,
                     display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                 }}>
-                    {formatEventDateTime(event.date_start)}{location ? ` · 📍 ${location}` : ''}
+                    {formatEventDateTime(event.date_start)}
+                    {extraCount > 0 && <strong style={{ color: '#fff' }}>{` · ${showtimesLabel(extraCount)}`}</strong>}
+                    {location ? ` · 📍 ${location}` : ''}
                 </p>
                 {price.kind === 'priced' && (
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600, color: '#fff', marginTop: 2 }}>

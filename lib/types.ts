@@ -15,6 +15,9 @@ export type DbEvent = {
   source: string;
   date_start: string;
   date_end: string | null;
+  // Funciones adicionales (obra con varias fechas) — ordenadas asc, todas posteriores a
+  // date_start. Vacío para eventos de una sola fecha. Ver lib/event-showtimes.ts.
+  extra_dates: string[];
   price: number | null;
   is_free: boolean;
   price_tiers: PriceTier[];

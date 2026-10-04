@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import { showtimesLabel } from '@/lib/event-showtimes';
 import { deleteEvent } from './actions';
 
 export const metadata = { title: 'Eventos — Admin' };
@@ -31,7 +32,7 @@ export default async function AdminEventsPage({
     const supabase = await createClient();
     const { data: events } = await supabase
         .from('events')
-        .select('id, title, category, zone, date_start, status, sponsored, source, contact_link')
+        .select('id, title, category, zone, date_start, extra_dates, status, sponsored, source, contact_link')
         .order(column, { ascending });
 
     const rows = events ?? [];
@@ -117,6 +118,11 @@ export default async function AdminEventsPage({
                                         month: 'short',
                                         year: 'numeric',
                                     })}
+                                    {event.extra_dates?.length > 0 && (
+                                        <span className="ml-1 text-xs text-[#999999]">
+                                            {showtimesLabel(event.extra_dates.length)}
+                                        </span>
+                                    )}
                                 </td>
                                 <td className="px-4 py-3">
                                     <span

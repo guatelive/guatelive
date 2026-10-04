@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { EventGridClient } from '@/components/eventos-hoy/event-grid-client';
-import { eventMatchesWhen } from '@/lib/event-when';
+import { focusWhen, toUpcomingEvents } from '@/lib/event-showtimes';
 import { guatNow } from '@/lib/hours-utils';
 import { SITE_URL } from '@/lib/site-config';
 import type { DbEvent } from '@/lib/types';
@@ -21,17 +21,20 @@ export default async function EventosHoyPage() {
         .from('events')
         .select(`
             id, title, slug, description, category, zone, venue_name,
-            place_id, date_start, date_end, price, is_free, price_tiers, image_url, contact_link,
+            place_id, date_start, date_end, extra_dates, price, is_free, price_tiers, image_url, contact_link,
             sponsored, featured, tags, status
         `)
         .eq('status', 'published')
-        .gte('date_start', guatNow().toISOString())
+        .gte('date_last', guatNow().toISOString())
         .order('date_start', { ascending: true })
         .limit(60);
 
-    const allEvents = (data ?? []) as DbEvent[];
     const now = guatNow();
-    const todayEvents = allEvents.filter(e => eventMatchesWhen(e.date_start, 'today', now));
+    const allEvents = toUpcomingEvents((data ?? []) as DbEvent[], now);
+    // Con varias funciones, "hoy" matchea si cualquiera cae hoy (y la card muestra esa).
+    const todayEvents = allEvents
+        .map(e => focusWhen(e, 'today', now))
+        .filter((e): e is DbEvent => e !== null);
     const showingToday = todayEvents.length > 0;
     const events = showingToday ? todayEvents : allEvents.slice(0, 12);
 

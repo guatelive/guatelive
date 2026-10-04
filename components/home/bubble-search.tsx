@@ -16,7 +16,7 @@ import {
     guatNow,
     type OpenStatus,
 } from '@/lib/hours-utils';
-import { eventMatchesWhen } from '@/lib/event-when';
+import { focusWhen } from '@/lib/event-showtimes';
 import type { DbEvent, DbActivity } from '@/lib/types';
 
 type Place = {
@@ -422,7 +422,9 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
             const now = guatNow();
             const filtered = selectedWhen === 'anytime'
                 ? data
-                : data.filter(e => eventMatchesWhen(e.date_start, selectedWhen, now));
+                : data
+                    .map(e => focusWhen(e, selectedWhen, now))
+                    .filter((e): e is DbEvent => e !== null);
             setEventBubbleResults(filtered);
         } catch {
             setEventBubbleResults([]);

@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { TagPicker } from './tag-picker';
 import { PriceTiersInput } from './price-tiers-input';
+import { ExtraDatesInput } from './extra-dates-input';
 import { ImageCropper } from './image-cropper';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { EVENT_TAG_GROUPS } from '@/lib/event-tags';
@@ -50,6 +51,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
     const [category, setCategory] = useState(event?.category ?? 'Otros');
     const [zone, setZone] = useState(event?.zone ?? '');
     const [dateStart, setDateStart] = useState(event ? toDatetimeLocal(event.date_start) : '');
+    const [extraDates, setExtraDates] = useState<string[]>(event?.extra_dates ?? []);
     const [price, setPrice] = useState(event?.price != null ? String(event.price) : '');
     const [isFree, setIsFree] = useState(event?.is_free ?? false);
     const [priceTiers, setPriceTiers] = useState(event?.price_tiers ?? []);
@@ -93,7 +95,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
         if (fileInputRef.current) fileInputRef.current.value = '';
     }
 
-    const previewData = { title, category, zone, date_start: dateStart, price, isFree, priceTiers, imageUrl: imagePreview, venue_name: venueName };
+    const previewData = { title, category, zone, date_start: dateStart, extraDatesCount: extraDates.length, price, isFree, priceTiers, imageUrl: imagePreview, venue_name: venueName };
 
     return (
         <div className="flex gap-8 items-start">
@@ -177,8 +179,26 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
                         type="datetime-local"
                         name="date_end"
                         defaultValue={event?.date_end ? toDatetimeLocal(event.date_end) : ''}
+                        disabled={extraDates.length > 0}
                     />
                 </div>
+            </div>
+
+            <div>
+                <label className="mb-1 block text-sm text-[#666666]">
+                    ¿Tiene más funciones? (ej. obra de teatro con varias fechas)
+                </label>
+                <ExtraDatesInput
+                    name="extra_dates"
+                    defaultValue={event?.extra_dates ?? []}
+                    onChange={setExtraDates}
+                />
+                {extraDates.length > 0 && (
+                    <p className="mt-1 text-xs text-[#999999]">
+                        Mismo lugar, precios y link para todas las funciones. La hora de fin no
+                        aplica a eventos con varias funciones.
+                    </p>
+                )}
             </div>
 
             <div>

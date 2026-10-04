@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { guatNow } from '@/lib/hours-utils';
+import { toUpcomingEvents } from '@/lib/event-showtimes';
 
 export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
@@ -15,9 +16,9 @@ export async function GET(req: NextRequest) {
 
     let query = supabase
         .from('events')
-        .select('id, title, slug, description, category, zone, venue_name, place_id, date_start, date_end, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags')
+        .select('id, title, slug, description, category, zone, venue_name, place_id, date_start, date_end, extra_dates, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags')
         .eq('status', 'published')
-        .gte('date_start', guatNow().toISOString());
+        .gte('date_last', guatNow().toISOString());
 
     if (!all && category) {
         query = query.eq('category', category);
@@ -36,5 +37,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(data ?? []);
+    // date_start = próxima función, extra_dates = las que siguen — el filtro "¿Cuándo?"
+    // del cliente (focusWhen) revisa todas.
+    return NextResponse.json(toUpcomingEvents(data ?? [], guatNow()));
 }
