@@ -11,8 +11,10 @@
 // criterio (ADR-019) de no evadir señales anti-scraping de terceros.
 
 import { eticketSource } from './eticket';
+import { fanaticksSource } from './fanaticks';
 import type { EventSource } from './types';
 
 export const EVENT_SOURCES: Record<string, EventSource> = {
     'eticket': eticketSource,
+    'fanaticks': fanaticksSource,
 };

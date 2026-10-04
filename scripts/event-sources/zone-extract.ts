@@ -31,7 +31,8 @@ export function extractZone(text: string | null): string | null {
         if (normalized.includes(normalize(venue))) return zone;
     }
 
-    const zonaMatch = text.match(/zona\s*(\d{1,2})\b/i);
+    // También la abreviatura "z9"/"z. 9" que usan algunas direcciones (ej. Fanaticks).
+    const zonaMatch = text.match(/\b(?:zona|z\.?)\s*(\d{1,2})\b/i);
     if (zonaMatch) return `Zona ${parseInt(zonaMatch[1], 10)}`;
 
     for (const area of KNOWN_AREAS) {

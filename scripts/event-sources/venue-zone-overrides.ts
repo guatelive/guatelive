@@ -29,5 +29,7 @@ export const VENUE_ZONE_OVERRIDES: Record<string, string> = {
     'hotel westin camino real': 'Zona 10',
     'alianza francesa': 'Zona 13',
     'zoologico la aurora': 'Zona 13',
+    'zoo la aurora': 'Zona 13', // mismo venue, nombre corto que usa Fanaticks
+    'teatro dick smith': 'Zona 4', // confirmado por la fuente ("Teatro Dick Smith, zona 4" en Fanaticks, 2026-10-04)
     'ermita de la santa cruz': 'Antigua',
 };
