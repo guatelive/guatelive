@@ -25,7 +25,7 @@ export function NewsletterSignup() {
     const [state, formAction] = useActionState(subscribeToNewsletter, initialState);
 
     return (
-        <section className="mx-auto mt-6 max-w-[1400px] px-6 pb-10 md:px-10">
+        <section id="newsletter" className="mx-auto mt-6 max-w-[1400px] scroll-mt-24 px-6 pb-10 md:px-10">
             <div className="relative overflow-hidden rounded-2xl bg-[#111111] p-8 text-center text-background md:p-12">
                 <div
                     className="pointer-events-none absolute -top-8 right-10 h-[90px] w-[90px] rounded-full bg-[#C8E64E]"
