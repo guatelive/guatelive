@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getCategoryColor, formatEventMeta, priceDisplay } from '@/lib/event-display';
+import { showtimesLabel } from '@/lib/event-showtimes';
 import type { PriceTier } from '@/lib/types';
 
 export type EventPreviewData = {
@@ -9,6 +10,7 @@ export type EventPreviewData = {
     category: string;
     zone: string;
     date_start: string;
+    extraDatesCount: number;
     price: string; // string from input, empty = no sé el precio (a menos que isFree)
     isFree: boolean;
     priceTiers: PriceTier[];
@@ -121,6 +123,7 @@ function PreviewCard({
                 {!isMsm && (
                     <p style={{ color: '#aaa', fontSize: isBig ? 11 : 10, fontFamily: 'var(--font-sans)' }}>
                         {formatEventMeta(data.date_start, data.zone)}
+                        {data.extraDatesCount > 0 && ` · ${showtimesLabel(data.extraDatesCount)}`}
                     </p>
                 )}
                 {isMsm && data.zone && (

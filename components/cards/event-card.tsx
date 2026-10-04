@@ -3,6 +3,7 @@ import { Star } from 'lucide-react';
 import type { DbEvent } from '@/lib/types';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
 import { eventLocation, priceDisplay } from '@/lib/event-display';
+import { showtimesLabel } from '@/lib/event-showtimes';
 
 const BADGE_STYLE: React.CSSProperties = {
   position: 'absolute',
@@ -36,6 +37,8 @@ export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titl
   const colors = EVENT_CATEGORY_BADGE[event.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
   const PlaceholderIcon = EVENT_CATEGORY_ICON[event.category as EventCategory] ?? Star;
   const price = priceDisplay(event);
+  // date_start ya es la próxima función (ver lib/event-showtimes.ts); extra_dates, las que siguen.
+  const extraCount = event.extra_dates?.length ?? 0;
 
   const rightBadge = event.sponsored
     ? { label: 'PATROCINADO', bg: '#E11D2E', fg: '#FFFFFF' }
@@ -121,7 +124,9 @@ export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titl
         </div>
 
         <p style={{ fontFamily: 'var(--font-sans)', fontSize: 11, color: '#888888', lineHeight: 1.4 }}>
-          {formatDate(event.date_start)}{eventLocation(event) ? ` · 📍 ${eventLocation(event)}` : ''}
+          {formatDate(event.date_start)}
+          {extraCount > 0 && <span style={{ color: '#FFFFFF', fontWeight: 600 }}>{` · ${showtimesLabel(extraCount)}`}</span>}
+          {eventLocation(event) ? ` · 📍 ${eventLocation(event)}` : ''}
         </p>
       </div>
     </div>

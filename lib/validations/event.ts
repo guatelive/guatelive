@@ -12,6 +12,7 @@ export const eventSchema = z.object({
     place_id: z.string().uuid().optional(),
     date_start: z.string().min(1, 'La fecha es obligatoria'),
     date_end: z.string().optional(),
+    extra_dates: z.array(z.string().min(1)).max(60).default([]),
     price: z.number().nonnegative().optional(),
     is_free: z.boolean(),
     price_tiers: priceTiersSchema.default([]),

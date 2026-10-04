@@ -9,6 +9,7 @@ import { EditionPeekTab } from "@/components/home/EditionPeekTab";
 import { EventsGrid } from "@/components/home/EventsGrid";
 import { ActivitiesGrid } from "@/components/home/ActivitiesGrid";
 import { guatNow } from "@/lib/hours-utils";
+import { toUpcomingEvents } from "@/lib/event-showtimes";
 import type { DbEvent, DbActivity, DbBankPromotion } from "@/lib/types";
 import { PromosCarousel } from "@/components/home/PromosCarousel";
 import { resolvePromoPlaces } from "@/lib/promo-place-match";
@@ -35,7 +36,7 @@ export const metadata = {
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEvents }, { data: activities }, { data: activePromos }, { data: promoMatchPlaces }] = await Promise.all([
+  const [{ data: recentPlaces }, { data: latestEdition }, { data: upcomingEventRows }, { data: activities }, { data: activePromos }, { data: promoMatchPlaces }] = await Promise.all([
     supabase
       .from("places")
       .select("id, name, slug, zone, rating, primary_category, hours, place_photos(url, is_primary, order_index)")
@@ -52,12 +53,15 @@ export default async function HomePage() {
       .single(),
     supabase
       .from("events")
-      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags, status")
+      .select("id, title, slug, description, category, zone, venue_name, place_id, source, date_start, date_end, extra_dates, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags, status")
       .eq("status", "published")
-      .gte("date_start", guatNow().toISOString())
+      // date_last (columna generada) = última función — un evento con varias funciones
+      // sigue visible aunque la primera ya haya pasado. El orden final es por PRÓXIMA
+      // función, en JS (toUpcomingEvents), por eso se trae más de 12.
+      .gte("date_last", guatNow().toISOString())
       .order("featured", { ascending: false })
       .order("date_start", { ascending: true })
-      .limit(12),
+      .limit(40),
     supabase
       .from("activities")
       .select("id, title, slug, description, category, zone, venue_name, place_id, recurrence_text, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags, status")
@@ -76,6 +80,7 @@ export default async function HomePage() {
   // Descuento más alto primero siempre; el shuffle diario solo varía el
   // orden entre promos empatadas en % — antes de esto, el home mostraba
   // literalmente el mismo top-8 fijo por descuento y nunca rotaba.
+  const upcomingEvents = toUpcomingEvents((upcomingEventRows ?? []) as DbEvent[], guatNow(), true).slice(0, 12);
   const shuffledPromos = sortByDiscountWithDailyVariation((activePromos ?? []) as DbBankPromotion[], guatNow()).slice(0, 8);
   const promoPlaces = resolvePromoPlaces(shuffledPromos, promoMatchPlaces ?? []);
   const promosWithPlaces = shuffledPromos.map((promo) => ({
@@ -125,7 +130,7 @@ export default async function HomePage() {
          animada quedaba de más y empujaba Eventos hacia abajo. */}
       {/* <MarqueeTicker /> */}
 
-      <EventsGrid events={(upcomingEvents ?? []) as DbEvent[]} />
+      <EventsGrid events={upcomingEvents} />
       <ActivitiesGrid activities={(activities ?? []) as DbActivity[]} />
       {/* Comentado intencionalmente: con "recién agregados" eliminado,
          la sección editorial quedó arriba y es fácil de encontrar sin este tab.

@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import { MapPin, ExternalLink, Star, CalendarDays, Clock, Ticket } from 'lucide-react';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
-import { formatDateParts } from '@/lib/format-event-date';
+import { formatDateLong, formatDateParts } from '@/lib/format-event-date';
+import { getShowtimes, upcomingFrom } from '@/lib/event-showtimes';
+import { guatNow } from '@/lib/hours-utils';
 import { DetailInfoCard, priceRowContent, type InfoRow } from '@/components/detail-info-card';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { Breadcrumb } from '@/components/breadcrumb';
@@ -78,11 +80,28 @@ export default async function EventoPage(props: { params: Params }) {
     const isFree = event.is_free;
     const priceUnknown = !isFree && event.price === null && event.price_tiers.length === 0;
     const hasPriceTiers = event.price_tiers.length > 0;
+    // Varias funciones: solo las próximas. Si ya pasaron todas, se muestran igual (la
+    // página sigue accesible por URL directa, como un evento de una fecha ya pasado).
+    const showtimes = getShowtimes(upcomingFrom(event, guatNow()) ?? event);
+    const hasManyShowtimes = (event.extra_dates?.length ?? 0) > 0;
     const { date: dateLabel, time: timeLabel } = formatDateParts(event.date_start, event.date_end);
     const priceContent = priceRowContent(event);
+    const whenRows: InfoRow[] = hasManyShowtimes
+        ? [{
+            icon: CalendarDays,
+            label: showtimes.length === 1 ? 'Función' : `Funciones (${showtimes.length})`,
+            content: (
+                <ul className="space-y-1">
+                    {showtimes.map(s => <li key={s}>{formatDateLong(s)}</li>)}
+                </ul>
+            ),
+        }]
+        : [
+            { icon: CalendarDays, label: 'Fecha', content: dateLabel },
+            { icon: Clock, label: 'Hora', content: timeLabel },
+        ];
     const infoRows: InfoRow[] = [
-        { icon: CalendarDays, label: 'Fecha', content: dateLabel },
-        { icon: Clock, label: 'Hora', content: timeLabel },
+        ...whenRows,
         {
             icon: MapPin,
             label: 'Lugar',
@@ -103,12 +122,12 @@ export default async function EventoPage(props: { params: Params }) {
     ];
     const url = `${SITE_URL}/evento/${event.slug}`;
 
-    const schema = {
+    // Google pide un Event por función cuando hay varias fechas — se emite uno por
+    // cada función próxima, todos con el mismo resto de datos.
+    const baseSchema = {
         '@context': 'https://schema.org',
         '@type': 'Event',
         name: event.title,
-        startDate: event.date_start,
-        ...(event.date_end ? { endDate: event.date_end } : {}),
         eventStatus: 'https://schema.org/EventScheduled',
         location: {
             '@type': 'Place',
@@ -137,6 +156,9 @@ export default async function EventoPage(props: { params: Params }) {
                 },
         }),
     };
+    const eventSchemas = hasManyShowtimes
+        ? showtimes.map(start => ({ ...baseSchema, startDate: start }))
+        : [{ ...baseSchema, startDate: event.date_start, ...(event.date_end ? { endDate: event.date_end } : {}) }];
 
     // Sin BreadcrumbList antes: esta página usa `@type: Event` como schema principal
     // (offers, startDate, etc.) — se suma el breadcrumb como schema aparte, mismo
@@ -150,7 +172,7 @@ export default async function EventoPage(props: { params: Params }) {
 
     return (
         <div className="min-h-screen bg-white">
-            <SchemaMarkup schema={[schema, breadcrumbSchema]} />
+            <SchemaMarkup schema={[...eventSchemas, breadcrumbSchema]} />
             <article className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
                 <Breadcrumb items={breadcrumbItems} className="mb-6" />
 

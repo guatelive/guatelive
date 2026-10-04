@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { eventSchema } from '@/lib/validations/event';
 import { slugify } from '@/lib/slug';
+import { normalizeShowtimes } from '@/lib/event-showtimes';
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -72,12 +73,22 @@ function parsePriceTiers(formData: FormData): unknown {
     }
 }
 
+function parseExtraDates(formData: FormData): unknown {
+    const raw = formData.get('extra_dates');
+    if (typeof raw !== 'string') return [];
+    try {
+        return JSON.parse(raw);
+    } catch {
+        return [];
+    }
+}
+
 function parseEventForm(formData: FormData) {
     const priceRaw = str(formData, 'price');
     const tagsRaw = str(formData, 'tags');
     const isFree = formData.get('is_free') === 'on';
 
-    return eventSchema.parse({
+    const parsed = eventSchema.parse({
         title: str(formData, 'title') ?? '',
         slug: str(formData, 'slug'),
         description: str(formData, 'description'),
@@ -87,6 +98,7 @@ function parseEventForm(formData: FormData) {
         place_id: str(formData, 'place_id'),
         date_start: str(formData, 'date_start') ?? '',
         date_end: str(formData, 'date_end'),
+        extra_dates: parseExtraDates(formData),
         price: !isFree && priceRaw ? Math.round(parseFloat(priceRaw) * 100) / 100 : undefined,
         is_free: isFree,
         price_tiers: parsePriceTiers(formData),
@@ -96,6 +108,22 @@ function parseEventForm(formData: FormData) {
         tags: tagsRaw ? tagsRaw.split(',').filter(Boolean) : [],
         status: str(formData, 'status') ?? 'pending',
     });
+
+    // Varias funciones: dedup + orden, y la más temprana queda como date_start.
+    const showtimes = normalizeShowtimes(parsed.date_start, parsed.extra_dates);
+    return {
+        ...parsed,
+        ...showtimes,
+        // date_end ("hora de fin") solo aplica a eventos de una función.
+        date_end: showtimes.extra_dates.length > 0 ? undefined : parsed.date_end,
+    };
+}
+
+function revalidateEventPaths(slug: string) {
+    revalidatePath('/admin/events');
+    revalidatePath('/');
+    revalidatePath('/eventos/hoy');
+    revalidatePath(`/evento/${slug}`);
 }
 
 function publishedAt(status: string): string | null {
@@ -130,8 +158,7 @@ export async function createEvent(formData: FormData) {
 
     if (error) throw new Error(error.message);
 
-    revalidatePath('/admin/events');
-    revalidatePath('/');
+    revalidateEventPaths(slug);
     redirect('/admin/events');
 }
 
@@ -176,8 +203,7 @@ export async function updateEvent(id: string, formData: FormData) {
 
     if (error) throw new Error(error.message);
 
-    revalidatePath('/admin/events');
-    revalidatePath('/');
+    revalidateEventPaths(slug);
     redirect('/admin/events');
 }
 
