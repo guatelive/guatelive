@@ -1,0 +1,468 @@
+{
+  "descripcion": "Respaldo de places.tags ANTES de la curación del tag para-trabajar (sesión 2026-10-19/20). Para revertir un lugar, restaurar su array 'tags_antes'. Ver docs/historial-sesiones.md.",
+  "cambios": {
+    "agregado_para_trabajar": "6 San Martín, 5 Patsy, 7 Saúl (confirmados por Fredy); Niquito, Artista de Café, Café Sol, Alegría Café, Cafe Boheme, Fat Cat Coffee House, Fernando's Kaffee, Rainbow Café (evidencia web)",
+    "quitado_para_trabajar": "El Gran Café (fuentes: pocos asientos, no apto para laptop)"
+  },
+  "lugares": [
+    {
+      "id": "eafd4b48-69f5-425b-a13f-897f1f9b8af3",
+      "name": "Patsy",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "reposteria",
+        "guatemalteca"
+      ]
+    },
+    {
+      "id": "158ed64c-32f9-42a4-b6fd-b1f4ab66d043",
+      "name": "San Martín • Centro Histórico",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "panaderia",
+        "guatemalteca"
+      ]
+    },
+    {
+      "id": "0d0b24a6-7fe7-46c0-9959-c4e814e193e9",
+      "name": "San Martín • Condado Concepción",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "panaderia"
+      ]
+    },
+    {
+      "id": "80cb21d3-bfa9-4812-95b1-c4632e2b8c72",
+      "name": "San Martín • Escala Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "apto-para-ninos"
+      ]
+    },
+    {
+      "id": "19d55ce3-baee-4c2a-b1cd-a5a6672fc3c9",
+      "name": "San Martín • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "ad5dcb25-8f74-496a-a430-fabf80cb153c",
+      "name": "Patsy • Aguilar Batres",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "c627bd85-1899-416c-8ed8-2a9e1f993926",
+      "name": "San Martín • Metrocentro",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "c2e95a79-151c-4289-8e63-340543a0e104",
+      "name": "Patsy • Plaza San Cristóbal",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "reposteria"
+      ]
+    },
+    {
+      "id": "f5d721b5-ea2b-4055-a2d4-9b7032d3f253",
+      "name": "Casa Patsy Antigua Guatemala",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "vistas-panoramicas"
+      ]
+    },
+    {
+      "id": "c3303c85-4dbf-418a-869f-4bca17fb4b29",
+      "name": "San Martín • Mix San Cristóbal",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "8cd4afa3-3722-431d-a3e3-94bcf904e8e8",
+      "name": "Patsy • Madero Roosevelt",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "ab666f02-9ba0-410a-8d03-d8fa1645b516",
+      "name": "Saúl Bistro Zona 10 (Casa Saúl)",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "bistro"
+      ]
+    },
+    {
+      "id": "f291d067-8bcd-4fbb-bde3-37fd94f6a4fe",
+      "name": "Saúl Bistro Metro 15",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "f4a0a181-888c-4701-a76b-f116774f4599",
+      "name": "Saúl Bistro Zona 14",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "253e1558-36f4-4661-86ad-0398c9440697",
+      "name": "Saúl Bistro • Majadas Once",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "b42fe386-34bc-401b-9006-95f298ba45e4",
+      "name": "Saúl Bistro Plaza Concepción",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "07ff3bd2-b334-4b63-a919-336afb0a66fc",
+      "name": "Saúl Cafe Pradera Concepción",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "9adfaaaa-f772-4a2e-a3fa-4f23b0048d4f",
+      "name": "Saúl Bistro Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "78677ab7-b14d-4d51-92ad-9f442e465e32",
+      "name": "Café Sol",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cafe-especialidad",
+        "terraza"
+      ]
+    },
+    {
+      "id": "0e88752a-e81f-4d00-8e76-17471507f92b",
+      "name": "Cafe Boheme",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "vistas-panoramicas",
+        "escondido"
+      ]
+    },
+    {
+      "id": "8ff1ba24-83c5-4b75-a047-e0d9d54acc51",
+      "name": "Niquito",
+      "tags_antes": [
+        "bar",
+        "cafe",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "cafe-especialidad"
+      ]
+    },
+    {
+      "id": "0558b5ac-5848-49f9-a7ad-1be8036ed375",
+      "name": "Artista de Café - Specialty Coffeeshop",
+      "tags_antes": [
+        "cafe",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "tuesta-su-propio-cafe",
+        "cafe-especialidad"
+      ]
+    },
+    {
+      "id": "26b5a47b-1532-42e7-b33c-758e58650380",
+      "name": "Rainbow Café Antigua Guatemala",
+      "tags_antes": [
+        "bar",
+        "book_store",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "sin-gluten"
+      ]
+    },
+    {
+      "id": "995eb6bf-674b-45f3-8326-71505575a03b",
+      "name": "Alegría Café / Specialty Coffee Shop",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "almuerzo",
+        "cafe-especialidad"
+      ]
+    },
+    {
+      "id": "b2306f14-0a0e-451b-aadc-9aa0093ab7ae",
+      "name": "Fat Cat Coffee House",
+      "tags_antes": [
+        "cafe",
+        "para-llevar",
+        "consumo-en-local",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "cf9c0284-e6a7-4fc7-b4d9-e290c8fac220",
+      "name": "Fernando's Kaffee",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "sin-gluten"
+      ]
+    },
+    {
+      "id": "8aee9a25-5362-463f-b3d1-4f18aab89730",
+      "name": "El Gran Café",
+      "tags_antes": [
+        "cafe",
+        "para-llevar",
+        "consumo-en-local",
+        "desayuno",
+        "almuerzo",
+        "cafe-especialidad",
+        "bar-de-cafe",
+        "tuesta-su-propio-cafe",
+        "venta-cafe-en-grano",
+        "cafe-de-origen-guatemalteco",
+        "economico",
+        "turismo",
+        "tranquilo",
+        "acogedor",
+        "volumen-conversacional",
+        "para-trabajar",
+        "ingredientes-locales",
+        "proyecto-local",
+        "en-antigua"
+      ]
+    }
+  ]
+}
