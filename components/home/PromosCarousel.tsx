@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { nearestChildIndex, useCarouselTakeover } from '@/hooks/use-carousel-takeover';
 import type { DbBankPromotion } from '@/lib/types';
 import type { PromoPlaceLink } from '@/lib/promo-place-match';
 import { PromoDetailModal } from '@/components/cards/promo-detail-modal';
@@ -67,7 +68,7 @@ function CouponCard({ promo }: { promo: PromoWithPlaces }) {
                     <div style={{ flex: 1, borderTop: '2px dashed #333' }} />
                     <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#fff', margin: '0 -8px' }} />
                     <div style={{
-                        background: '#C8E64E', color: '#111', fontFamily: 'var(--font-display)', fontWeight: 800,
+                        background: '#E11D2E', color: '#FFFFFF', fontFamily: 'var(--font-display)', fontWeight: 800,
                         fontSize: promo.discount_pct !== null ? 18 : 12, padding: '8px 14px', borderRadius: 8,
                         transform: 'rotate(-4deg)', margin: '0 10px', boxShadow: '0 4px 10px rgba(0,0,0,0.15)', whiteSpace: 'nowrap',
                     }}>
@@ -121,6 +122,15 @@ export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promo
     const pauseStartRef = useRef<number | null>(null);
     const isPausedRef = useRef(false);
 
+    // Swipe/click manual (o flechas/puntos) → el auto-avance se apaga para siempre en
+    // este carrusel; ver hooks/use-carousel-takeover.ts.
+    const stopAutoAdvance = useCallback(() => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        isPausedRef.current = true;
+        if (footerProgressRef.current) footerProgressRef.current.style.width = '0%';
+    }, []);
+    const { tookControlRef, takeControl, takeoverHandlers } = useCarouselTakeover(stopAutoAdvance);
+
     // RAF — actualiza la barra de progreso directamente (sin React state), mismo patrón que EventsGrid
     useEffect(() => {
         function tick() {
@@ -154,12 +164,13 @@ export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promo
 
     const startTimer = useCallback((remaining = DURATION) => {
         if (timerRef.current) clearTimeout(timerRef.current);
+        if (tookControlRef.current) return;
         pageStartRef.current = performance.now() - (DURATION - remaining);
         if (remaining === DURATION) {
             if (footerProgressRef.current) footerProgressRef.current.style.width = '0%';
         }
         timerRef.current = setTimeout(() => doAdvance(), remaining);
-    }, [doAdvance]);
+    }, [doAdvance, tookControlRef]);
 
     useEffect(() => {
         startTimer();
@@ -167,14 +178,14 @@ export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promo
     }, [activeIndex, startTimer]);
 
     function handleMouseEnter() {
-        if (isPausedRef.current) return;
+        if (isPausedRef.current || tookControlRef.current) return;
         isPausedRef.current = true;
         pauseStartRef.current = performance.now();
         if (timerRef.current) clearTimeout(timerRef.current);
     }
 
     function handleMouseLeave() {
-        if (!isPausedRef.current) return;
+        if (!isPausedRef.current || tookControlRef.current) return;
         const pauseDuration = performance.now() - (pauseStartRef.current ?? performance.now());
         pageStartRef.current += pauseDuration;
         const elapsed = performance.now() - pageStartRef.current;
@@ -183,8 +194,15 @@ export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promo
         startTimer(Math.max(100, DURATION - elapsed));
     }
 
+    // Después de un swipe manual, los puntos/contador siguen la carta real.
+    function handleCarouselScroll() {
+        const container = carouselRef.current;
+        if (!container || !tookControlRef.current) return;
+        setIndex(nearestChildIndex(container));
+    }
+
     function goTo(idx: number) {
-        if (timerRef.current) clearTimeout(timerRef.current);
+        takeControl();
         const clamped = ((idx % promos.length) + promos.length) % promos.length;
         setIndex(clamped);
         scrollToCard(clamped);
@@ -242,6 +260,8 @@ export function PromosCarousel({ promos: promosProp, lastUpdatedLabel }: { promo
                 className="no-scrollbar"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onScroll={handleCarouselScroll}
+                {...takeoverHandlers}
                 style={{ display: 'flex', gap: '0.85rem', overflowX: 'auto', scrollSnapType: 'x mandatory', paddingBottom: 2 }}
             >
                 {promos.map(promo => (

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getPublishedPlaceZones } from "@/lib/zones";
 
-// Estilo home v2 (design_handoff_home_v2): fondo #111, acento lima #C8E64E, rojo solo
-// en el "Live" del logo. Vive en app/layout.tsx (vía FooterGate) para salir en todas
+// Estilo home v2 (design_handoff_home_v2): fondo #111 con el rojo de marca como único
+// acento — el lima del handoff se sacó del sitio (feedback beta 2026-10-19: competía
+// con el rojo y se sentía "otra marca"). Vive en app/layout.tsx (vía FooterGate) para salir en todas
 // las páginas públicas — antes estaba en SiteLayout y solo lo tenían 4 páginas.
 
 const TICKER_ITEMS = [
@@ -28,7 +29,7 @@ function TickerContent() {
     <span className="font-display text-sm font-extrabold tracking-[0.06em]">
       {TICKER_ITEMS.map((item, i) => (
         <span key={item}>
-          <span className={i % 2 === 1 ? "text-[#C8E64E]" : "text-white"}>{item}</span>
+          <span className={i % 2 === 1 ? "text-[#E11D2E]" : "text-white"}>{item}</span>
           <span className="mx-4 text-white/30">✦</span>
         </span>
       ))}
@@ -45,7 +46,7 @@ function ColumnTitle({ children }: { children: React.ReactNode }) {
 }
 
 const LINK_CLASS =
-  "text-[15px] text-white/80 transition-colors hover:text-[#C8E64E]";
+  "text-[15px] text-white/80 transition-colors hover:text-white";
 
 export async function Footer() {
   const zones = await getPublishedPlaceZones();
@@ -65,12 +66,12 @@ export async function Footer() {
       <div className="mx-auto max-w-[1400px] px-[22px] pb-8 pt-14 md:px-10 md:pt-20">
         <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="col-span-2 md:col-span-1">
-            <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-[#C8E64E]">
-              <span className="inline-block h-2 w-2 rounded-full bg-[#C8E64E]" />
+            <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-[#E11D2E]">
+              <span className="inline-block h-2 w-2 rounded-full bg-[#E11D2E]" />
               Todo lo que pasa en Guate
             </div>
             <p className="font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] md:text-[44px]">
-              ¿Qué hacemos <span className="text-[#C8E64E]">hoy</span>
+              ¿Qué hacemos <span className="text-[#E11D2E]">hoy</span>
               <br />
               en Guate?
             </p>
@@ -80,7 +81,7 @@ export async function Footer() {
             </p>
             <Link
               href="/#newsletter"
-              className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#C8E64E] px-5 py-3 text-[13px] font-extrabold uppercase tracking-[0.04em] text-[#111111] transition-transform hover:-translate-y-0.5"
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#E11D2E] px-5 py-3 text-[13px] font-extrabold uppercase tracking-[0.04em] text-white transition-transform hover:-translate-y-0.5"
             >
               Recibí la edición semanal →
             </Link>

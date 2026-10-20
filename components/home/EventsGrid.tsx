@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { nearestChildIndex, useCarouselTakeover } from '@/hooks/use-carousel-takeover';
 import type { DbEvent } from '@/lib/types';
 import { formatEventDateTime, eventLocation, priceDisplay } from '@/lib/event-display';
 import { showtimesLabel } from '@/lib/event-showtimes';
@@ -193,6 +194,15 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     const pauseStartRef = useRef<number | null>(null);
     const isPausedRef = useRef(false);
 
+    // Swipe/click manual (o flechas/puntos) → el auto-avance se apaga para siempre en
+    // este carrusel; ver hooks/use-carousel-takeover.ts.
+    const stopAutoAdvance = useCallback(() => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        isPausedRef.current = true;
+        if (footerProgressRef.current) footerProgressRef.current.style.width = '0%';
+    }, []);
+    const { tookControlRef, takeControl, takeoverHandlers } = useCarouselTakeover(stopAutoAdvance);
+
     // RAF — actualiza la barra de progreso directamente (sin React state)
     useEffect(() => {
         function tick() {
@@ -236,12 +246,13 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
 
     const startTimer = useCallback((remaining = DURATION) => {
         if (timerRef.current) clearTimeout(timerRef.current);
+        if (tookControlRef.current) return;
         pageStartRef.current = performance.now() - (DURATION - remaining);
         if (remaining === DURATION) {
             if (footerProgressRef.current) footerProgressRef.current.style.width = '0%';
         }
         timerRef.current = setTimeout(() => doAdvance(), remaining);
-    }, [doAdvance]);
+    }, [doAdvance, tookControlRef]);
 
     // Reinicia el timer cada vez que cambia la página (desktop) o la card activa (mobile)
     useEffect(() => {
@@ -250,14 +261,14 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
     }, [navIndex, startTimer]);
 
     function handleMouseEnter() {
-        if (isPausedRef.current) return;
+        if (isPausedRef.current || tookControlRef.current) return;
         isPausedRef.current = true;
         pauseStartRef.current = performance.now();
         if (timerRef.current) clearTimeout(timerRef.current);
     }
 
     function handleMouseLeave() {
-        if (!isPausedRef.current) return;
+        if (!isPausedRef.current || tookControlRef.current) return;
         const pauseDuration = performance.now() - (pauseStartRef.current ?? performance.now());
         pageStartRef.current += pauseDuration;
         const elapsed = performance.now() - pageStartRef.current;
@@ -266,8 +277,15 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
         startTimer(Math.max(100, DURATION - elapsed));
     }
 
+    // Después de un swipe manual, los puntos/contador siguen la carta real.
+    function handleCarouselScroll() {
+        const container = carouselRef.current;
+        if (!container || !tookControlRef.current) return;
+        setMobileIndex(nearestChildIndex(container));
+    }
+
     function goTo(idx: number) {
-        if (timerRef.current) clearTimeout(timerRef.current);
+        takeControl();
         if (isDesktop) {
             setVisible(false);
             setTimeout(() => {
@@ -388,6 +406,8 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
                     <div
                         ref={carouselRef}
                         className="no-scrollbar"
+                        onScroll={handleCarouselScroll}
+                        {...takeoverHandlers}
                         style={{ display: 'flex', gap: '0.65rem', overflowX: 'auto', scrollSnapType: 'x mandatory', paddingBottom: 2 }}
                     >
                         {events.map(ev => (

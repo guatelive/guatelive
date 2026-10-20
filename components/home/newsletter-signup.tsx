@@ -14,7 +14,7 @@ function SubmitButton() {
         <Button
             type="submit"
             disabled={pending}
-            className="shrink-0 rounded-lg bg-[#C8E64E] px-6 py-3 text-[13px] font-extrabold tracking-[0.04em] text-[#111111] hover:bg-[#bdd944]"
+            className="shrink-0 rounded-lg bg-[#E11D2E] px-6 py-3 text-[13px] font-extrabold tracking-[0.04em] text-white hover:bg-[#C41626]"
         >
             {pending ? 'ENVIANDO…' : 'SUSCRIBIRME'}
         </Button>
@@ -28,10 +28,10 @@ export function NewsletterSignup() {
         <section id="newsletter" className="mx-auto mt-6 max-w-[1400px] scroll-mt-24 px-6 pb-10 md:px-10">
             <div className="relative overflow-hidden rounded-2xl bg-[#111111] p-8 text-center text-background md:p-12">
                 <div
-                    className="pointer-events-none absolute -top-8 right-10 h-[90px] w-[90px] rounded-full bg-[#C8E64E]"
+                    className="pointer-events-none absolute -top-8 right-10 h-[90px] w-[90px] rounded-full bg-[#E11D2E]"
                     style={{ opacity: 0.15 }}
                 />
-                <p className="text-xs font-bold uppercase tracking-[0.08em] text-[#C8E64E]">
+                <p className="text-xs font-bold uppercase tracking-[0.08em] text-[#E11D2E]">
                     Newsletter
                 </p>
                 <p className="mt-3 font-display text-xl font-extrabold">

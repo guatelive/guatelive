@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
+import { useCarouselTakeover } from '@/hooks/use-carousel-takeover';
 import type { DbActivity } from '@/lib/types';
 import { eventLocation } from '@/lib/event-display';
 import { priceDisplay } from '@/lib/event-display';
@@ -10,9 +11,12 @@ import { priceDisplay } from '@/lib/event-display';
 // Sticker wall (home v2): cinta adhesiva + tilt 3D en hover — ver
 // design_handoff_home_v2/README.md sección 5. Auto-avanza carta por carta como
 // el mobile de EventsGrid/PromosCarousel (decisión de Fredy 2026-10-04, antes era
-// scroll manual); se pausa con hover/touch y no corre con prefers-reduced-motion.
-// Ver ADR-023 en docs/decisions.md para el resto del razonamiento (tabla separada,
-// sin scraper).
+// scroll manual). El hover en desktop solo pausa; en cuanto el usuario lo mueve a
+// mano (touch, click/arrastre, rueda horizontal) el auto-avance se apaga para siempre
+// — antes retomaba al soltar y volvía a la carta 1 al llegar al final, arrancándole
+// el carrusel al usuario (feedback beta 2026-10-19, ver hooks/use-carousel-takeover.ts).
+// No corre con prefers-reduced-motion. Ver ADR-023 en docs/decisions.md para el resto
+// del razonamiento (tabla separada, sin scraper).
 function rot(id: number, spread: number) {
     return ((id * 41) % (spread * 2 + 1)) - spread;
 }
@@ -60,6 +64,9 @@ function useScrollThumb() {
 
 const DURATION = 4000;
 
+// El ref del hook alcanza: el intervalo lo lee en cada tick, no hace falta callback.
+function noop() {}
+
 // Posición de scroll de la carta `index` dentro del carrusel. Relativa a la primera
 // carta: el contenedor no es offsetParent, así que offsetLeft solo no alcanza.
 function cardScrollLeft(container: HTMLElement, index: number) {
@@ -69,24 +76,11 @@ function cardScrollLeft(container: HTMLElement, index: number) {
     return card.offsetLeft - first.offsetLeft;
 }
 
-// Índice de la carta más cercana al borde izquierdo del contenedor (para retomar
-// el auto-avance desde donde el usuario dejó el scroll manual).
-function nearestCardIndex(container: HTMLElement, count: number) {
-    let best = 0;
-    let bestDist = Infinity;
-    for (let i = 0; i < count; i++) {
-        const left = cardScrollLeft(container, i);
-        if (left === null) break;
-        const dist = Math.abs(left - container.scrollLeft);
-        if (dist < bestDist) { bestDist = dist; best = i; }
-    }
-    return best;
-}
-
 export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
     const { ref: scrollRef, thumb, updateThumb } = useScrollThumb();
     const indexRef = useRef(0);
     const pausedRef = useRef(false);
+    const { tookControlRef, takeoverHandlers } = useCarouselTakeover(noop);
 
     useEffect(() => {
         updateThumb();
@@ -102,7 +96,7 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
         const id = setInterval(() => {
             const container = scrollRef.current;
             const count = activities.length;
-            if (!container || pausedRef.current || count < 2) return;
+            if (!container || pausedRef.current || tookControlRef.current || count < 2) return;
             if (container.scrollWidth <= container.clientWidth) return;
             const atEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 4;
             const next = atEnd ? 0 : (indexRef.current + 1) % count;
@@ -111,17 +105,15 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
             indexRef.current = next;
         }, DURATION);
         return () => clearInterval(id);
-    }, [activities.length, scrollRef]);
+    }, [activities.length, scrollRef, tookControlRef]);
 
+    // Hover en desktop: solo pausa (el mouse encima no es "tomar el control").
     function pause() {
         pausedRef.current = true;
     }
 
-    // Al soltar, retoma desde la carta donde el usuario dejó el scroll manual.
     function resume() {
         pausedRef.current = false;
-        const container = scrollRef.current;
-        if (container) indexRef.current = nearestCardIndex(container, activities.length);
     }
 
     if (activities.length === 0) return null;
@@ -162,8 +154,7 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
                 onScroll={updateThumb}
                 onMouseEnter={pause}
                 onMouseLeave={resume}
-                onTouchStart={pause}
-                onTouchEnd={resume}
+                {...takeoverHandlers}
                 className="no-scrollbar"
                 style={{
                     display: 'flex', gap: 24, overflowX: 'auto',
@@ -195,7 +186,7 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
                             <div style={{
                                 position: 'absolute', top: -10, left: '50%',
                                 transform: 'translateX(-50%) rotate(-3deg)',
-                                width: 56, height: 20, background: 'rgba(200,230,78,0.85)',
+                                width: 56, height: 20, background: 'rgba(225,29,46,0.85)',
                                 boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
                             }} />
 

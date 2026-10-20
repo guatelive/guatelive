@@ -767,7 +767,7 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                         <div
                             style={{
                                 position: 'absolute', top: 24, right: 24,
-                                background: '#C8E64E', color: '#111111',
+                                background: '#E11D2E', color: '#FFFFFF',
                                 fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 14,
                                 padding: '10px 16px', borderRadius: 10,
                                 transform: 'rotate(6deg)', boxShadow: '0 8px 18px rgba(0,0,0,0.25)',

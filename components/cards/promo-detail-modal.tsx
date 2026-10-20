@@ -77,8 +77,8 @@ export function PromoDetailModal({
                     </div>
                     {promo.discount_pct !== null && (
                         <div
-                            className={`absolute bottom-3 left-3 max-w-[80%] rounded-xl px-3 py-1.5 ${isV2 ? 'text-[#111111]' : 'text-white'}`}
-                            style={{ backgroundColor: isV2 ? '#C8E64E' : brand.accent }}
+                            className="absolute bottom-3 left-3 max-w-[80%] rounded-xl px-3 py-1.5 text-white"
+                            style={{ backgroundColor: isV2 ? '#E11D2E' : brand.accent }}
                         >
                             <span className={`text-2xl font-semibold leading-none ${isV2 ? 'font-display font-extrabold' : 'font-serif'}`}>{promo.discount_pct}%</span>
                             <span className="ml-1 text-xs font-medium">OFF</span>
