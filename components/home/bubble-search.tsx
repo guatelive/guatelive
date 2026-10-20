@@ -39,11 +39,23 @@ const TAG_MAP: Record<string, string[]> = {
     Cenar: ['cena-romantica', 'date-night', 'restaurante'],
     'Tomar algo': ['bar', 'bar-completo', 'cocteleria-de-autor', 'cerveza-artesanal'],
     'Desayuno o brunch': ['desayuno', 'brunch', 'cafe', 'desayuno-todo-el-dia', 'abierto-temprano'],
-    Trabajar: ['para-trabajar', 'laptop-friendly', 'cafe-especialidad', 'reunion-de-negocios'],
+    // Solo tags que afirman "se puede trabajar ahí" (verificados por Fredy) — antes
+    // incluía cafe-especialidad y reunion-de-negocios, y salían vinotecas y café-bares.
+    // Los cafés en general van como sugerencia aparte (RELATED_TAG_MAP).
+    Trabajar: ['para-trabajar', 'laptop-friendly'],
     'Salir de fiesta': ['salir-de-fiesta', 'noche', 'night_club', 'after-office', 'musica-en-vivo'],
     'Ir con mi perro': ['al-aire-libre', 'tranquilo', 'acogedor', 'casual'],
     'Plan familiar': ['familia', 'ninos', 'domingo-en-familia', 'grupos-grandes'],
 };
+
+// Sugerencias "También te podría interesar" debajo de los resultados: lugares que
+// encajan con el plan pero sin confirmar (ej. cafés para "Trabajar"). Se muestran
+// aparte para no afirmar algo que no verificamos. Los bares quedan fuera aunque tengan
+// "café" en el nombre/tags.
+const RELATED_TAG_MAP: Record<string, string[]> = {
+    Trabajar: ['cafe', 'cafe-especialidad'],
+};
+const RELATED_LIMIT = 6;
 
 const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '🌅 Brunch', key: 'Desayuno o brunch' },
@@ -91,6 +103,7 @@ type PersistedSearchState = {
     when: string | null;
     zoneFallback: boolean;
     bubbleResults: Place[] | null;
+    relatedResults?: Place[] | null;
     eventBubbleResults: DbEvent[] | null;
     activityBubbleResults: DbActivity[] | null;
 };
@@ -234,6 +247,7 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
     const [isSurprise, setIsSurprise] = useState(false);
     const [zone, setZone] = useState<string | null>(null);
     const [bubbleResults, setBubbleResults] = useState<Place[] | null>(null);
+    const [relatedResults, setRelatedResults] = useState<Place[] | null>(null);
     const [eventBubbleResults, setEventBubbleResults] = useState<DbEvent[] | null>(null);
     const [activityBubbleResults, setActivityBubbleResults] = useState<DbActivity[] | null>(null);
     const [eventExplorerIndex, setEventExplorerIndex] = useState<number | null>(null);
@@ -262,6 +276,7 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
             setWhen(saved.when);
             setZoneFallback(saved.zoneFallback);
             setBubbleResults(saved.bubbleResults);
+            setRelatedResults(saved.relatedResults ?? null);
             setEventBubbleResults(saved.eventBubbleResults);
             setActivityBubbleResults(saved.activityBubbleResults ?? null);
         } catch {
@@ -292,6 +307,7 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                 when,
                 zoneFallback,
                 bubbleResults,
+                relatedResults,
                 eventBubbleResults,
                 activityBubbleResults,
             };
@@ -299,7 +315,7 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
         } catch {
             // sessionStorage no disponible — no persiste, no rompe el componente.
         }
-    }, [searchQuery, bubbleStep, placeOrEventTab, searchKind, activity, eventCategory, activityCategory, isSurprise, zone, when, zoneFallback, bubbleResults, eventBubbleResults, activityBubbleResults]);
+    }, [searchQuery, bubbleStep, placeOrEventTab, searchKind, activity, eventCategory, activityCategory, isSurprise, zone, when, zoneFallback, bubbleResults, relatedResults, eventBubbleResults, activityBubbleResults]);
 
     function handleFocus() {
         setInputFocused(true);
@@ -395,9 +411,32 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                     : null;
                 data = prefetched && prefetched.length > 0 ? prefetched : await fetchFresh(false);
             }
-            setBubbleResults(sortByWhen(data));
+            const sorted = sortByWhen(data);
+            setBubbleResults(sorted);
+            setRelatedResults(await fetchRelated(sorted));
         } catch {
             setBubbleResults([]);
+            setRelatedResults(null);
+        }
+
+        // Las sugerencias priorizan la zona elegida aunque los resultados principales
+        // hayan caído a toda Guatemala (ej. Zona 4 sin lugares verificados para trabajar
+        // pero con cafés): si en la zona no hay ninguna, recién ahí van sin zona.
+        async function fetchRelated(main: Place[]): Promise<Place[] | null> {
+            const relatedTags = isSurprise ? [] : (RELATED_TAG_MAP[activity ?? ''] ?? []);
+            if (relatedTags.length === 0) return null;
+            const seen = new Set(main.map(p => p.id));
+            async function fetchPool(withZone: boolean): Promise<Place[]> {
+                const params = new URLSearchParams({ tags: relatedTags.join(',') });
+                if (withZone) params.set('zone', zone!);
+                const res = await fetch(`/api/places/bubble?${params}`);
+                const pool: Place[] = await res.json();
+                return pool.filter(p => !seen.has(p.id) && p.primary_category !== 'Bar');
+            }
+            let candidates = hasZone ? await fetchPool(true) : [];
+            if (candidates.length === 0) candidates = await fetchPool(false);
+            const related = candidates.slice(0, RELATED_LIMIT);
+            return related.length > 0 ? sortByWhen(related) : null;
         }
     }
 
@@ -488,6 +527,7 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
 
     function resetBubble() {
         setBubbleResults(null);
+        setRelatedResults(null);
         setEventBubbleResults(null);
         setActivityBubbleResults(null);
         setBubbleStep(1);
@@ -947,6 +987,30 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                             <button onClick={resetBubble} className="bubble-reset-btn">
                                 Intentar de nuevo
                             </button>
+                        </div>
+                    )}
+
+                    {relatedResults && relatedResults.length > 0 && (
+                        <div style={{ marginTop: '48px' }}>
+                            <p className="font-display" style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0A0A0A', marginBottom: '16px' }}>
+                                También te podría interesar
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {relatedResults.map(place => {
+                                    const openNow: OpenStatus = when
+                                        ? openStatusForSelection(normalizeHours(place.hours), when, guatNow())
+                                        : 'unknown';
+                                    return (
+                                        <Link
+                                            key={place.id}
+                                            href={`/lugar/${place.slug}`}
+                                            className="block hover:opacity-90 transition-opacity"
+                                        >
+                                            <PlaceCard place={place} openNow={openNow} titleFont="display" />
+                                        </Link>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
                 </section>
