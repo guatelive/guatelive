@@ -13,7 +13,7 @@ function TickerContent() {
         <span className="text-sm font-bold tracking-[0.04em] text-white">
             {ITEMS.map((item, i) => (
                 <span key={i}>
-                    <span style={{ color: i % 2 === 1 ? '#C8E64E' : '#FFFFFF' }}>{item}</span>
+                    <span style={{ color: i % 2 === 1 ? '#E11D2E' : '#FFFFFF' }}>{item}</span>
                     <span className="mx-3 text-white/40">•</span>
                 </span>
             ))}
