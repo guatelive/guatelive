@@ -7,7 +7,7 @@ import { createBuildTimeClient } from '@/lib/supabase/server';
 import { SITE_URL } from '@/lib/site-config';
 import { resolvePromoPlaces } from '@/lib/promo-place-match';
 import { sortByDiscountWithDailyVariation } from '@/lib/promo-order';
-import { formatUpdatedLabel } from '@/lib/promo-freshness';
+import { formatUpdatedLabel, notExpiredPromoFilter } from '@/lib/promo-freshness';
 import { guatNow } from '@/lib/hours-utils';
 import type { DbBankPromotion } from '@/lib/types';
 
@@ -26,6 +26,7 @@ export default async function PromosPage() {
             .from('bank_promotions')
             .select('*')
             .eq('is_active', true)
+            .or(notExpiredPromoFilter())
             .order('discount_pct', { ascending: false, nullsFirst: false })
             .order('valid_until', { ascending: true, nullsFirst: false }),
         supabase.from('places').select('name, slug, zone').eq('is_published', true),

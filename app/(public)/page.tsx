@@ -14,7 +14,7 @@ import type { DbEvent, DbActivity, DbBankPromotion } from "@/lib/types";
 import { PromosCarousel } from "@/components/home/PromosCarousel";
 import { resolvePromoPlaces } from "@/lib/promo-place-match";
 import { sortByDiscountWithDailyVariation, shuffleByDay } from "@/lib/promo-order";
-import { formatUpdatedLabel } from "@/lib/promo-freshness";
+import { formatUpdatedLabel, notExpiredPromoFilter } from "@/lib/promo-freshness";
 import { SchemaMarkup } from "@/components/seo/schema-markup";
 import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/schema-builders";
 import { NewsletterSignup } from "@/components/home/newsletter-signup";
@@ -73,6 +73,7 @@ export default async function HomePage() {
       .from("bank_promotions")
       .select("*")
       .eq("is_active", true)
+      .or(notExpiredPromoFilter())
       .order("discount_pct", { ascending: false, nullsFirst: false }),
     supabase.from("places").select("name, slug, zone").eq("is_published", true),
   ]);
