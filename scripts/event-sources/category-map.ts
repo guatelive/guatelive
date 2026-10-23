@@ -11,11 +11,18 @@
 // a 'Otros', igual que antes.
 import type { EventCategory } from '@/lib/event-categories';
 
+// El orden importa: gana la primera regla que matchea (ej. "Festival de la Mujer" es
+// Familiar antes que Festivales; "Taller" antes que "Charlas").
 const KEYWORD_CATEGORY: [RegExp, EventCategory][] = [
-    [/carrera|marat[oó]n|\b\d{1,2}k\b|hyrox|triatl[oó]n/i, 'Deportes'],
-    [/teatro|obra de teatro|comedia|stand[\s-]?up/i, 'Cultura'],
-    [/taller|congreso|conferencia|expo\b|feria de negocios/i, 'Talleres'],
+    [/carrera|marat[oó]n|\b\d{1,2}k\b|\brun\b|hyrox|triatl[oó]n/i, 'Deportes'],
+    [/semana santa|procesi[oó]n|alfombra|barrilete|convite|quema del diablo|independencia|d[ií]a de (los )?(muertos|difuntos)/i, 'Tradiciones'],
+    [/teatro|obra de teatro|comedia|stand[\s-]?up|improv/i, 'Teatro y Comedia'],
+    [/\bcine\b|pel[ií]cula|proyecci[oó]n|film/i, 'Cine'],
+    [/yoga|meditaci[oó]n|retiro|sound healing|mindfulness|bienestar/i, 'Bienestar'],
+    [/taller|workshop|clase de/i, 'Talleres'],
+    [/congreso|conferencia|expo\b|feria de negocios|invertur|networking|charla|summit|foro\b/i, 'Charlas y Negocios'],
     [/festival de la mujer|d[ií]a del ni[ñn]o|infantil|familiar/i, 'Familiar'],
+    [/festival|feria|matsuri|bazar|mercadito|mercado de/i, 'Festivales y Ferias'],
     [/concierto|en concierto|tour\b|gira\b|sinf[oó]nico/i, 'Música'],
 ];
 

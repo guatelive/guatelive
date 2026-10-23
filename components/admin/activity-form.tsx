@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { TagPicker } from './tag-picker';
+import { TagPicker, type TagGroup } from './tag-picker';
 import { PriceTiersInput } from './price-tiers-input';
 import { ActivityGalleryEditor } from './activity-gallery-editor';
 import { ImageCropper } from './image-cropper';
@@ -20,6 +20,7 @@ interface Props {
     activity?: DbActivity;
     initialPlaceName?: string;
     action: (formData: FormData) => void | Promise<void>;
+    tagGroups?: TagGroup[];
 }
 
 function SubmitButton({ mode }: { mode: 'create' | 'edit' }) {
@@ -32,7 +33,7 @@ function SubmitButton({ mode }: { mode: 'create' | 'edit' }) {
     );
 }
 
-export function ActivityForm({ mode, activity, initialPlaceName, action }: Props) {
+export function ActivityForm({ mode, activity, initialPlaceName, action, tagGroups = EVENT_TAG_GROUPS }: Props) {
     const [zones, setZones] = useState<string[]>([]);
     const [places, setPlaces] = useState<PlaceOption[]>([]);
     const [placeName, setPlaceName] = useState(initialPlaceName ?? '');
@@ -201,7 +202,7 @@ export function ActivityForm({ mode, activity, initialPlaceName, action }: Props
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Tags</label>
-                <TagPicker name="tags" groups={EVENT_TAG_GROUPS} defaultValue={activity?.tags ?? []} />
+                <TagPicker name="tags" groups={tagGroups} defaultValue={activity?.tags ?? []} />
             </div>
 
             <div>

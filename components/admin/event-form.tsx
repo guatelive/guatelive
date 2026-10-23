@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { TagPicker } from './tag-picker';
+import { TagPicker, type TagGroup } from './tag-picker';
 import { PriceTiersInput } from './price-tiers-input';
 import { ExtraDatesInput } from './extra-dates-input';
 import { ImageCropper } from './image-cropper';
@@ -21,6 +21,7 @@ interface Props {
     event?: DbEvent;
     initialPlaceName?: string;
     action: (formData: FormData) => void | Promise<void>;
+    tagGroups?: TagGroup[];
 }
 
 function toDatetimeLocal(iso: string): string {
@@ -37,7 +38,7 @@ function SubmitButton({ mode }: { mode: 'create' | 'edit' }) {
     );
 }
 
-export function EventForm({ mode, event, initialPlaceName, action }: Props) {
+export function EventForm({ mode, event, initialPlaceName, action, tagGroups = EVENT_TAG_GROUPS }: Props) {
     const [zones, setZones] = useState<string[]>([]);
     const [places, setPlaces] = useState<PlaceOption[]>([]);
     const [placeName, setPlaceName] = useState(initialPlaceName ?? '');
@@ -242,7 +243,7 @@ export function EventForm({ mode, event, initialPlaceName, action }: Props) {
 
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Tags</label>
-                <TagPicker name="tags" groups={EVENT_TAG_GROUPS} defaultValue={event?.tags ?? []} />
+                <TagPicker name="tags" groups={tagGroups} defaultValue={event?.tags ?? []} />
             </div>
 
             <div>

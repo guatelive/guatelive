@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getEventTagGroupsWithCustom } from '@/lib/custom-event-tags';
 import { ActivityForm } from '@/components/admin/activity-form';
 import { updateActivity } from '../../actions';
 import type { DbActivity } from '@/lib/types';
@@ -17,6 +18,8 @@ export default async function EditActivityPage({ params }: { params: Promise<{ i
 
     if (!data) notFound();
 
+    const tagGroups = await getEventTagGroupsWithCustom();
+
     const { places: relatedPlace, ...activity } = data;
 
     return (
@@ -26,6 +29,7 @@ export default async function EditActivityPage({ params }: { params: Promise<{ i
                 mode="edit"
                 activity={activity as DbActivity}
                 initialPlaceName={relatedPlace?.name}
+                tagGroups={tagGroups}
                 action={updateActivity.bind(null, id)}
             />
         </div>
