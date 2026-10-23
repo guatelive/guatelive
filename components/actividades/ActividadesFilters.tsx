@@ -3,74 +3,54 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ActivityCard } from '@/components/cards/activity-card';
+import { FilterChipRow, distinctOptions, interestOptions } from '@/components/filters/filter-chip-row';
 import type { DbActivity } from '@/lib/types';
-
-function chipClass(active: boolean) {
-    return `px-4 py-1.5 rounded-full text-sm font-semibold transition ${active
-        ? 'bg-[#E11D2E] text-white'
-        : 'bg-[#F0F0F0] text-[#0A0A0A] hover:bg-[#E5E5E5]'
-        }`;
-}
 
 // Zonas y categorías se derivan de las actividades ya cargadas por page.tsx (no de
 // /api/zones ni de EVENT_CATEGORIES completo) para no mostrar chips que den 0
 // resultados — hoy el catálogo de actividades es chico y la mayoría de categorías
 // todavía no tienen ninguna fila.
 export function ActividadesFilters({ activities }: { activities: DbActivity[] }) {
-    const zones = useMemo(
-        () => Array.from(new Set(activities.map(a => a.zone))).sort(),
-        [activities]
-    );
-    const categories = useMemo(
-        () => Array.from(new Set(activities.map(a => a.category))).sort(),
-        [activities]
-    );
+    const zones = useMemo(() => distinctOptions(activities.map(a => a.zone)), [activities]);
+    const categories = useMemo(() => distinctOptions(activities.map(a => a.category)), [activities]);
+    const interests = useMemo(() => interestOptions(activities), [activities]);
 
     const [zone, setZone] = useState<string | null>(null);
     const [category, setCategory] = useState<string | null>(null);
+    const [interest, setInterest] = useState<string | null>(null);
     const [onlyFree, setOnlyFree] = useState(false);
 
     const filtered = useMemo(() => {
         return activities.filter(a =>
             (!zone || a.zone === zone) &&
             (!category || a.category === category) &&
+            (!interest || a.tags.includes(interest)) &&
             (!onlyFree || a.is_free)
         );
-    }, [activities, zone, category, onlyFree]);
+    }, [activities, zone, category, interest, onlyFree]);
 
-    const hasActiveFilters = zone !== null || category !== null || onlyFree;
+    const hasActiveFilters = zone !== null || category !== null || interest !== null || onlyFree;
 
     function clearFilters() {
         setZone(null);
         setCategory(null);
+        setInterest(null);
         setOnlyFree(false);
     }
 
     return (
         <div>
-            <div className="flex flex-wrap gap-2 mb-3">
-                <button onClick={() => setCategory(null)} className={chipClass(category === null)}>
-                    Todas
-                </button>
-                {categories.map(c => (
-                    <button key={c} onClick={() => setCategory(c)} className={chipClass(category === c)}>
-                        {c}
-                    </button>
-                ))}
-            </div>
+            {categories.length > 1 && (
+                <FilterChipRow label="Categoría" allLabel="Todas" options={categories} selected={category} onSelect={setCategory} />
+            )}
+            {interests.length > 0 && (
+                <FilterChipRow label="Intereses" options={interests} selected={interest} onSelect={setInterest} />
+            )}
+            {zones.length > 1 && (
+                <FilterChipRow label="Zona" allLabel="Todas las zonas" options={zones} selected={zone} onSelect={setZone} />
+            )}
 
-            <div className="flex flex-wrap gap-2 mb-4">
-                <button onClick={() => setZone(null)} className={chipClass(zone === null)}>
-                    Todas las zonas
-                </button>
-                {zones.map(z => (
-                    <button key={z} onClick={() => setZone(z)} className={chipClass(zone === z)}>
-                        {z}
-                    </button>
-                ))}
-            </div>
-
-            <div className="flex items-center gap-4 mb-8">
+            <div className="mt-4 mb-6 flex items-center gap-4">
                 <label className="flex items-center gap-2 text-sm text-[#0A0A0A]">
                     <input type="checkbox" checked={onlyFree} onChange={e => setOnlyFree(e.target.checked)} />
                     Solo gratis

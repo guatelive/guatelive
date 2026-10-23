@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
-import { EventGridClient } from '@/components/eventos-hoy/event-grid-client';
+import { EventosFilters } from '@/components/eventos-hoy/eventos-filters';
 import { focusWhen, toUpcomingEvents } from '@/lib/event-showtimes';
 import { guatNow } from '@/lib/hours-utils';
 import { SITE_URL } from '@/lib/site-config';
@@ -35,8 +35,9 @@ export default async function EventosHoyPage() {
     const todayEvents = allEvents
         .map(e => focusWhen(e, 'today', now))
         .filter((e): e is DbEvent => e !== null);
-    const showingToday = todayEvents.length > 0;
-    const events = showingToday ? todayEvents : allEvents.slice(0, 12);
+    // El JSON-LD sigue describiendo "hoy" (o los próximos 12 si no hay nada hoy) —
+    // es lo que promete la URL; los filtros del cliente no cambian el schema.
+    const events = todayEvents.length > 0 ? todayEvents : allEvents.slice(0, 12);
 
     const itemListSchema = {
         '@context': 'https://schema.org',
@@ -99,13 +100,11 @@ export default async function EventosHoyPage() {
                 Eventos hoy en Guatemala
             </h1>
             <p className="text-sm text-[#666666] mb-8">
-                {showingToday
-                    ? `${events.length} evento${events.length !== 1 ? 's' : ''} confirmado${events.length !== 1 ? 's' : ''} para hoy.`
-                    : 'No hay eventos confirmados para hoy todavía — estos son los próximos.'}
+                Conciertos, festivales, talleres y planes en Guatemala, actualizados a diario.
             </p>
 
-            {events.length > 0 ? (
-                <EventGridClient events={events} />
+            {allEvents.length > 0 ? (
+                <EventosFilters events={allEvents} nowIso={now.toISOString()} />
             ) : (
                 <p className="text-center text-sm text-[#666666] py-12">
                     Todavía no hay eventos publicados. Volvé pronto.

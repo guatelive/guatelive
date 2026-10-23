@@ -707,28 +707,38 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                                 {/* key fuerza re-animación al cambiar de paso */}
                                 <div key={bubbleStep} className="bubble-step-content">
                                     {bubbleStep === 1 && (
+                                        // Control segmentado (antes: texto gris #999 con subrayado) — en
+                                        // la beta nadie descubría que existían Eventos y Actividades.
                                         <div
+                                            role="tablist"
                                             style={{
-                                                display: 'flex', justifyContent: 'center', gap: '24px',
-                                                marginBottom: '16px', borderBottom: '1px solid #EEEEEE',
+                                                display: 'flex', gap: '4px', padding: '4px',
+                                                margin: '0 auto 16px', maxWidth: '440px',
+                                                background: '#F0F0F0', borderRadius: '999px',
                                             }}
                                         >
-                                            {TABS.map(tab => (
-                                                <button
-                                                    key={tab.value}
-                                                    onClick={() => setPlaceOrEventTab(tab.value)}
-                                                    style={{
-                                                        fontFamily: 'var(--font-sans)', fontSize: 'clamp(13px, 2vw, 14px)', fontWeight: 600,
-                                                        padding: '0 4px 10px', marginBottom: '-1px',
-                                                        background: 'none', cursor: 'pointer',
-                                                        color: placeOrEventTab === tab.value ? '#E11D2E' : '#999999',
-                                                        border: 'none',
-                                                        borderBottom: placeOrEventTab === tab.value ? '2px solid #E11D2E' : '2px solid transparent',
-                                                    }}
-                                                >
-                                                    {tab.label}
-                                                </button>
-                                            ))}
+                                            {TABS.map(tab => {
+                                                const active = placeOrEventTab === tab.value;
+                                                return (
+                                                    <button
+                                                        key={tab.value}
+                                                        role="tab"
+                                                        aria-selected={active}
+                                                        onClick={() => setPlaceOrEventTab(tab.value)}
+                                                        style={{
+                                                            flex: 1, whiteSpace: 'nowrap',
+                                                            fontFamily: 'var(--font-sans)', fontSize: 'clamp(12px, 2vw, 14px)', fontWeight: 600,
+                                                            padding: '8px 10px', borderRadius: '999px', border: 'none', cursor: 'pointer',
+                                                            background: active ? '#0A0A0A' : 'transparent',
+                                                            color: active ? '#FFFFFF' : '#0A0A0A',
+                                                            boxShadow: active ? '0 2px 6px rgba(0,0,0,0.15)' : 'none',
+                                                            transition: 'background 0.15s, color 0.15s',
+                                                        }}
+                                                    >
+                                                        {tab.label}
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     )}
 
