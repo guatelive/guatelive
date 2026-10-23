@@ -322,7 +322,7 @@ export function EventsGrid({ events }: { events: DbEvent[] }) {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
                         <Link
-                            href="/buscar?tipo=eventos"
+                            href="/eventos/hoy"
                             style={{
                                 fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600,
                                 color: '#E11D2E', letterSpacing: '0.02em', textDecoration: 'none',
