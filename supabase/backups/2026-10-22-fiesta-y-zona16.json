@@ -1,0 +1,46 @@
+{
+  "descripcion": "Respaldo ANTES de: quitar night_club a Wisdom (speakeasy = Tomar algo, no fiesta) y mover Hacienda Real Dinamia de Cayalá a Zona 16 (Dinamia y Lirios = Zona 16, Fredy 2026-10-22).",
+  "lugares": [
+    {
+      "id": "609ce9e3-0db5-48d8-b171-895ddc8cf4cd",
+      "name": "Wisdom Cocktail Bar",
+      "zone": "Antigua",
+      "tags": [
+        "bar",
+        "night_club",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "cocteleria-de-autor",
+        "con-amigos",
+        "date-night",
+        "noche",
+        "animado",
+        "decoracion-unica",
+        "instagrameable",
+        "experiencia-unica",
+        "estilo-speakeasy",
+        "en-antigua"
+      ]
+    },
+    {
+      "id": "5a9dc7f0-da3f-4b1b-8893-47abd3a69963",
+      "name": "Hacienda Real • Dinamia Cayalá",
+      "zone": "Cayalá",
+      "tags": [
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "apto-para-ninos",
+        "carnes"
+      ]
+    }
+  ]
+}
