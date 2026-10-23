@@ -43,7 +43,9 @@ const TAG_MAP: Record<string, string[]> = {
     // incluía cafe-especialidad y reunion-de-negocios, y salían vinotecas y café-bares.
     // Los cafés en general van como sugerencia aparte (RELATED_TAG_MAP).
     Trabajar: ['para-trabajar', 'laptop-friendly'],
-    'Salir de fiesta': ['salir-de-fiesta', 'noche', 'night_club', 'after-office', 'musica-en-vivo'],
+    // Fiesta = discotecas y bares de fiesta (Fredy, 2026-10-22). Antes incluía
+    // musica-en-vivo, noche y after-office, y salían restaurantes con marimba.
+    'Salir de fiesta': ['salir-de-fiesta', 'night_club'],
     // Solo pet-friendly verificado (reseña explícita o 2+ fuentes, ADR-027) — antes
     // mapeaba a al-aire-libre/tranquilo/acogedor/casual, que no dicen nada de perros.
     'Ir con mi perro': ['pet-friendly'],
