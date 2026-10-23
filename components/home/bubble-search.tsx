@@ -81,6 +81,12 @@ const EVENT_ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '🌙 Vida Nocturna', key: 'Vida Nocturna' },
     { label: '🛠 Talleres', key: 'Talleres' },
     { label: '👨‍👩‍👧 Familiar', key: 'Familiar' },
+    { label: '🎪 Festivales', key: 'Festivales y Ferias' },
+    { label: '🎭 Teatro y Comedia', key: 'Teatro y Comedia' },
+    { label: '🧘 Bienestar', key: 'Bienestar' },
+    { label: '🎤 Charlas', key: 'Charlas y Negocios' },
+    { label: '🇬🇹 Tradiciones', key: 'Tradiciones' },
+    { label: '🎬 Cine', key: 'Cine' },
     { label: '🎟 Cualquier evento', key: 'Otros', special: true },
 ];
 

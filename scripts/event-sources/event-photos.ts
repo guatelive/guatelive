@@ -26,6 +26,12 @@ const PHOTO_POOLS: Record<EventCategory, StockPhoto[]> = {
     'Gastronomía': [],
     'Vida Nocturna': [],
     'Aventura y Naturaleza': [],
+    'Festivales y Ferias': [],
+    'Teatro y Comedia': [],
+    'Bienestar': [],
+    'Charlas y Negocios': [],
+    'Tradiciones': [],
+    'Cine': [],
     'Otros': [],
 };
 
