@@ -1,0 +1,255 @@
+{
+  "descripcion": "Respaldo de places.tags ANTES de curar pet-friendly (sesión 2026-10-22). Para revertir, restaurar 'tags_antes'. Ver ADR-027 y docs/historial-sesiones.md.",
+  "criterio": "pet-friendly = reseña explícita o 2+ fuentes web independientes. 7 de una sola fuente (Gula, Miettes, Mercado 24, Rayuela, Manolo García, Casa Escobar Cayalá, Fat Cat) quedaron sin tag a propósito.",
+  "lugares": [
+    {
+      "id": "192fd75b-2c4c-450e-aea9-2c1fe222cc07",
+      "name": "Restaurante El Potrero Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "pet-friendly"
+      ]
+    },
+    {
+      "id": "748805ac-d50a-45d1-837d-01b973f7d4ec",
+      "name": "Buenos Aires by Palermo",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "almuerzo",
+        "carnes",
+        "pet-friendly"
+      ]
+    },
+    {
+      "id": "f6e24ba9-4843-4886-b8a6-d5d86e479577",
+      "name": "Donde El Gringo • Dinamia Cayala",
+      "tags_antes": [
+        "bar",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "almuerzo",
+        "al-aire-libre",
+        "pet-friendly"
+      ]
+    },
+    {
+      "id": "dfee4f95-6bd7-4667-a5a4-bef7c8ea5512",
+      "name": "Restaurante La Pista",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "terraza",
+        "pet-friendly"
+      ]
+    },
+    {
+      "id": "6553aa2e-d2e5-4e58-8c03-f491a30b2684",
+      "name": "Chonita's Grill",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "pet-friendly"
+      ]
+    },
+    {
+      "id": "c414260e-1d62-47a7-8ad6-26c45fbe405a",
+      "name": "La Cantina 5 Elementos",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "pet-friendly"
+      ]
+    },
+    {
+      "id": "176d28f8-8f97-4929-92d4-e8a1818f8907",
+      "name": "Patio San Román",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "terraza",
+        "al-aire-libre",
+        "pet-friendly",
+        "musica-en-vivo"
+      ]
+    },
+    {
+      "id": "5684f5dd-7648-4a2a-b004-c546c5fcf968",
+      "name": "Bonanza Fraijanes",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "al-aire-libre",
+        "apto-para-ninos"
+      ]
+    },
+    {
+      "id": "a4d78330-d925-46f2-9597-8714dd6d5971",
+      "name": "Karma, Gastro-Bar",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "almuerzo",
+        "moderado"
+      ]
+    },
+    {
+      "id": "6df73126-7808-4327-bc68-c1c82c8c4186",
+      "name": "El Mercadito de Lola",
+      "tags_antes": [
+        "grocery_or_supermarket",
+        "delivery",
+        "moderado",
+        "vegano",
+        "sin-gluten",
+        "al-aire-libre"
+      ]
+    },
+    {
+      "id": "31b55dad-b37d-4c07-bfff-492e8a0627c3",
+      "name": "Restaurante El Rincón De La Finca",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "musica-en-vivo",
+        "apto-para-ninos"
+      ]
+    },
+    {
+      "id": "99c6aa94-fa21-4d89-b794-71ec2ee67322",
+      "name": "Los Tres Tiempos • Centro Histórico",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "terraza",
+        "vistas-panoramicas",
+        "en-centro-historico"
+      ]
+    },
+    {
+      "id": "9aca9672-945c-4d8c-917a-e768ab9da84e",
+      "name": "Antigua Cerveza El Bosque Entrance",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "moderado",
+        "cerveza-artesanal",
+        "al-aire-libre"
+      ]
+    },
+    {
+      "id": "17de0f8d-7023-426f-8471-a22060839203",
+      "name": "El Rincón de Alex",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "almuerzo",
+        "espanola",
+        "terraza"
+      ]
+    },
+    {
+      "id": "86878eb7-ad69-4854-b050-399f852a8d4c",
+      "name": "El Viejo Café",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "musica-en-vivo"
+      ]
+    }
+  ]
+}

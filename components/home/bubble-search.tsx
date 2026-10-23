@@ -44,7 +44,9 @@ const TAG_MAP: Record<string, string[]> = {
     // Los cafés en general van como sugerencia aparte (RELATED_TAG_MAP).
     Trabajar: ['para-trabajar', 'laptop-friendly'],
     'Salir de fiesta': ['salir-de-fiesta', 'noche', 'night_club', 'after-office', 'musica-en-vivo'],
-    'Ir con mi perro': ['al-aire-libre', 'tranquilo', 'acogedor', 'casual'],
+    // Solo pet-friendly verificado (reseña explícita o 2+ fuentes, ADR-027) — antes
+    // mapeaba a al-aire-libre/tranquilo/acogedor/casual, que no dicen nada de perros.
+    'Ir con mi perro': ['pet-friendly'],
     'Plan familiar': ['familia', 'ninos', 'domingo-en-familia', 'grupos-grandes'],
 };
 
