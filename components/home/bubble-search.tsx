@@ -37,13 +37,18 @@ const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-�
 const TAG_MAP: Record<string, string[]> = {
     Almuerzo: ['almuerzo', 'restaurante'],
     Cenar: ['cena-romantica', 'date-night', 'restaurante'],
-    'Tomar algo': ['bar', 'bar-completo', 'cocteleria-de-autor', 'cerveza-artesanal'],
+    // "Tomar algo" se separó en dos (Fredy, 2026-10-23): tragos y café. Sin
+    // bar-completo, que es el serves_beer de Google y lo tiene casi todo restaurante.
+    Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal'],
+    'Ir por un café': ['cafe', 'cafe-especialidad', 'bar-de-cafe'],
     'Desayuno o brunch': ['desayuno', 'brunch', 'cafe', 'desayuno-todo-el-dia', 'abierto-temprano'],
     // Solo tags que afirman "se puede trabajar ahí" (verificados por Fredy) — antes
     // incluía cafe-especialidad y reunion-de-negocios, y salían vinotecas y café-bares.
     // Los cafés en general van como sugerencia aparte (RELATED_TAG_MAP).
     Trabajar: ['para-trabajar', 'laptop-friendly'],
-    'Salir de fiesta': ['salir-de-fiesta', 'noche', 'night_club', 'after-office', 'musica-en-vivo'],
+    // Fiesta = discotecas y bares de fiesta (Fredy, 2026-10-22). Antes incluía
+    // musica-en-vivo, noche y after-office, y salían restaurantes con marimba.
+    'Salir de fiesta': ['salir-de-fiesta', 'night_club'],
     // Solo pet-friendly verificado (reseña explícita o 2+ fuentes, ADR-027) — antes
     // mapeaba a al-aire-libre/tranquilo/acogedor/casual, que no dicen nada de perros.
     'Ir con mi perro': ['pet-friendly'],
@@ -63,7 +68,8 @@ const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '🌅 Brunch', key: 'Desayuno o brunch' },
     { label: '🍛 Almuerzo', key: 'Almuerzo' },
     { label: '🍽 Cenar', key: 'Cenar' },
-    { label: '☕ Tomar algo', key: 'Tomar algo' },
+    { label: '🍸 Drinks', key: 'Drinks' },
+    { label: '☕ Un café', key: 'Ir por un café' },
     { label: '💻 Trabajar', key: 'Trabajar' },
     { label: '🐶 Con mi perro', key: 'Ir con mi perro' },
     { label: '👨‍👩‍👧 Plan familiar', key: 'Plan familiar' },
@@ -95,7 +101,9 @@ const EVENT_ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
 type ZoneOption = { label: string; value: string };
 
 const STORAGE_KEY = 'guatelive:home-search-state';
-const STORAGE_VERSION = 1;
+// v2: "Tomar algo" pasó a Drinks / Ir por un café — un estado guardado con la
+// key vieja buscaría sin tags (todos los lugares).
+const STORAGE_VERSION = 2;
 
 type PersistedSearchState = {
     v: number;

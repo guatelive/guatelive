@@ -1,0 +1,96 @@
+{
+  "descripcion": "Respaldo ANTES de agregar 'restaurante' (o 'bar') a 9 lugares publicados que no caían en ninguna burbuja de la búsqueda (2026-10-23).",
+  "lugares": [
+    {
+      "id": "de6d5c82-4142-45a8-a9ec-831ceeeb50f8",
+      "name": "Taqueria mi bella Guadalajara zona 15",
+      "tags_antes": [
+        "tacos-y-mexicana",
+        "mexicana"
+      ]
+    },
+    {
+      "id": "ad54a15c-39a6-491b-b800-dcb9fb62b1db",
+      "name": "Bendito Sabor",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local"
+      ]
+    },
+    {
+      "id": "bef04eac-7da5-4d14-ae5d-a01087fca0ba",
+      "name": "Cayibel Mercado Gastronomico",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "moderado"
+      ]
+    },
+    {
+      "id": "d508555e-a4ba-4d24-acc0-c2ccd945a8cc",
+      "name": "Nacionsushi Pradera Concepcion",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "japonesa"
+      ]
+    },
+    {
+      "id": "c453f236-fed1-4ef3-84c2-dd4b678770a8",
+      "name": "Restaurant Puerto Viejo",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "mariscos"
+      ]
+    },
+    {
+      "id": "5c216e07-5951-40f4-9da4-4ece57155145",
+      "name": "Café del Callejón",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "musica-en-vivo",
+        "en-centro-historico"
+      ]
+    },
+    {
+      "id": "39878f6e-51e0-4779-97d7-664bcfc128b5",
+      "name": "Tomaquet",
+      "tags_antes": [
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "espanola"
+      ]
+    },
+    {
+      "id": "8e2680a6-0cf6-4b26-a105-d17f6ffd38d2",
+      "name": "Taqueria el jardin de los conejos villa nueva",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "mexicana"
+      ]
+    },
+    {
+      "id": "49291302-e7ff-4a15-b4ca-b51af3476ec7",
+      "name": "Sport Bar El Taller",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo"
+      ]
+    }
+  ]
+}

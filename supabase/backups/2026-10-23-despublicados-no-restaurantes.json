@@ -1,0 +1,41 @@
+{
+  "descripcion": "Lugares despublicados (no borrados) el 2026-10-23: no son restaurantes/cafés/bares. 3 centros comerciales, 1 residencial (Santa Rosalía), 2 lugares de eventos (Cabaña Suiza, Vivero Palmetto) según Fredy. Para revertir: is_published = true.",
+  "lugares": [
+    {
+      "id": "1f5b13e9-8159-459e-8729-c4e91bbbb107",
+      "name": "Condado Concepción",
+      "zone": "Carretera a El Salvador",
+      "is_published": true
+    },
+    {
+      "id": "b753551f-e588-4d24-bcfe-e3ab6b9e7fe6",
+      "name": "Centro Comercial Centro YAYA",
+      "zone": "Villa Nueva",
+      "is_published": true
+    },
+    {
+      "id": "0d2cd674-a2b6-4a1a-a120-02ad0fb543d6",
+      "name": "Santa Rosalía, Guatemala",
+      "zone": "Carretera a El Salvador",
+      "is_published": true
+    },
+    {
+      "id": "22c198f7-99bf-4eb2-a097-67f09f31a23c",
+      "name": "Plaza Muxbal",
+      "zone": "Carretera a El Salvador",
+      "is_published": true
+    },
+    {
+      "id": "77698b2e-d74e-4037-8109-03ca5847b1ab",
+      "name": "Cabaña Suiza",
+      "zone": "Mixco",
+      "is_published": true
+    },
+    {
+      "id": "0f2d36cf-7aff-41fd-9f17-c7d00242a3f3",
+      "name": "Vivero Palmetto",
+      "zone": "Villa Nueva",
+      "is_published": true
+    }
+  ]
+}
