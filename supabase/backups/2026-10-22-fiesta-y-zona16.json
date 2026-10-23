@@ -1,5 +1,5 @@
 {
-  "descripcion": "Respaldo ANTES de: quitar night_club a Wisdom (speakeasy = Tomar algo, no fiesta) y mover Hacienda Real Dinamia de Cayalá a Zona 16 (Dinamia y Lirios = Zona 16, Fredy 2026-10-22).",
+  "descripcion": "Respaldo ANTES de: quitar night_club a Wisdom (speakeasy = Tomar algo, no fiesta) y mover Hacienda Real Dinamia de Cayalá a Zona 16 (Dinamia y Lirios = Zona 16, Fredy 2026-10-22). Después: CaraLuna Cayalá += salir-de-fiesta; Reilly's -= night_club (bar tranquilo).",
   "lugares": [
     {
       "id": "609ce9e3-0db5-48d8-b171-895ddc8cf4cd",
@@ -40,6 +40,29 @@
         "caro",
         "apto-para-ninos",
         "carnes"
+      ]
+    },
+    {
+      "id": "6f28f97c-2b6a-493e-a55c-86aea0575502",
+      "name": "CaraLuna Rooftop Cayala",
+      "zone": "Cayalá",
+      "tags": [
+        "consumo-en-local",
+        "rooftop"
+      ]
+    },
+    {
+      "id": "97ac5c60-df30-4d08-a453-80399b5c93ef",
+      "name": "Reilly's Antigua",
+      "zone": "Antigua",
+      "tags": [
+        "bar",
+        "night_club",
+        "acepta-reservas",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "moderado"
       ]
     }
   ]
