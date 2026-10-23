@@ -44,7 +44,9 @@ const TAG_MAP: Record<string, string[]> = {
     // Los cafés en general van como sugerencia aparte (RELATED_TAG_MAP).
     Trabajar: ['para-trabajar', 'laptop-friendly'],
     'Salir de fiesta': ['salir-de-fiesta', 'noche', 'night_club', 'after-office', 'musica-en-vivo'],
-    'Ir con mi perro': ['al-aire-libre', 'tranquilo', 'acogedor', 'casual'],
+    // Solo pet-friendly verificado (reseña explícita o 2+ fuentes, ADR-027) — antes
+    // mapeaba a al-aire-libre/tranquilo/acogedor/casual, que no dicen nada de perros.
+    'Ir con mi perro': ['pet-friendly'],
     'Plan familiar': ['familia', 'ninos', 'domingo-en-familia', 'grupos-grandes'],
 };
 
@@ -193,19 +195,6 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
     const [inputFocused, setInputFocused] = useState(false);
     const [nudgeKey, setNudgeKey] = useState(0);
 
-    // ── Zonas dinámicas desde la DB ──
-    const [zones, setZones] = useState<ZoneOption[]>([]);
-    useEffect(() => {
-        fetch('/api/zones')
-            .then(r => r.json())
-            .then((data: { zone: string; count: number }[]) => {
-                const opts: ZoneOption[] = data.map(({ zone }) => ({ label: zone, value: zone }));
-                opts.push({ label: 'En cualquier lugar', value: 'all' });
-                setZones(opts);
-            })
-            .catch(console.error);
-    }, []);
-
     useEffect(() => {
         if (searchQuery && allPlaces.length === 0) {
             fetch('/api/places')
@@ -259,6 +248,40 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
     const [eventExplorerIndex, setEventExplorerIndex] = useState<number | null>(null);
     const [loadingBubble, setLoadingBubble] = useState(false);
     const [zoneFallback, setZoneFallback] = useState(false);
+
+    // ── Zonas del paso 2: solo las que tienen resultados para el plan elegido ──
+    // (antes: todas las zonas siempre, y muchas daban 0 resultados — ej. "Trabajar").
+    // `zonesQuery` cambia con el plan; las zonas de otro plan se ignoran por key.
+    const zonesQuery = useMemo(() => {
+        const params = new URLSearchParams();
+        if (searchKind === 'place') {
+            params.set('kind', 'place');
+            const tags = isSurprise ? [] : (TAG_MAP[activity ?? ''] ?? []);
+            if (tags.length > 0) params.set('tags', tags.join(','));
+        } else if (searchKind === 'event' || searchKind === 'activity') {
+            params.set('kind', searchKind);
+            const category = searchKind === 'event' ? eventCategory : activityCategory;
+            if (isSurprise) params.set('all', 'true');
+            else if (category) params.set('category', category);
+        }
+        return params.toString();
+    }, [searchKind, activity, eventCategory, activityCategory, isSurprise]);
+
+    const [zonesData, setZonesData] = useState<{ query: string; zones: ZoneOption[] } | null>(null);
+    useEffect(() => {
+        let cancelled = false;
+        fetch(`/api/zones?${zonesQuery}`)
+            .then(r => r.json())
+            .then((data: { zone: string; count: number }[]) => {
+                if (cancelled) return;
+                const opts: ZoneOption[] = data.map(({ zone }) => ({ label: zone, value: zone }));
+                opts.push({ label: 'En cualquier lugar', value: 'all' });
+                setZonesData({ query: zonesQuery, zones: opts });
+            })
+            .catch(console.error);
+        return () => { cancelled = true; };
+    }, [zonesQuery]);
+    const zones = zonesData?.query === zonesQuery ? zonesData.zones : null;
     const [when, setWhen] = useState<string | null>(null);
 
     // Restaura búsqueda anterior al volver con el botón del navegador (Next.js remonta
@@ -769,7 +792,11 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
 
                                         {bubbleStep === 2 && (
                                             <BubbleScrollRow className="bubble-row-hero">
-                                                {zones.map(({ label, value }) => (
+                                                {zones === null ? (
+                                                    <span className="bubble-btn" style={{ opacity: 0.5, cursor: 'default' }}>
+                                                        Buscando zonas…
+                                                    </span>
+                                                ) : zones.map(({ label, value }) => (
                                                     <button key={value} onClick={() => pickZone(value)} className="bubble-btn">
                                                         {label}
                                                     </button>
