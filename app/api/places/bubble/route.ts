@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { zonesWithin } from '@/lib/zone-hierarchy';
 
 type PhotoRow = { url: string; is_primary: boolean; order_index: number };
 
@@ -43,8 +44,8 @@ export async function GET(req: NextRequest) {
     }
 
     if (zone && !preload) {
-        // Exact match para evitar que "Zona 1" matchee "Zona 10", "Zona 11", etc.
-        query = query.eq('zone', zone);
+        // Exact match ("Zona 1" no matchea "Zona 10") + sub-zonas (Zona 16 incluye Cayalá).
+        query = query.in('zone', zonesWithin(zone));
     }
 
     query = query.order('rating', { ascending: false });

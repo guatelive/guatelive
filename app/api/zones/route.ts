@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { guatNow } from '@/lib/hours-utils';
+import { rollUpZoneCounts } from '@/lib/zone-hierarchy';
 
 type ZoneRow = { zone: string | null };
 
@@ -68,7 +69,7 @@ export async function GET(req: NextRequest) {
         if (z) counts[z] = (counts[z] ?? 0) + 1;
     }
 
-    const zones = Object.entries(counts)
+    const zones = Object.entries(rollUpZoneCounts(counts))
         .sort((a, b) => b[1] - a[1])
         .map(([zone, count]) => ({ zone, count }));
 

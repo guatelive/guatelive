@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { zonesWithin } from '@/lib/zone-hierarchy';
 import { guatNow } from '@/lib/hours-utils';
 import { toUpcomingEvents } from '@/lib/event-showtimes';
 
@@ -25,8 +26,8 @@ export async function GET(req: NextRequest) {
     }
 
     if (zone) {
-        // Exact match para evitar que "Zona 1" matchee "Zona 10", "Zona 11", etc.
-        query = query.eq('zone', zone);
+        // Exact match ("Zona 1" no matchea "Zona 10") + sub-zonas (Zona 16 incluye Cayalá).
+        query = query.in('zone', zonesWithin(zone));
     }
 
     query = query.order('date_start', { ascending: true });

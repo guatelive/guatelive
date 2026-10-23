@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { zonesWithin } from '@/lib/zone-hierarchy';
 
 export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
@@ -22,8 +23,8 @@ export async function GET(req: NextRequest) {
     }
 
     if (zone) {
-        // Exact match para evitar que "Zona 1" matchee "Zona 10", "Zona 11", etc.
-        query = query.eq('zone', zone);
+        // Exact match ("Zona 1" no matchea "Zona 10") + sub-zonas (Zona 16 incluye Cayalá).
+        query = query.in('zone', zonesWithin(zone));
     }
 
     query = query.order('featured', { ascending: false }).order('created_at', { ascending: false });

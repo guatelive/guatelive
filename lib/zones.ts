@@ -1,5 +1,6 @@
 import { createBuildTimeClient } from '@/lib/supabase/server';
 import { slugify } from '@/lib/slug';
+import { rollUpZoneCounts } from '@/lib/zone-hierarchy';
 
 export type ZoneInfo = { zone: string; slug: string; count: number };
 
@@ -20,7 +21,7 @@ export async function getPublishedPlaceZones(): Promise<ZoneInfo[]> {
         if (zone) counts[zone] = (counts[zone] ?? 0) + 1;
     }
 
-    return Object.entries(counts)
+    return Object.entries(rollUpZoneCounts(counts))
         .map(([zone, count]) => ({ zone, slug: slugify(zone), count }))
         .sort((a, b) => b.count - a.count);
 }

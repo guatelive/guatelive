@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { EventGridClient } from '@/components/eventos-hoy/event-grid-client';
 import { FilterChipRow, distinctOptions, interestOptions, type ChipOption } from '@/components/filters/filter-chip-row';
 import { focusWhen } from '@/lib/event-showtimes';
+import { matchesZone } from '@/lib/zone-hierarchy';
 import type { DbEvent } from '@/lib/types';
 
 const WHEN_OPTIONS: ChipOption[] = [
@@ -45,7 +46,7 @@ export function EventosFilters({ events, nowIso }: { events: DbEvent[]; nowIso: 
             .filter((e): e is DbEvent => e !== null)
             .filter(e =>
                 (!category || e.category === category) &&
-                (!zone || e.zone === zone) &&
+                (!zone || matchesZone(e.zone, zone)) &&
                 (!interest || e.tags.includes(interest)) &&
                 (!onlyFree || e.is_free)
             ),
