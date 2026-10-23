@@ -1,0 +1,121 @@
+{
+  "descripcion": "Respaldo ANTES de agregar el tag 'cafe' a lugares con primary_category Café (Google) que no tenían ningún tag de café, para la burbuja 'Ir por un café' (2026-10-23).",
+  "lugares": [
+    {
+      "id": "0d0b24a6-7fe7-46c0-9959-c4e814e193e9",
+      "name": "San Martín • Condado Concepción",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "panaderia",
+        "para-trabajar"
+      ]
+    },
+    {
+      "id": "80cb21d3-bfa9-4812-95b1-c4632e2b8c72",
+      "name": "San Martín • Escala Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "apto-para-ninos",
+        "para-trabajar"
+      ]
+    },
+    {
+      "id": "08e88877-f81d-40fe-bbb6-74de8595f718",
+      "name": "Graciela",
+      "tags_antes": [
+        "tranquilo",
+        "al-aire-libre",
+        "acogedor",
+        "date-night",
+        "cena-romantica",
+        "almuerzo",
+        "restaurante",
+        "terraza",
+        "estacionamiento",
+        "wifi",
+        "bar",
+        "moderno",
+        "elegante",
+        "casual",
+        "brunch",
+        "cumpleanos",
+        "familia",
+        "amigos",
+        "primera-cita",
+        "aniversario"
+      ]
+    },
+    {
+      "id": "158ed64c-32f9-42a4-b6fd-b1f4ab66d043",
+      "name": "San Martín • Centro Histórico",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "panaderia",
+        "guatemalteca",
+        "para-trabajar"
+      ]
+    },
+    {
+      "id": "c627bd85-1899-416c-8ed8-2a9e1f993926",
+      "name": "San Martín • Metrocentro",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar"
+      ]
+    },
+    {
+      "id": "c3303c85-4dbf-418a-869f-4bca17fb4b29",
+      "name": "San Martín • Mix San Cristóbal",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar"
+      ]
+    }
+  ]
+}
