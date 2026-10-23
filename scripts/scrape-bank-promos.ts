@@ -18,6 +18,7 @@
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
+import { isPromoExpired } from '@/lib/promo-freshness';
 import { slugify } from '@/lib/slug';
 import { BANK_SOURCES } from './bank-sources/index';
 import { buildPlaceMatchIndex, matchPlaceByName } from './bank-sources/match-place';
@@ -91,7 +92,9 @@ async function run(bank: string, isDry: boolean) {
             source_url: promo.sourceUrl,
             valid_from: promo.validFrom,
             valid_until: promo.validUntil,
-            is_active: true,
+            // Seguir listada en el sitio del banco no la hace vigente: si ya
+            // pasó valid_until se guarda inactiva (ver isPromoExpired).
+            is_active: !isPromoExpired(promo.validUntil),
             last_seen_at: runStartedAt,
             updated_at: runStartedAt,
         };

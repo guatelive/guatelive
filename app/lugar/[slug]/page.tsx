@@ -11,6 +11,7 @@ import { PromoBadge } from '@/components/lugar/promo-badge';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { parseHoursRange } from '@/lib/hours-utils';
 import { matchesBrand } from '@/lib/promo-place-match';
+import { notExpiredPromoFilter } from '@/lib/promo-freshness';
 import { SITE_URL } from '@/lib/site-config';
 import { buildBreadcrumbSchema, buildOfferSchema, schemaTypeForCategory } from '@/lib/schema-builders';
 import type { DbBankPromotion } from '@/lib/types';
@@ -224,6 +225,7 @@ export default async function LugarPage(props: { params: Params }) {
         .from('bank_promotions')
         .select('*')
         .eq('is_active', true)
+        .or(notExpiredPromoFilter())
         .order('discount_pct', { ascending: false, nullsFirst: false });
     const activePromo = ((activePromosRaw ?? []) as DbBankPromotion[])
         .find((promo) => promo.merchant_slug && matchesBrand(place.name, promo.merchant_slug)) ?? null;
