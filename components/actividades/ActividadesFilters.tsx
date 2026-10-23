@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ActivityCard } from '@/components/cards/activity-card';
 import { FilterChipRow, distinctOptions, interestOptions } from '@/components/filters/filter-chip-row';
+import { matchesZone } from '@/lib/zone-hierarchy';
 import type { DbActivity } from '@/lib/types';
 
 // Zonas y categorías se derivan de las actividades ya cargadas por page.tsx (no de
@@ -22,7 +23,7 @@ export function ActividadesFilters({ activities }: { activities: DbActivity[] })
 
     const filtered = useMemo(() => {
         return activities.filter(a =>
-            (!zone || a.zone === zone) &&
+            (!zone || matchesZone(a.zone, zone)) &&
             (!category || a.category === category) &&
             (!interest || a.tags.includes(interest)) &&
             (!onlyFree || a.is_free)

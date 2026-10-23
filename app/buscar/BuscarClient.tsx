@@ -8,6 +8,7 @@ import { EventCardLink } from '@/components/cards/event-card-link';
 import { EventExplorer } from '@/components/home/EventExplorer';
 import { Input } from '@/components/ui/input';
 import { normalizeHours, getOpenStatus, guatNow } from '@/lib/hours-utils';
+import { matchesZone } from '@/lib/zone-hierarchy';
 import type { DbEvent } from '@/lib/types';
 
 const ZONES = ['Zona 10', 'Zona 14', 'Zona 15', 'Zona 4', 'Cayalá', 'Antigua'];
@@ -59,7 +60,7 @@ function BuscarContent() {
         let result = places;
 
         if (selectedZone) {
-            result = result.filter(p => p.zone === selectedZone);
+            result = result.filter(p => matchesZone(p.zone, selectedZone));
         }
 
         if (searchQuery) {
@@ -78,7 +79,7 @@ function BuscarContent() {
         let result = events;
 
         if (selectedZone) {
-            result = result.filter(e => e.zone === selectedZone);
+            result = result.filter(e => matchesZone(e.zone, selectedZone));
         }
 
         if (searchQuery) {

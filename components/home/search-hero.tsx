@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
+import { matchesZone } from '@/lib/zone-hierarchy';
 
 const ZONES = ['Zona 10', 'Zona 14', 'Zona 15', 'Zona 4', 'Cayalá', 'Antigua'];
 
@@ -39,7 +40,7 @@ export function SearchHero() {
         let result = places;
 
         if (selectedZone) {
-            result = result.filter(p => p.zone === selectedZone);
+            result = result.filter(p => matchesZone(p.zone, selectedZone));
         }
 
         if (searchQuery) {

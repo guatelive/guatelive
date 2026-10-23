@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { PlaceCard } from '@/components/cards/place-card';
 import { createBuildTimeClient } from '@/lib/supabase/server';
 import { getPublishedPlaceZones } from '@/lib/zones';
+import { zonesWithin } from '@/lib/zone-hierarchy';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { buildBreadcrumbSchema, buildFAQSchema, buildPlaceListSchema } from '@/lib/schema-builders';
@@ -42,7 +43,7 @@ export default async function ZonaRestaurantesPage(props: { params: Params }) {
     const { data: placesRaw, error } = await supabase
         .from('places')
         .select('*, place_photos(url, is_primary, order_index)')
-        .eq('zone', zoneInfo.zone)
+        .in('zone', zonesWithin(zoneInfo.zone))
         .eq('is_published', true)
         .order('rating', { ascending: false })
         .limit(60);
