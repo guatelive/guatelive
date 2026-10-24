@@ -142,6 +142,21 @@
         "para-trabajar",
         "cena"
       ]
+    },
+    {
+      "id": "339bd66c-c535-49c8-b735-94793e8c19fe",
+      "name": "Le Café Petit",
+      "zone": "Zona 15",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "nota": "Le Café Petit += cafe (Fredy, 2026-10-24)"
     }
   ]
 }
