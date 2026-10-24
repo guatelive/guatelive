@@ -841,6 +841,25 @@
         "moderado",
         "para-trabajar"
       ]
+    },
+    {
+      "id": "46a4e1f1-a981-47aa-b8f5-b8f82768c730",
+      "name": "Restaurante La Finka",
+      "zone": "Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "apto-para-ninos"
+      ],
+      "nota": "La Finka CAES: animales y área para niños, confirmado por Fredy"
     }
   ]
 }

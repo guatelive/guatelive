@@ -54,7 +54,7 @@ const TAG_MAP: Record<string, string[]> = {
     'Ir con mi perro': ['pet-friendly'],
     // familia = verificado (área de juegos, menú infantil o reseña que lo recomienda
     // para ir en familia, ADR-027). grupos-grandes salió: grupo grande no implica niños.
-    'Plan familiar': ['familia', 'ninos', 'domingo-en-familia'],
+    'Plan familiar': ['familia', 'ninos', 'apto-para-ninos', 'domingo-en-familia'],
 };
 
 // Sugerencias "También te podría interesar" debajo de los resultados: lugares que
