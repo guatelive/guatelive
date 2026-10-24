@@ -39,8 +39,8 @@ const TAG_MAP: Record<string, string[]> = {
     Cenar: ['cena-romantica', 'date-night', 'restaurante'],
     // "Tomar algo" se separó en dos (Fredy, 2026-10-23): tragos y café. Sin
     // bar-completo, que es el serves_beer de Google y lo tiene casi todo restaurante.
-    Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal'],
-    'Ir por un café': ['cafe', 'cafe-especialidad', 'bar-de-cafe'],
+    Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal', 'vinoteca'],
+    'Ir por un café': ['cafe', 'cafe-especialidad', 'bar-de-cafe', 'panaderia-cafeteria'],
     'Desayuno o brunch': ['desayuno', 'brunch', 'cafe', 'desayuno-todo-el-dia', 'abierto-temprano'],
     // Solo tags que afirman "se puede trabajar ahí" (verificados por Fredy) — antes
     // incluía cafe-especialidad y reunion-de-negocios, y salían vinotecas y café-bares.
