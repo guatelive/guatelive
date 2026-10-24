@@ -39,8 +39,8 @@ const TAG_MAP: Record<string, string[]> = {
     Cenar: ['cena-romantica', 'date-night', 'restaurante'],
     // "Tomar algo" se separó en dos (Fredy, 2026-10-23): tragos y café. Sin
     // bar-completo, que es el serves_beer de Google y lo tiene casi todo restaurante.
-    Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal'],
-    'Ir por un café': ['cafe', 'cafe-especialidad', 'bar-de-cafe'],
+    Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal', 'vinoteca'],
+    'Ir por un café': ['cafe', 'cafe-especialidad', 'bar-de-cafe', 'panaderia-cafeteria'],
     'Desayuno o brunch': ['desayuno', 'brunch', 'cafe', 'desayuno-todo-el-dia', 'abierto-temprano'],
     // Solo tags que afirman "se puede trabajar ahí" (verificados por Fredy) — antes
     // incluía cafe-especialidad y reunion-de-negocios, y salían vinotecas y café-bares.
@@ -52,7 +52,9 @@ const TAG_MAP: Record<string, string[]> = {
     // Solo pet-friendly verificado (reseña explícita o 2+ fuentes, ADR-027) — antes
     // mapeaba a al-aire-libre/tranquilo/acogedor/casual, que no dicen nada de perros.
     'Ir con mi perro': ['pet-friendly'],
-    'Plan familiar': ['familia', 'ninos', 'domingo-en-familia', 'grupos-grandes'],
+    // familia = verificado (área de juegos, menú infantil o reseña que lo recomienda
+    // para ir en familia, ADR-027). grupos-grandes salió: grupo grande no implica niños.
+    'Plan familiar': ['familia', 'ninos', 'apto-para-ninos', 'domingo-en-familia'],
 };
 
 // Sugerencias "También te podría interesar" debajo de los resultados: lugares que
@@ -61,7 +63,12 @@ const TAG_MAP: Record<string, string[]> = {
 // "café" en el nombre/tags.
 const RELATED_TAG_MAP: Record<string, string[]> = {
     Trabajar: ['cafe', 'cafe-especialidad'],
+    // Cualquier restaurante que no sea bar ni discoteca (Fredy, 2026-10-23): plausible
+    // para ir con niños, pero sin confirmar.
+    'Plan familiar': ['restaurante', 'almuerzo'],
 };
+// Un lugar con alguno de estos tags nunca es sugerencia (ej. bar-restaurante en Familiar).
+const RELATED_EXCLUDED_TAGS = ['bar', 'salir-de-fiesta', 'night_club', 'cocteleria-de-autor'];
 const RELATED_LIMIT = 6;
 
 const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
@@ -468,7 +475,8 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                 if (withZone) params.set('zone', zone!);
                 const res = await fetch(`/api/places/bubble?${params}`);
                 const pool: Place[] = await res.json();
-                return pool.filter(p => !seen.has(p.id) && p.primary_category !== 'Bar');
+                return pool.filter(p => !seen.has(p.id) && p.primary_category !== 'Bar' &&
+                    !(p.tags ?? []).some(t => RELATED_EXCLUDED_TAGS.includes(t)));
             }
             let candidates = hasZone ? await fetchPool(true) : [];
             if (candidates.length === 0) candidates = await fetchPool(false);

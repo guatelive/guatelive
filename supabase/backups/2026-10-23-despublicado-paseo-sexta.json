@@ -1,0 +1,10 @@
+{
+  "descripcion": "Despublicado (no borrado): es la calle peatonal, no un restaurante (Fredy, 2026-10-23). Revertir: is_published = true.",
+  "lugar": {
+    "id": "e21789d1-1dfc-4dc2-940a-956f7fe580dd",
+    "name": "Paseo de La Sexta",
+    "zone": "Zona 1",
+    "is_published": true,
+    "address": "JFQP+X9R, Av La Castellana, Cdad. de Guatemala, Guatemala"
+  }
+}
