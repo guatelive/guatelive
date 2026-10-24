@@ -39,6 +39,9 @@ const TAG_MAP: Record<string, string[]> = {
     // cena = serves_dinner de Google (dato, no opinión). Lo romántico/elegante va
     // aparte en una burbuja curada (Fredy, 2026-10-23).
     Cenar: ['cena'],
+    // Curada con el skill curar-burbuja (2026-10-24): lugares elegantes para una cita.
+    // Tag propio, separado de cena-romantica/date-night del lote viejo sin verificar.
+    'Cita romántica': ['cita-romantica'],
     // "Tomar algo" se separó en dos (Fredy, 2026-10-23): tragos y café. Sin
     // bar-completo, que es el serves_beer de Google y lo tiene casi todo restaurante.
     Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal', 'vinoteca'],
@@ -79,6 +82,7 @@ const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
     { label: '🌅 Brunch', key: 'Desayuno o brunch' },
     { label: '🍛 Almuerzo', key: 'Almuerzo' },
     { label: '🍽 Cenar', key: 'Cenar' },
+    { label: '🍷 Cita romántica', key: 'Cita romántica' },
     { label: '🍸 Drinks', key: 'Drinks' },
     { label: '☕ Un café', key: 'Ir por un café' },
     { label: '💻 Trabajar', key: 'Trabajar' },

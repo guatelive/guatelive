@@ -127,4 +127,4 @@ Para cada lote:
 | Con mi perro | pet-friendly | — |
 | Plan familiar | familia, ninos, apto-para-ninos, domingo-en-familia | restaurantes sin bar |
 | Salir de fiesta | salir-de-fiesta, night_club | — |
-| Cita romántica | (en curso: 20 ✅, 🟡 pendientes de Fredy) | — |
+| Cita romántica | cita-romantica (47: 20 con evidencia explícita + 27 probables aprobados por Fredy) | — |
