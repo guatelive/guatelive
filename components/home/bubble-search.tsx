@@ -36,7 +36,9 @@ const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-�
 
 const TAG_MAP: Record<string, string[]> = {
     Almuerzo: ['almuerzo', 'restaurante'],
-    Cenar: ['cena-romantica', 'date-night', 'restaurante'],
+    // cena = serves_dinner de Google (dato, no opinión). Lo romántico/elegante va
+    // aparte en una burbuja curada (Fredy, 2026-10-23).
+    Cenar: ['cena'],
     // "Tomar algo" se separó en dos (Fredy, 2026-10-23): tragos y café. Sin
     // bar-completo, que es el serves_beer de Google y lo tiene casi todo restaurante.
     Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal', 'vinoteca'],
@@ -66,6 +68,8 @@ const RELATED_TAG_MAP: Record<string, string[]> = {
     // Cualquier restaurante que no sea bar ni discoteca (Fredy, 2026-10-23): plausible
     // para ir con niños, pero sin confirmar.
     'Plan familiar': ['restaurante', 'almuerzo'],
+    // Restaurantes sin el dato serves_dinner de Google (79 al 2026-10-23).
+    Cenar: ['restaurante', 'almuerzo'],
 };
 // Un lugar con alguno de estos tags nunca es sugerencia (ej. bar-restaurante en Familiar).
 const RELATED_EXCLUDED_TAGS = ['bar', 'salir-de-fiesta', 'night_club', 'cocteleria-de-autor'];
