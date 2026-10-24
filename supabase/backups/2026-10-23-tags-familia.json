@@ -1063,6 +1063,84 @@
         "familia"
       ],
       "nota": "familia removido: sin evidencia tras búsqueda web (2026-10-23)"
+    },
+    {
+      "id": "d281f2f5-edfc-4760-900c-735c7caae3b5",
+      "name": "Asanígua",
+      "zone": "Villa Nueva",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "almuerzo",
+        "restaurante",
+        "mexicana",
+        "economico",
+        "con-amigos",
+        "casual",
+        "animado",
+        "proyecto-local",
+        "joya-escondida"
+      ],
+      "nota": "familia restaurado: confirmado por Fredy (2026-10-23)"
+    },
+    {
+      "id": "c5f59d4b-45b0-48cd-885c-dae8d924d258",
+      "name": "Mr. Tortilla de Harina",
+      "zone": "Zona 16",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "restaurante",
+        "mexicana",
+        "economico",
+        "con-amigos",
+        "grupos-grandes",
+        "casual",
+        "animado",
+        "proyecto-local"
+      ],
+      "nota": "familia restaurado: confirmado por Fredy (2026-10-23)"
+    },
+    {
+      "id": "192fd75b-2c4c-450e-aea9-2c1fe222cc07",
+      "name": "Restaurante El Potrero Carretera a El Salvador",
+      "zone": "Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "pet-friendly"
+      ],
+      "nota": "familia restaurado: confirmado por Fredy (2026-10-23)"
+    },
+    {
+      "id": "c0f561e8-e8c4-42c2-a80e-4e29c14428e9",
+      "name": "Tony Roma's • Cayalá",
+      "zone": "Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo"
+      ],
+      "nota": "familia restaurado: confirmado por Fredy (2026-10-23)"
     }
   ]
 }
