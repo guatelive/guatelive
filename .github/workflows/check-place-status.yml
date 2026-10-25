@@ -1,0 +1,41 @@
+name: Check place status
+
+# Revisa en Google Places si algún lugar publicado cerró (scripts/check-place-status.ts):
+# cerrados definitivamente se despublican, cerrados temporalmente solo se reportan en el
+# resumen del job.
+#
+# APAGADO a propósito (Fredy, 2026-10-24): por ahora solo se puede correr a mano desde
+# la pestaña Actions ("Run workflow"). Para activarlo semanalmente, descomentar el
+# bloque `schedule`. Antes hace falta el secret NEXT_PUBLIC_GOOGLE_PLACES_API_KEY en el
+# ambiente "Production" (mismo lugar que los secrets de Supabase).
+
+on:
+  # schedule:
+  #   # Lunes 10:00 UTC = 4:00 AM hora de Guatemala
+  #   - cron: '0 10 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: 'Solo reportar, sin escribir en la base'
+        type: boolean
+        default: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # Los secrets están como Environment secrets de "Production" (ver scrape-bank-promos.yml).
+    environment: Production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - run: npx tsx scripts/check-place-status.ts ${{ inputs.dry && '--dry' || '' }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_GOOGLE_PLACES_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY }}
