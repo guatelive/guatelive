@@ -1,5 +1,5 @@
 import { SiteLayout } from '@/components/layout/site-layout';
-import { PromoCard } from '@/components/cards/promo-card';
+import { PromosFilters } from '@/components/promos/promos-filters';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { buildBreadcrumbSchema, buildOfferSchema } from '@/lib/schema-builders';
@@ -76,11 +76,7 @@ export default async function PromosPage() {
                 {promos.length === 0 ? (
                     <p className="text-muted-foreground">No hay promos vigentes por el momento.</p>
                 ) : (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {promos.map((promo) => (
-                            <PromoCard key={promo.id} promo={promo} places={promoPlaces.get(promo.id) ?? []} />
-                        ))}
-                    </div>
+                    <PromosFilters promos={promos} places={Object.fromEntries(promoPlaces)} />
                 )}
             </div>
         </SiteLayout>
