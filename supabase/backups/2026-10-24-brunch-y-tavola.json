@@ -1,5 +1,5 @@
 {
-  "descripcion": "Respaldo ANTES de: (1) quitar el tag 'brunch' de Google (serves_brunch, sin valor) a todos los lugares y dejarlo solo en los curados (evidencia de brunch + Saúl, The Market y Los Tres Tiempos confirmados por Fredy); (2) tag 'mimosas'; (3) despublicar La Tavola (cerrada en todas sus sucursales, Fredy 2026-10-24).",
+  "descripcion": "Respaldo ANTES de: (1) quitar el tag 'brunch' de Google (serves_brunch, sin valor) a todos los lugares y dejarlo solo en los curados (evidencia de brunch + Saúl, The Market y Los Tres Tiempos confirmados por Fredy); (2) tag 'mimosas'; (3) despublicar La Tavola (cerrada en todas sus sucursales, Fredy 2026-10-24). Después: Frisco Grill Cayalá y Arena Cocina Griega despublicados (cerrados, Fredy).",
   "lugares": [
     {
       "id": "4a6b4464-17c6-455a-bdbd-d868137e74ca",
@@ -3981,6 +3981,41 @@
         "cena"
       ],
       "is_published_antes": true
+    },
+    {
+      "id": "2fd97178-75d9-4d9a-980f-17dcb11a2e62",
+      "name": "Frisco Grill • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true,
+      "nota": "despublicado: cerrado (Fredy, 2026-10-24)"
+    },
+    {
+      "id": "1de471fe-40be-4dd9-898b-f5ff9fa671e7",
+      "name": "Arena Cocina Griega",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "almuerzo",
+        "griega",
+        "vegetariano",
+        "cena"
+      ],
+      "is_published_antes": true,
+      "nota": "despublicado: cerrado (Fredy, 2026-10-24)"
     }
   ]
 }
