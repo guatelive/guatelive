@@ -118,7 +118,8 @@ Para cada lote:
 
 | Burbuja | Principal | Sugerencia |
 |---|---|---|
-| Brunch | desayuno, brunch, cafe… | — (sin curar todavía) |
+| Desayuno | desayuno (serves_breakfast de Google) | — |
+| Brunch | brunch (curado; el brunch de Google se quitó) + tag `mimosas` informativo | — |
 | Almuerzo | almuerzo, restaurante | — |
 | Cenar | cena (serves_dinner) | restaurantes sin el dato |
 | Drinks | bar, coctelería, cerveza artesanal, vinoteca | — |

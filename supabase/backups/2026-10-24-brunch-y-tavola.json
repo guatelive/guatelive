@@ -1,0 +1,3986 @@
+{
+  "descripcion": "Respaldo ANTES de: (1) quitar el tag 'brunch' de Google (serves_brunch, sin valor) a todos los lugares y dejarlo solo en los curados (evidencia de brunch + Saúl, The Market y Los Tres Tiempos confirmados por Fredy); (2) tag 'mimosas'; (3) despublicar La Tavola (cerrada en todas sus sucursales, Fredy 2026-10-24).",
+  "lugares": [
+    {
+      "id": "4a6b4464-17c6-455a-bdbd-d868137e74ca",
+      "name": "Montano's",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "carnes",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "5615b852-fc86-4ad0-86c8-2e978119ad2f",
+      "name": "Gerty's Bar Restaurant & Art Gallery",
+      "tags_antes": [
+        "art_gallery",
+        "bar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "restaurante",
+        "americana",
+        "con-amigos",
+        "date-night",
+        "noche",
+        "animado",
+        "bohemio",
+        "decoracion-unica",
+        "galeria-permanente",
+        "espacio-cultural",
+        "cocteleria-de-autor",
+        "musica-en-vivo",
+        "en-antigua",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f4a0a181-888c-4701-a76b-f116774f4599",
+      "name": "Saúl Bistro Zona 14",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena",
+        "cafe",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "9adfaaaa-f772-4a2e-a3fa-4f23b0048d4f",
+      "name": "Saúl Bistro Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena",
+        "cafe",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "79cee9e3-4ed3-4d39-9fd0-aa4477e7f948",
+      "name": "Cafe Cafe Mas Sano",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "restaurante",
+        "guatemalteca",
+        "economico",
+        "turismo",
+        "tranquilo",
+        "acogedor",
+        "volumen-conversacional",
+        "para-trabajar",
+        "en-antigua"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "339bd66c-c535-49c8-b735-94793e8c19fe",
+      "name": "Le Café Petit",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena",
+        "cafe"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "78677ab7-b14d-4d51-92ad-9f442e465e32",
+      "name": "Café Sol",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cafe-especialidad",
+        "terraza",
+        "para-trabajar"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e0445fb4-852e-49e5-b734-6a8bb0baa683",
+      "name": "El Alquimista Café - Magical Coffee Shop",
+      "tags_antes": [
+        "bar",
+        "cafe",
+        "tourist_attraction",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "comfort-food",
+        "moderado",
+        "turismo",
+        "con-amigos",
+        "date-night",
+        "primera-cita",
+        "animado",
+        "decoracion-unica",
+        "instagrameable",
+        "experiencia-unica",
+        "experiencia-cultural",
+        "bohemio",
+        "cocteleria-de-autor",
+        "en-antigua",
+        "lodging",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "cfdae073-6fae-4c17-bedc-f73e4b02570b",
+      "name": "El Tenedor",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "espacio-cultural",
+        "vistas-panoramicas",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2bb55b2e-f7b4-4d4e-8513-fb4d813e35d0",
+      "name": "Las Antorchas",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "sin-gluten",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0fd8e20b-bdc0-4888-ba12-2c22a2edefb6",
+      "name": "Los Tres Tiempos",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "6059253e-30e6-49b5-ab91-dc5ef07d54e8",
+      "name": "El Che-Cha",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "99c6aa94-fa21-4d89-b794-71ec2ee67322",
+      "name": "Los Tres Tiempos • Centro Histórico",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "terraza",
+        "vistas-panoramicas",
+        "en-centro-historico",
+        "pet-friendly",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "151a81f1-2b64-4b8b-ac49-a2fda654c25b",
+      "name": "Loros y Pericos Restaurante Sport Bar",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "musica-en-vivo",
+        "apto-para-ninos",
+        "mexicana",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0e88752a-e81f-4d00-8e76-17471507f92b",
+      "name": "Cafe Boheme",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "vistas-panoramicas",
+        "escondido",
+        "para-trabajar",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "08b94ed6-621f-4373-8687-1bad4de9388d",
+      "name": "ANTAÑO MUNDO PAN",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "panaderia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "1db28b21-d31e-40fa-bdfe-900640d74380",
+      "name": "Unión Café",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "vegano"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "62fb01ef-d3b5-4a54-b7e1-0027c9995109",
+      "name": "Tre Fratelli Condado Concepción",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "italiana",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "1e0364de-d0e1-4c45-a0be-bb818dd09751",
+      "name": "Rayuela",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "musica-en-vivo",
+        "espacio-cultural",
+        "vegetariano",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0558b5ac-5848-49f9-a7ad-1be8036ed375",
+      "name": "Artista de Café - Specialty Coffeeshop",
+      "tags_antes": [
+        "cafe",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "tuesta-su-propio-cafe",
+        "cafe-especialidad",
+        "para-trabajar"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "3f231ba4-4811-423a-acbd-196c75df0f82",
+      "name": "Donde Mikel Carretera al Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "20dd5186-b92a-4bfe-ab8d-94e291e66da9",
+      "name": "7 Caldos • Dinamia Cayala",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "329542cb-48d7-419f-9d8a-e6f325397006",
+      "name": "Kloster • Condado Concepción",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "01e163b4-2c8c-4b4e-aa43-2cc9f7a72e60",
+      "name": "Casa Escobar Antigua",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "restaurante",
+        "carnes",
+        "date-night",
+        "cena-romantica",
+        "celebracion",
+        "con-amigos",
+        "elegante",
+        "acogedor",
+        "romantico",
+        "cocteleria-de-autor",
+        "buenos-postres",
+        "proyecto-local",
+        "en-antigua",
+        "vistas-panoramicas",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "aa24c397-3fdf-4fac-a33c-00c9cd0cbd71",
+      "name": "LIMA. Cocina Realmente Peruana",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "restaurante",
+        "peruana",
+        "date-night",
+        "cena-romantica",
+        "celebracion",
+        "con-amigos",
+        "elegante",
+        "acogedor",
+        "mariscos",
+        "experiencia-unica",
+        "proyecto-local",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "323f8f85-d0b8-46ec-8242-e9a0462fc97e",
+      "name": "Muriel Postres Gourmet - Santa Rosalía CAES",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "panaderia-cafeteria",
+        "reposteria",
+        "americana",
+        "economico",
+        "con-amigos",
+        "desayuno",
+        "brunch",
+        "plan-rapido",
+        "acogedor",
+        "instagrameable",
+        "buenos-postres",
+        "postres-artesanales",
+        "pan-de-masa-madre",
+        "proyecto-local",
+        "en-muxbal"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "73a804e7-69b0-4688-820f-67ecbca3ce59",
+      "name": "Casa Cantonesa",
+      "tags_antes": [
+        "meal_delivery",
+        "meal_takeaway",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "brunch",
+        "almuerzo",
+        "china",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "8cd4afa3-3722-431d-a3e3-94bcf904e8e8",
+      "name": "Patsy • Madero Roosevelt",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f5b3b512-3a72-4e03-b84c-1f592c6efb2d",
+      "name": "Rias Bajas Seafood Restaurant zona 9",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mariscos",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e65970af-39eb-434b-9823-9096850ebd00",
+      "name": "La Parrillada",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "3cd952a5-a66c-4fc8-a4fd-2938ce199712",
+      "name": "La Estancia San Jose Pinula",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "al-aire-libre",
+        "guatemalteca",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e21789d1-1dfc-4dc2-940a-956f7fe580dd",
+      "name": "Paseo de La Sexta",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "economico",
+        "en-centro-historico"
+      ],
+      "is_published_antes": false
+    },
+    {
+      "id": "44520431-8df4-4f81-b2cb-344dfa41f8a2",
+      "name": "Cevicheria Los Chatos",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mariscos"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0d0b24a6-7fe7-46c0-9959-c4e814e193e9",
+      "name": "San Martín • Condado Concepción",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "panaderia",
+        "para-trabajar",
+        "cafe",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "be5173fd-a165-43ec-b924-0d6b81fa547d",
+      "name": "Coffee District - 4 Grados Norte",
+      "tags_antes": [
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "07ff3bd2-b334-4b63-a919-336afb0a66fc",
+      "name": "Saúl Cafe Pradera Concepción",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena",
+        "cafe",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f75b3b2c-ee67-4999-bba4-57b3f38fa6c6",
+      "name": "Altuna Cayala",
+      "tags_antes": [
+        "acepta-reservas",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "espanola",
+        "mariscos",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0682dc98-d5b5-4e32-984f-78fa5635f72c",
+      "name": "Crêpette",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "al-aire-libre",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "19d55ce3-baee-4c2a-b1cd-a5a6672fc3c9",
+      "name": "San Martín • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "308b784f-f221-4f1b-a37f-aa5335f9b99c",
+      "name": "Gula",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "29eab35f-3d0b-488a-b61d-fb65e3652012",
+      "name": "Restaurante La Finka San Cristóbal",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "8727fd58-6c37-43a6-888a-476a5563a00e",
+      "name": "Hacienda Real Zona 14",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0283a43a-aa39-40ef-b953-bb8c48bd037b",
+      "name": "Miettes",
+      "tags_antes": [
+        "bar",
+        "cafe",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "9fb9e33d-1fa6-452e-aa26-28dd5588ee75",
+      "name": "Palacio Cristal • Zona 9",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "china",
+        "mariscos",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "4380ac3f-88b7-41f6-bef8-dfbbe1f3b082",
+      "name": "Restaurante Yi Hou",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "china",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c5f59d4b-45b0-48cd-885c-dae8d924d258",
+      "name": "Mr. Tortilla de Harina",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "restaurante",
+        "mexicana",
+        "economico",
+        "con-amigos",
+        "grupos-grandes",
+        "casual",
+        "animado",
+        "proyecto-local",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "08e88877-f81d-40fe-bbb6-74de8595f718",
+      "name": "Graciela",
+      "tags_antes": [
+        "tranquilo",
+        "al-aire-libre",
+        "acogedor",
+        "date-night",
+        "cena-romantica",
+        "almuerzo",
+        "restaurante",
+        "terraza",
+        "estacionamiento",
+        "wifi",
+        "bar",
+        "moderno",
+        "elegante",
+        "casual",
+        "brunch",
+        "cumpleanos",
+        "amigos",
+        "primera-cita",
+        "aniversario",
+        "cafe",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "391d18c9-ce4f-43b5-b3a3-d3ea1a4e5b31",
+      "name": "Las Tablas Mucha Brasa, Plaza Madero",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "eb8889a9-ffaf-492f-b774-78c663a1aabc",
+      "name": "MONTICELLI",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "italiana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "eafd4b48-69f5-425b-a13f-897f1f9b8af3",
+      "name": "Patsy",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "reposteria",
+        "guatemalteca",
+        "para-trabajar",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "158ed64c-32f9-42a4-b6fd-b1f4ab66d043",
+      "name": "San Martín • Centro Histórico",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "panaderia",
+        "guatemalteca",
+        "para-trabajar",
+        "cafe",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c0f561e8-e8c4-42c2-a80e-4e29c14428e9",
+      "name": "Tony Roma's • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "ab666f02-9ba0-410a-8d03-d8fa1645b516",
+      "name": "Saúl Bistro Zona 10 (Casa Saúl)",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "bistro",
+        "para-trabajar",
+        "cena",
+        "cafe",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f291d067-8bcd-4fbb-bde3-37fd94f6a4fe",
+      "name": "Saúl Bistro Metro 15",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena",
+        "cafe",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "192fd75b-2c4c-450e-aea9-2c1fe222cc07",
+      "name": "Restaurante El Potrero Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "pet-friendly",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "b42fe386-34bc-401b-9006-95f298ba45e4",
+      "name": "Saúl Bistro Plaza Concepción",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena",
+        "cafe",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "29f86305-6996-4b03-a651-6b02557d5381",
+      "name": "AZTLAN RESTAURANTE",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0a1afe98-e855-443e-bcdf-d5fdc6de9c40",
+      "name": "Tre Fratelli • Metrocentro Villa Nueva",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "1de471fe-40be-4dd9-898b-f5ff9fa671e7",
+      "name": "Arena Cocina Griega",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "griega",
+        "vegetariano",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "115eebad-edfc-4650-ba2c-9266402f9365",
+      "name": "Tre Fratelli • Pradera Vistares",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2321cdf0-f240-4d05-b3c3-0c72ff34d09b",
+      "name": "Aida",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "bbfd35af-7080-4193-812f-ef90ae0d7e58",
+      "name": "La Estancia • Amatitlán",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "cf9c0284-e6a7-4fc7-b4d9-e290c8fac220",
+      "name": "Fernando's Kaffee",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "sin-gluten",
+        "para-trabajar",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d2956c9a-999a-4b7c-abf6-ec2e8adb1f7a",
+      "name": "Kaffa Restaurante",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "al-aire-libre",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "ef9e33a1-b973-46d4-afe5-5175476ded2e",
+      "name": "Cielito Lindo Grill",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "fdc39503-682f-4dbd-b34f-8d3623deaf78",
+      "name": "Aqua Antigua",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "brunch",
+        "almuerzo",
+        "piscina",
+        "vistas-panoramicas",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "4c63e477-2095-4527-ade1-d8b3cc5e1d72",
+      "name": "Restaurante Palomino Ranch",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "apto-para-ninos",
+        "musica-en-vivo",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "6f3adbf5-81ad-4b45-9dba-88f8d2e6211a",
+      "name": "Tre Fratelli Zona 14",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "9ab5ce97-cd93-42b5-bc9d-fd7cf501f69f",
+      "name": "Hacienda Real Zona 10",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "carnes",
+        "lugar-historico",
+        "familia",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "17ef82a0-8459-4841-83b4-dffcbecf04a4",
+      "name": "Altuna",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "espanola",
+        "lugar-historico",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "8e4f7b02-af47-4d12-aac7-f52164ef9a61",
+      "name": "Pizza Hut • Santa Clara",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "b3ecaeed-0332-4848-9762-e56950819533",
+      "name": "Hector's Bistro",
+      "tags_antes": [
+        "bar",
+        "meal_delivery",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "1cfe7fc0-c835-487b-b60c-7285dd707707",
+      "name": "OJO DE AGUA GUATEMALA GAURA ZONA 15",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "65ca567e-7a49-482c-9586-718fc390a826",
+      "name": "Los Cebollines (Los Álamos)",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "a9f11fa8-c7d5-418a-ac29-19eab59a8a8d",
+      "name": "Margó",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "al-aire-libre",
+        "vistas-panoramicas",
+        "familia",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "405dda1b-eeb8-4325-939a-20c4bae917b6",
+      "name": "Carpa Restaurante Buffet",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "china",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "8ff1ba24-83c5-4b75-a047-e0d9d54acc51",
+      "name": "Niquito",
+      "tags_antes": [
+        "bar",
+        "cafe",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "cafe-especialidad",
+        "para-trabajar",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "fd7998ac-b848-4f3b-9fd6-1b92f0677de5",
+      "name": "Restaurante El Pepián",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "guatemalteca",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "72dad4d1-1484-4ef9-bbfc-069ac1f0c80c",
+      "name": "Picadilly Zona 1",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "cba723bf-6404-4ec5-bd5b-55583ba05fbf",
+      "name": "La Estancia",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "musica-en-vivo",
+        "familia",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "bb9282ae-6e7e-434f-b809-107b9d0fcfe1",
+      "name": "Portal del Ángel • Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "vistas-panoramicas",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c6b3aac6-7bf4-4087-9832-a3d6ff693701",
+      "name": "El Pinche • Condado Concepción",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f3ab129f-e429-4f6b-ae21-39e469d10420",
+      "name": "Restaurante El Adobe Zona 10",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "musica-en-vivo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "12d3e20b-ec56-40e4-ab49-44a3d73d99a1",
+      "name": "Colibrí Restaurante",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "escondido",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "3458c41b-a7cd-43c1-a2eb-007ca869e6b9",
+      "name": "Carpaccio Restaurante",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "terraza",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "525373a3-9545-49d5-a9cd-be623f90b778",
+      "name": "Nokiate it",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "japonesa",
+        "al-aire-libre",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2e005fba-aca6-46b1-999c-942596cf52db",
+      "name": "Restaurante Mamma Roma",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "italiana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "5684f5dd-7648-4a2a-b004-c546c5fcf968",
+      "name": "Bonanza Fraijanes",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "al-aire-libre",
+        "apto-para-ninos",
+        "pet-friendly",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "253e1558-36f4-4661-86ad-0398c9440697",
+      "name": "Saúl Bistro • Majadas Once",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e95456c1-f49e-426d-ba32-a5383e4e55d6",
+      "name": "Kloster Majadas Once",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "cfd4d981-4e5d-48c3-b47c-178dc6da3e64",
+      "name": "La Playa",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "vistas-panoramicas",
+        "salir-de-fiesta",
+        "restaurante",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "80cb21d3-bfa9-4812-95b1-c4632e2b8c72",
+      "name": "San Martín • Escala Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "apto-para-ninos",
+        "para-trabajar",
+        "cafe",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "a3b4ed5b-7a03-4fae-af9a-5bf7ca439164",
+      "name": "Rooftop Antigua",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "vistas-panoramicas",
+        "rooftop",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "116c85bb-8f43-43fd-82b4-823b2f11f703",
+      "name": "Rosanta - Cocina sostenible | Farm to Table",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "restaurante",
+        "fusion-latina",
+        "guatemalteca",
+        "caro",
+        "cena-romantica",
+        "celebracion",
+        "date-night",
+        "con-amigos",
+        "elegante",
+        "acogedor",
+        "romantico",
+        "al-aire-libre",
+        "ingredientes-locales",
+        "ingredientes-de-temporada",
+        "proyecto-local",
+        "en-antigua",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "235e09b9-0466-42e5-8e10-bd5c0e835de4",
+      "name": "Parrillada Argentina",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "be7c62a1-a0b0-4a85-aeef-48c748427f59",
+      "name": "Don Emiliano Galerías Tiffany",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "al-aire-libre",
+        "mariscos",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "21eebd78-2320-4f40-a961-7306c897e33d",
+      "name": "Restaurante Kloster • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f1c89318-8b7e-4246-b2e9-80e767e70c75",
+      "name": "Tre Fratelli San Cristobal",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "9e1a81a2-3d5b-423c-bc53-dd90b961ff0e",
+      "name": "El Alicante",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "9fcdf70c-9a64-4eba-81df-86aac3dee8b9",
+      "name": "KI Restaurante",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "vistas-panoramicas",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2a83e6ae-4a26-4c70-8735-67f57d143073",
+      "name": "La Estancia Plazuela",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2667057e-00f8-4176-a24f-eebe21297cb4",
+      "name": "GIANNI'S La Noria",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "musica-en-vivo",
+        "griega",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "210d9af4-6582-4432-bcac-8ec6eedcdc09",
+      "name": "Rincón Del Steak",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0f44d39a-4d9a-4069-a56d-d74c0fb417ef",
+      "name": "La Posada del Mondongo",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "musica-en-vivo",
+        "colombiana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e4581b54-11ef-4e65-804f-ef6140865c2a",
+      "name": "Restaurante Manolo Garcia",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2b84ed0d-72d3-4a5e-8169-73da760b1531",
+      "name": "El Arte Steak House",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "musica-en-vivo",
+        "al-aire-libre",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2bf17f16-65f9-439b-890e-f6acea8299e3",
+      "name": "7 Caldos Las Americas",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "8350f7a8-c1b5-4e88-a823-bc9dbc541c88",
+      "name": "Restaurante MUU",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c627bd85-1899-416c-8ed8-2a9e1f993926",
+      "name": "San Martín • Metrocentro",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cafe",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "3d8bfc2b-43d7-42b2-8f77-70641085f2f6",
+      "name": "Restaurante Las Pérgolas",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "desayuno",
+        "brunch",
+        "almuerzo"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "965d7cec-b6f6-4414-afdb-7608acb69de5",
+      "name": "Casa escobar",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2bf71a77-505a-4cf4-a10e-78cfdab3f150",
+      "name": "El Pirata Zona 9",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "apto-para-ninos",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2fd97178-75d9-4d9a-980f-17dcb11a2e62",
+      "name": "Frisco Grill • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "26b5a47b-1532-42e7-b33c-758e58650380",
+      "name": "Rainbow Café Antigua Guatemala",
+      "tags_antes": [
+        "bar",
+        "book_store",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "sin-gluten",
+        "para-trabajar",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "ad5dcb25-8f74-496a-a430-fabf80cb153c",
+      "name": "Patsy • Aguilar Batres",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "ea82809f-99d0-42be-9ef7-e13d49abae3a",
+      "name": "Restaurante El Adobe • Zona 1",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "musica-en-vivo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d1544119-9d43-48f5-bb86-442ac6b2d2f1",
+      "name": "Jack Sparrow Guatemala",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f5d721b5-ea2b-4055-a2d4-9b7032d3f253",
+      "name": "Casa Patsy Antigua Guatemala",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "vistas-panoramicas",
+        "para-trabajar",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "6553aa2e-d2e5-4e58-8c03-f491a30b2684",
+      "name": "Chonita's Grill",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "pet-friendly",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d80b7b4e-2d93-4c09-9fcb-94267ca7dbc8",
+      "name": "Cafe Sky Bar",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "vistas-panoramicas",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "84a51054-f7ed-41da-a8a5-60b9bc17f98f",
+      "name": "Santa Monica Latin Food",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "al-aire-libre",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "46a4e1f1-a981-47aa-b8f5-b8f82768c730",
+      "name": "Restaurante La Finka",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "apto-para-ninos",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "3ceba432-fdfc-44c3-a956-5cd4999565ae",
+      "name": "Denny's",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "cc526520-1cc5-4233-8d6f-4b1095986561",
+      "name": "Restaurante Calle Real Gt",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "4eaf79a2-b2b1-41b4-b343-5e7eac15ba11",
+      "name": "Las Tablas Food And Beer",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "brunch",
+        "almuerzo",
+        "economico",
+        "carnes"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "5a9dc7f0-da3f-4b1b-8893-47abd3a69963",
+      "name": "Hacienda Real • Dinamia Cayalá",
+      "tags_antes": [
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "apto-para-ninos",
+        "carnes",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "147fea0f-2079-4db1-b7c8-b42172c6ffb9",
+      "name": "Aída Restaurante zona 10",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "43785412-a1b8-42eb-be71-1c0ea90af718",
+      "name": "El Pinche • Madero Atanasio",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c2e95a79-151c-4289-8e63-340543a0e104",
+      "name": "Patsy • Plaza San Cristóbal",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "reposteria",
+        "para-trabajar",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "babe654b-c840-458b-8e21-2c73ea5f86b2",
+      "name": "Restaurante Sarita",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "95026ac0-e02e-4c54-88ed-e20698aba396",
+      "name": "Entre Brasas",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "carnes",
+        "al-aire-libre",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d6c60b7f-cbb5-4208-80d6-c7e8fbee7a20",
+      "name": "Restaurante Muelle Viejo • Los Álamos",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "musica-en-vivo",
+        "after-office",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "85436672-83f3-4799-966a-06ffdab95fb2",
+      "name": "El Green Restaurant",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "guatemalteca"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "31b55dad-b37d-4c07-bfff-492e8a0627c3",
+      "name": "Restaurante El Rincón De La Finca",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "musica-en-vivo",
+        "apto-para-ninos",
+        "pet-friendly",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "69bf3c9f-4739-44b9-94fd-fe17e7f531f8",
+      "name": "Restaurante La Mezquita",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "espanola",
+        "lugar-historico",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "dfee4f95-6bd7-4667-a5a4-bef7c8ea5512",
+      "name": "Restaurante La Pista",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "terraza",
+        "pet-friendly",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "3d15116f-36a9-4fc5-a225-e762d327eae4",
+      "name": "Churrasco Centroamericano Zona Cuatro",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "f1cd37af-3243-4c65-9350-24c0592ad147",
+      "name": "Fridas Mezcaleria",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "98377296-53e1-4f44-92f8-6645e50ab620",
+      "name": "Restaurante Puerto Barrios",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "mariscos",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "b56a7ba2-3842-458a-a61d-aa9e5b17fa80",
+      "name": "Arrin Cuan Zona 9",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "53c8756c-60f3-42e1-9969-43aa4e18e6b5",
+      "name": "Fishermans Guatemala",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "mariscos",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e54dbca3-9503-4d50-8972-9524840ac79d",
+      "name": "Mariscal Gastro Market",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d1d26d13-ff23-48da-bd68-341d23234b4b",
+      "name": "Café Condesa",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "lugar-historico",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "749f19b0-1c96-41ae-87f8-aa0efd9c3771",
+      "name": "SNUG Antigua",
+      "tags_antes": [
+        "bar",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "terraza",
+        "vistas-panoramicas",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "852493b5-0e24-4fd7-8b36-8bb606b8003c",
+      "name": "Restaurante Fridas - La Antigua Guatemala",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "2c6170cd-7f93-47ae-98d6-b58a16476fae",
+      "name": "Hacienda Real Majadas",
+      "tags_antes": [
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "al-aire-libre",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "72b88fcb-1f48-44ea-9058-c68d8b1a9991",
+      "name": "Donde Joselito Steakhouse",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "66a50671-f12c-417b-9560-bf75af5d8cee",
+      "name": "Restaurante The Market",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "b30f7c56-d8a4-4257-8ddb-7552cc0fa206",
+      "name": "Aída Restaurant",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "7547542b-6508-4a42-ad12-ab35ab9721a6",
+      "name": "Hacienda Real CAES",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "carnes",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "a2110719-f526-4667-a793-dce6fb64262e",
+      "name": "Comedor Don Carlos zona 12",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "be224ae6-59fe-4a64-9b99-9a4b397c5957",
+      "name": "Del Posto",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "italiana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "6ffb9636-e76e-44d7-bad9-613c7e095bb2",
+      "name": "Las Tres Amigas",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "restaurante",
+        "mexicana",
+        "moderado",
+        "con-amigos",
+        "noche",
+        "casual",
+        "animado",
+        "vegano",
+        "cerveza-artesanal",
+        "cocteleria-de-autor",
+        "proyecto-local",
+        "en-antigua",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "368743fa-8c1d-4b0a-a630-b5165cefe129",
+      "name": "Ni-Fu Ni-Fa Zona 9",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c68f0c68-ed98-4f5f-b684-5f15e85274af",
+      "name": "El Pinche • CC El Frutal",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c3303c85-4dbf-418a-869f-4bca17fb4b29",
+      "name": "San Martín • Mix San Cristóbal",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cafe",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "be98587a-5eb6-4d21-aece-e95ba1bcb95f",
+      "name": "Terraza Catorce",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "rooftop",
+        "vistas-panoramicas"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e759216b-fc68-4c79-83d3-929689cf3e67",
+      "name": "Tre Fratelli • Majadas Once",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "al-aire-libre",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e04f32fe-5fff-4a59-a797-2fc256d85b27",
+      "name": "Los Moros Restaurant, by Porta Hotel Antigua",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "vistas-panoramicas",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c414260e-1d62-47a7-8ad6-26c45fbe405a",
+      "name": "La Cantina 5 Elementos",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "pet-friendly",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "4cf268ea-1df2-4f9a-a955-73f2fe75eed0",
+      "name": "La Maison Restaurant",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "francesa",
+        "terraza",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "76d590b2-027d-4402-bd9c-743d8c22d0aa",
+      "name": "Mi Jardin, Zona Portales",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "al-aire-libre",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "6cef4b81-8dd0-4640-a3d3-4431942e9328",
+      "name": "Fridas Restaurant",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "vegetariano",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0b447334-fda9-4983-b98f-84971ba89b56",
+      "name": "La Estancia Z14",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "9ad88360-201b-492f-bba9-559d72e3604e",
+      "name": "Las Carnes de Rodrigo",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "819e88a9-ac65-4985-add5-2a6f35db4ccc",
+      "name": "Casa Escobar...Paseo Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "c47d3f7c-dd7a-4450-b4b5-5f8326a66fb3",
+      "name": "Casa El Reformador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "a1f0d9a1-3b11-4d5b-869d-8027cde7b1e0",
+      "name": "Biba",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "italiana",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "fa47dc4c-180c-40f5-b24b-9671f4aa0b63",
+      "name": "TGI Friday's",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e861d85f-6d8c-401d-aa95-81e416bdbdea",
+      "name": "Pranzo San Cristobal",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "11f68536-b3b6-49e2-a88e-00738f107330",
+      "name": "Los Cebollines",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "familia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "8e486e28-7480-4add-b0c1-ae4fcdbe097c",
+      "name": "Don Emiliano",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "carnes",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d71a1b9f-02ac-4266-9317-d0c4129354f9",
+      "name": "Luna de Miel",
+      "tags_antes": [
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "vistas-panoramicas",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "dcb313fa-09a7-419b-8ece-4bcbb9120306",
+      "name": "Los Cebollines • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "a19ade49-2dd1-409f-a85b-4f50590a03ee",
+      "name": "Palacio Imperial",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "china",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e236fc4d-ad43-466c-9417-672b66ea3c5e",
+      "name": "El Marinero",
+      "tags_antes": [
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mariscos",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "4b3794cf-986f-4540-9e64-5605686c7934",
+      "name": "Cenma",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "cbbcd2a8-48a3-476d-84e7-04f4a1122d8b",
+      "name": "El Pibe",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "musica-en-vivo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "e670fe39-3f38-4ec8-8325-49c2a8ca7a9e",
+      "name": "Pizzeria Vesuvio",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "italiana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d03cc734-66e8-4e01-8ee3-e386439919dd",
+      "name": "Gracia Cocina de Autor",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "86878eb7-ad69-4854-b050-399f852a8d4c",
+      "name": "El Viejo Café",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "musica-en-vivo",
+        "pet-friendly",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "d86a54a9-bfc9-4439-b309-7b1018c03268",
+      "name": "Cafe Estudio",
+      "tags_antes": [
+        "cafe",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "rooftop",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "b2306f14-0a0e-451b-aadc-9aa0093ab7ae",
+      "name": "Fat Cat Coffee House",
+      "tags_antes": [
+        "cafe",
+        "para-llevar",
+        "consumo-en-local",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "56d94ef5-48a5-4d38-ad25-8a25f5812e8a",
+      "name": "El Adobe Antigua Guatemala",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "musica-en-vivo",
+        "guatemalteca",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "942a9195-9cc8-4fdc-ba7e-ee1d6cdace9f",
+      "name": "The Garden Cafe",
+      "tags_antes": [
+        "cafe",
+        "consumo-en-local",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "1fd64711-76cb-46b2-8071-9efa993ab10e",
+      "name": "Taqueria Las Flautas",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "mexicana",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "dfb63bde-2a16-4976-9ee1-c71172bf8ca8",
+      "name": "Patio de la Primera",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "vistas-panoramicas",
+        "terraza",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0d92b777-7a15-46d0-8f27-dc197affc75f",
+      "name": "Cafe Cafe Guatemala",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "restaurante",
+        "guatemalteca",
+        "turismo",
+        "tranquilo",
+        "acogedor",
+        "volumen-conversacional",
+        "cafe-especialidad",
+        "tostadas-aguacate",
+        "desayuno-todo-el-dia",
+        "proyecto-local",
+        "en-antigua",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "5776adc7-a9b6-41a2-98e7-1a6fe150738e",
+      "name": "NÍCOLO Restaurante • Vista Muxbal",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "a79c07cc-0550-4546-b9fe-dbefdcafc367",
+      "name": "La Cuisine",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "brunch",
+        "almuerzo",
+        "francesa",
+        "panaderia",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "cba04777-f990-4071-b6e8-866790b28bab",
+      "name": "Los Delfines Zona 15",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "mariscos",
+        "musica-en-vivo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "0995c90e-f979-43d5-b8c7-72e5879ae36a",
+      "name": "La Estancia Santa Clara",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "al-aire-libre",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "43e51f9f-081a-4daf-a63a-0763e16e43c0",
+      "name": "Madre Tierra",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "guatemalteca",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "73fa7211-763e-45c5-add8-32c569c65258",
+      "name": "La Casa del Adobo",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "brunch",
+        "almuerzo",
+        "mariscos",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "5f2e0f14-1607-4a03-83c6-3e62d5e61cef",
+      "name": "La Tavola - Creative Bistro",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "musica-en-vivo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "fcba8dd6-481c-4d63-bd86-384557fe0a65",
+      "name": "Luka",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "terraza",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "4fe1b67d-7b0a-4c48-beaa-e695ceaefe59",
+      "name": "Parcela Coffee & Bistro",
+      "tags_antes": [
+        "cafe",
+        "para-llevar",
+        "consumo-en-local",
+        "almuerzo",
+        "cafe-especialidad",
+        "bar-de-cafe",
+        "metodos-de-preparacion",
+        "economico",
+        "para-trabajar",
+        "con-amigos",
+        "desayuno",
+        "brunch",
+        "tranquilo",
+        "acogedor",
+        "laptop-friendly",
+        "volumen-conversacional",
+        "abierto-temprano",
+        "proyecto-local"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "176d28f8-8f97-4929-92d4-e8a1818f8907",
+      "name": "Patio San Román",
+      "tags_antes": [
+        "bar",
+        "acepta-reservas",
+        "delivery",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "terraza",
+        "al-aire-libre",
+        "pet-friendly",
+        "musica-en-vivo",
+        "cena"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "798b9809-6c30-4939-b097-cc022a050e1e",
+      "name": "Restaurante el refugio del trapiche",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "al-aire-libre",
+        "apto-para-ninos",
+        "familia"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "74bfa8b9-97d3-440e-af76-0427a2859784",
+      "name": "Restaurante Giratorio Vista Quince",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "caro",
+        "vistas-panoramicas",
+        "mariscos",
+        "apto-para-ninos",
+        "familia",
+        "cena",
+        "cita-romantica"
+      ],
+      "is_published_antes": true
+    },
+    {
+      "id": "81c48a80-cea8-4a09-b292-cd3e02073b26",
+      "name": "Tre Fratelli • Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "terraza",
+        "vistas-panoramicas",
+        "cena"
+      ],
+      "is_published_antes": true
+    }
+  ]
+}
