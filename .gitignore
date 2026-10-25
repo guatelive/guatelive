@@ -63,6 +63,8 @@ scripts/output/
 scripts/bank-sources/.debug/
 
 !scripts/scrape-events.ts
+# Revisión de lugares cerrados (cron check-place-status.yml)
+!scripts/check-place-status.ts
 !scripts/event-sources/
 !scripts/event-sources/**
 
