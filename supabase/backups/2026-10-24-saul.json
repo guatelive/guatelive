@@ -1,0 +1,162 @@
+{
+  "descripcion": "Respaldo ANTES de agregar para-trabajar, cafe, cita-romantica, almuerzo, cena a las 7 sucursales de Saúl. Fredy (2026-10-24): \"muy versátil\", sirve para trabajar, café, cita romántica, almuerzo y cena.",
+  "lugares": [
+    {
+      "id": "07ff3bd2-b334-4b63-a919-336afb0a66fc",
+      "name": "Saúl Cafe Pradera Concepción",
+      "zone": "Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena"
+      ]
+    },
+    {
+      "id": "ab666f02-9ba0-410a-8d03-d8fa1645b516",
+      "name": "Saúl Bistro Zona 10 (Casa Saúl)",
+      "zone": "Zona 10",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "bistro",
+        "para-trabajar",
+        "cena"
+      ]
+    },
+    {
+      "id": "f291d067-8bcd-4fbb-bde3-37fd94f6a4fe",
+      "name": "Saúl Bistro Metro 15",
+      "zone": "Zona 15",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena"
+      ]
+    },
+    {
+      "id": "b42fe386-34bc-401b-9006-95f298ba45e4",
+      "name": "Saúl Bistro Plaza Concepción",
+      "zone": "Carretera a El Salvador",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena"
+      ]
+    },
+    {
+      "id": "f4a0a181-888c-4701-a76b-f116774f4599",
+      "name": "Saúl Bistro Zona 14",
+      "zone": "Zona 14",
+      "tags_antes": [
+        "acepta-reservas",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena"
+      ]
+    },
+    {
+      "id": "253e1558-36f4-4661-86ad-0398c9440697",
+      "name": "Saúl Bistro • Majadas Once",
+      "zone": "Zona 11",
+      "tags_antes": [
+        "cafe",
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena"
+      ]
+    },
+    {
+      "id": "9adfaaaa-f772-4a2e-a3fa-4f23b0048d4f",
+      "name": "Saúl Bistro Cayalá",
+      "zone": "Cayalá",
+      "tags_antes": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vinos-importados",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "moderado",
+        "para-trabajar",
+        "cena"
+      ]
+    },
+    {
+      "id": "339bd66c-c535-49c8-b735-94793e8c19fe",
+      "name": "Le Café Petit",
+      "zone": "Zona 15",
+      "tags_antes": [
+        "para-llevar",
+        "consumo-en-local",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "brunch",
+        "almuerzo",
+        "cena"
+      ],
+      "nota": "Le Café Petit += cafe (Fredy, 2026-10-24)"
+    }
+  ]
+}
