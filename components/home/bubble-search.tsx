@@ -46,7 +46,11 @@ const TAG_MAP: Record<string, string[]> = {
     // bar-completo, que es el serves_beer de Google y lo tiene casi todo restaurante.
     Drinks: ['bar', 'cocteleria-de-autor', 'cerveza-artesanal', 'vinoteca'],
     'Ir por un café': ['cafe', 'cafe-especialidad', 'bar-de-cafe', 'panaderia-cafeteria'],
-    'Desayuno o brunch': ['desayuno', 'brunch', 'cafe', 'desayuno-todo-el-dia', 'abierto-temprano'],
+    // Desayuno = serves_breakfast de Google (dato). Brunch = curado (2026-10-24): el tag
+    // brunch de Google (serves_brunch) se quitó por no significar nada; ahora solo lo
+    // tienen lugares con brunch de verdad (menú de brunch, benedictinos, mimosas).
+    Desayuno: ['desayuno', 'desayuno-todo-el-dia'],
+    Brunch: ['brunch'],
     // Solo tags que afirman "se puede trabajar ahí" (verificados por Fredy) — antes
     // incluía cafe-especialidad y reunion-de-negocios, y salían vinotecas y café-bares.
     // Los cafés en general van como sugerencia aparte (RELATED_TAG_MAP).
@@ -79,7 +83,8 @@ const RELATED_EXCLUDED_TAGS = ['bar', 'salir-de-fiesta', 'night_club', 'cocteler
 const RELATED_LIMIT = 6;
 
 const ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
-    { label: '🌅 Brunch', key: 'Desayuno o brunch' },
+    { label: '🍳 Desayuno', key: 'Desayuno' },
+    { label: '🥂 Brunch', key: 'Brunch' },
     { label: '🍛 Almuerzo', key: 'Almuerzo' },
     { label: '🍽 Cenar', key: 'Cenar' },
     { label: '🍷 Cita romántica', key: 'Cita romántica' },
@@ -116,9 +121,9 @@ const EVENT_ACTIVITIES: { label: string; key: string; special?: boolean }[] = [
 type ZoneOption = { label: string; value: string };
 
 const STORAGE_KEY = 'guatelive:home-search-state';
-// v2: "Tomar algo" pasó a Drinks / Ir por un café — un estado guardado con la
-// key vieja buscaría sin tags (todos los lugares).
-const STORAGE_VERSION = 2;
+// v2: "Tomar algo" pasó a Drinks / Ir por un café; v3: "Desayuno o brunch" pasó a
+// Desayuno / Brunch. Un estado guardado con una key vieja buscaría sin tags.
+const STORAGE_VERSION = 3;
 
 type PersistedSearchState = {
     v: number;
