@@ -3,6 +3,7 @@ import { Playfair_Display, Inter, Bricolage_Grotesque } from 'next/font/google';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { FooterGate } from '@/components/layout/footer-gate';
+import { SiteAnalytics } from '@/components/analytics';
 import { SITE_URL } from '@/lib/site-config';
 import './globals.css';
 
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <FooterGate>
           <Footer />
         </FooterGate>
+        <SiteAnalytics />
       </body>
     </html>
   );
