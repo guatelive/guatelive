@@ -282,7 +282,7 @@ export default async function HomePage() {
                 href="/edicion"
                 style={{ fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 600, color: '#E11D2E', letterSpacing: '0.02em', textDecoration: 'none' }}
               >
-                Ver todas las ediciones →
+                Ver todas →
               </Link>
             </div>
 
