@@ -4016,6 +4016,28 @@
       ],
       "is_published_antes": true,
       "nota": "despublicado: cerrado (Fredy, 2026-10-24)"
+    },
+    {
+      "id": "1cfe7fc0-c835-487b-b60c-7285dd707707",
+      "name": "OJO DE AGUA GUATEMALA GAURA ZONA 15",
+      "zone": "Zona 15",
+      "tags": [
+        "acepta-reservas",
+        "delivery",
+        "para-llevar",
+        "consumo-en-local",
+        "bar-completo",
+        "vegetariano",
+        "acceso-silla-de-ruedas",
+        "desayuno",
+        "almuerzo",
+        "mexicana",
+        "cena"
+      ],
+      "is_published": true,
+      "business_status": "CLOSED_TEMPORARILY",
+      "is_published_antes": true,
+      "nota": "despublicado por si acaso: Google CLOSED_TEMPORARILY; podría reabrir en Zona 14 (Fredy, 2026-10-24). Revisar."
     }
   ]
 }
