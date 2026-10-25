@@ -23,6 +23,19 @@ const WHEN_EMPTY_COPY: Record<string, string> = {
     anytime: 'próximamente',
 };
 
+// Separadores dentro de "Cuando sea": eventos de los próximos 7 días vs. el resto.
+// Se compara solo la fecha de pared (YYYY-MM-DD) de date_start contra la de `now`
+// (guatNow: sus campos UTC son la hora de Guatemala), igual que lib/event-when.ts.
+function dayNumber(year: number, month: number, day: number): number {
+    return Date.UTC(year, month, day) / 86_400_000;
+}
+
+function isThisWeek(dateStart: string, now: Date): boolean {
+    const [y, m, d] = dateStart.slice(0, 10).split('-').map(Number);
+    const today = dayNumber(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    return dayNumber(y, m - 1, d) - today < 7;
+}
+
 // `nowIso` viene del server (guatNow() al momento del render ISR) en vez de leer el
 // reloj en el cliente: así el primer render del cliente coincide con el HTML del
 // server (sin hydration mismatch). Desfase máximo = revalidate de la página (1h).
@@ -52,6 +65,17 @@ export function EventosFilters({ events, nowIso }: { events: DbEvent[]; nowIso: 
             ),
         [events, when, now, category, zone, interest, onlyFree]
     );
+
+    // Solo en "Cuando sea" (con otro filtro de tiempo ya está todo en la misma ventana).
+    // Una sección vacía no se muestra; si una de las dos queda vacía, no hay separador.
+    const sections = useMemo(() => {
+        if (when !== 'anytime') return null;
+        const groups = [
+            { title: 'Esta semana', events: filtered.filter(e => isThisWeek(e.date_start, now)) },
+            { title: 'Más adelante', events: filtered.filter(e => !isThisWeek(e.date_start, now)) },
+        ].filter(g => g.events.length > 0);
+        return groups.length > 1 ? groups : null;
+    }, [when, filtered, now]);
 
     const hasActiveFilters = when !== 'anytime' || category !== null || zone !== null || interest !== null || onlyFree;
 
@@ -100,7 +124,16 @@ export function EventosFilters({ events, nowIso }: { events: DbEvent[]; nowIso: 
                 {filtered.length} evento{filtered.length !== 1 ? 's' : ''} {WHEN_EMPTY_COPY[when]}
             </p>
 
-            {filtered.length > 0 ? (
+            {filtered.length > 0 && sections ? (
+                <div className="space-y-10">
+                    {sections.map(section => (
+                        <section key={section.title}>
+                            <h2 className="mb-4 font-serif text-xl font-bold text-[#0A0A0A]">{section.title}</h2>
+                            <EventGridClient events={section.events} />
+                        </section>
+                    ))}
+                </div>
+            ) : filtered.length > 0 ? (
                 <EventGridClient events={filtered} />
             ) : (
                 <div className="py-12 text-center">

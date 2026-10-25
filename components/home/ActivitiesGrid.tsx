@@ -140,7 +140,7 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
                             whiteSpace: 'nowrap', flexShrink: 0,
                         }}
                     >
-                        Ver más →
+                        Ver todas →
                     </Link>
                 </div>
                 <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: '#666666', marginTop: 8 }}>
