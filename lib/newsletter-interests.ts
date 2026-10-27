@@ -20,3 +20,10 @@ export const NEWSLETTER_INTERESTS = [
 export type NewsletterInterest = typeof NEWSLETTER_INTERESTS[number]['value'];
 
 export const NEWSLETTER_INTEREST_VALUES = NEWSLETTER_INTERESTS.map(i => i.value) as [NewsletterInterest, ...NewsletterInterest[]];
+
+// Cómo se muestran en el paso 2 del newsletter ("¿Qué te gustaría recibir?").
+export const NEWSLETTER_INTEREST_GROUPS: { label: string; values: NewsletterInterest[] }[] = [
+    { label: 'Planes para salir', values: ['cita-romantica', 'plan-familiar', 'con-mi-perro', 'salir-de-fiesta', 'drinks', 'cafe', 'brunch', 'trabajar'] },
+    { label: 'Eventos y actividades', values: ['conciertos', 'cultura', 'deportes'] },
+    { label: 'Ahorrar', values: ['promos'] },
+];
