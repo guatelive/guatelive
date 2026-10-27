@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FavoritesNavLink } from '@/components/favorites/favorites-nav-link';
 
 export function Header() {
     return (
@@ -11,6 +12,7 @@ export function Header() {
                     Guate<span className="text-[#E11D2E]">Live</span>
                 </Link>
                 <nav className="flex items-center gap-3">
+                    <FavoritesNavLink />
                     <Link
                         href="/edicion"
                         className="inline-flex items-center rounded-full border-2 border-[#111111] px-4 py-1.5 text-sm font-bold text-[#111111] transition-colors hover:bg-[#F5F5F5]"

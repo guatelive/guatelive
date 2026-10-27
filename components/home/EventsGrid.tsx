@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { FavoriteButton } from '@/components/favorites/favorite-button';
 import { nearestChildIndex, useCarouselTakeover } from '@/hooks/use-carousel-takeover';
 import type { DbEvent } from '@/lib/types';
 import { formatEventDateTime, eventLocation, priceDisplay } from '@/lib/event-display';
@@ -61,6 +62,7 @@ function MainCard({ event }: { event: DbEvent | null }) {
         }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: badge.fg, zIndex: 3 }} />
             <div style={{ position: 'relative', overflow: 'hidden', height: 320, background: '#242424', flexShrink: 0 }}>
+                <FavoriteButton type="event" slug={event.slug} name={event.title} />
                 {event.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -122,6 +124,7 @@ function MediaCard({ event }: { event: DbEvent | null }) {
         }}>
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: badge.fg, zIndex: 3 }} />
             <div style={{ position: 'relative', overflow: 'hidden', flex: '1 1 0%', minHeight: 90, background: '#242424' }}>
+                <FavoriteButton type="event" slug={event.slug} name={event.title} />
                 {event.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={event.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />

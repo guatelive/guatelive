@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { FavoriteButton } from '@/components/favorites/favorite-button';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import { useCarouselTakeover } from '@/hooks/use-carousel-takeover';
 import type { DbActivity } from '@/lib/types';
@@ -191,6 +192,7 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
                             }} />
 
                             <div style={{ padding: '10px 10px 0', position: 'relative', height: 190 }}>
+                                <FavoriteButton type="activity" slug={activity.slug} name={activity.title} />
                                 {activity.image_url ? (
                                     <ImageWithSkeleton
                                         src={activity.image_url}

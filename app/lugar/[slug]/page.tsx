@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import { MapPin } from 'lucide-react';
+import { FavoriteButton } from '@/components/favorites/favorite-button';
 import { GalleryCarousel } from '@/components/gallery-carousel';
 import { Breadcrumb } from '@/components/breadcrumb';
 import { TagsBadges } from './TagsBadges';
@@ -284,6 +285,9 @@ export default async function LugarPage(props: { params: Params }) {
                 <h1 className="font-serif text-3xl font-bold text-[#0A0A0A] leading-tight mb-3">
                     {place.name}
                 </h1>
+                <div className="mb-3">
+                    <FavoriteButton type="place" slug={place.slug} name={place.name} variant="inline" />
+                </div>
 
                 <div className="flex flex-wrap items-center gap-3 mb-2">
                     {place.rating && (
