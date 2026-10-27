@@ -30,7 +30,7 @@ function InterestsStep({ email }: { email: string }) {
     const [done, setDone] = useState<'saved' | 'skipped' | null>(null);
     const [pending, startTransition] = useTransition();
 
-    if (done === 'saved') return <p className="mt-5 text-sm opacity-80">¡Gracias! Vamos a tenerlo en cuenta para tus jueves.</p>;
+    if (done === 'saved') return <p className="mt-5 text-sm opacity-80">¡Gracias! Ya sabemos qué te gusta.</p>;
     if (done === 'skipped') return <p className="mt-5 text-sm opacity-80">Listo — ya estás suscrito.</p>;
 
     function toggle(value: string) {
@@ -40,7 +40,8 @@ function InterestsStep({ email }: { email: string }) {
     return (
         <div className="mt-5">
             <p className="text-sm font-semibold">¡Listo, ya estás suscrito! 🎉</p>
-            <p className="mt-1 text-sm opacity-80">¿Qué te gustaría recibir los jueves?</p>
+            <p className="mt-3 font-display text-lg font-extrabold">¿Qué planes son lo tuyo?</p>
+            <p className="mt-1 text-sm opacity-80">Elegí tus favoritos.</p>
             <div className="mx-auto mt-5 max-w-2xl space-y-4">
                 {NEWSLETTER_INTEREST_GROUPS.map(group => (
                     <div key={group.label}>
