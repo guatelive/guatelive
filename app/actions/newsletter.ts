@@ -1,12 +1,15 @@
 'use server';
 
 import { createClient as createServiceClient } from '@supabase/supabase-js';
-import { createClient } from '@/lib/supabase/server';
 import { newsletterSchema } from '@/lib/validations/newsletter';
+import { NEWSLETTER_INTEREST_VALUES } from '@/lib/newsletter-interests';
+import { z } from 'zod';
 
 export type NewsletterState = {
     status: 'idle' | 'success' | 'error';
     message?: string;
+    // Email ya validado y guardado: lo usa el paso 2 (intereses).
+    email?: string;
 };
 
 const UNIQUE_VIOLATION = '23505';
@@ -30,7 +33,11 @@ export async function subscribeToNewsletter(
         return { status: 'error', message: parsed.error.issues[0]?.message ?? 'Email inválido' };
     }
 
-    const supabase = await createClient();
+    // Escribe con service role desde el server (input ya validado con Zod + honeypot).
+    // Con el cliente de cookies, un visitante con sesión de admin abierta entraba como
+    // `authenticated` y la RLS de la base solo permite insert a `anon`: "No se pudo
+    // guardar tu email" (bug encontrado 2026-10-26). Así no depende de la sesión.
+    const supabase = serviceClient();
     const { error } = await supabase
         .from('newsletter_subscribers')
         .insert({ email: parsed.data.email, interests: parsed.data.interests });
@@ -48,11 +55,15 @@ export async function subscribeToNewsletter(
         return { status: 'error', message: 'No se pudo guardar tu email. Intentá de nuevo.' };
     }
 
-    return { status: 'success' };
+    return { status: 'success', email: parsed.data.email };
+}
+
+function serviceClient() {
+    return createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 }
 
 async function mergeInterests(email: string, interests: string[]): Promise<void> {
-    const admin = createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+    const admin = serviceClient();
     const { data, error } = await admin
         .from('newsletter_subscribers')
         .select('interests')
@@ -68,4 +79,19 @@ async function mergeInterests(email: string, interests: string[]): Promise<void>
         .update({ interests: merged })
         .eq('email', email);
     if (updateError) console.error('newsletter merge update error:', updateError);
+}
+
+const interestsSchema = z.object({
+    email: z.string().trim().email(),
+    interests: z.array(z.enum(NEWSLETTER_INTEREST_VALUES)).min(1).max(NEWSLETTER_INTEREST_VALUES.length),
+});
+
+// Paso 2 del newsletter: el usuario ya se suscribió y elige qué le interesa. Se
+// unen con los que tuviera. Quien conozca un email ajeno podría sumarle intereses;
+// es un riesgo menor (solo preferencias, no expone datos) y evita pedir login.
+export async function saveNewsletterInterests(email: string, interests: string[]): Promise<{ ok: boolean }> {
+    const parsed = interestsSchema.safeParse({ email, interests });
+    if (!parsed.success) return { ok: false };
+    await mergeInterests(parsed.data.email, parsed.data.interests);
+    return { ok: true };
 }
