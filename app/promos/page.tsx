@@ -17,6 +17,7 @@ export const metadata = {
     title: 'Promos bancarias — GuateLive',
     description: 'Descuentos vigentes en restaurantes, cafés y bares de Guatemala con tarjetas BAC Credomatic y G&T Continental.',
     alternates: { canonical: `${SITE_URL}/promos` },
+    openGraph: { title: 'Promos bancarias en restaurantes | GuateLive', description: 'Descuentos vigentes en restaurantes, cafés y bares de Guatemala con tarjetas BAC Credomatic y G&T Continental.', url: `${SITE_URL}/promos`, images: [{ url: '/og-home.jpg', width: 1200, height: 630 }] },
 };
 
 export default async function PromosPage() {

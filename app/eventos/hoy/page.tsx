@@ -13,6 +13,7 @@ export const metadata = {
     title: 'Eventos hoy en Guatemala | GuateLive',
     description: 'Qué hacer hoy en Guatemala: conciertos, talleres, ferias y planes del día, actualizados a diario.',
     alternates: { canonical: `${SITE_URL}/eventos/hoy` },
+    openGraph: { title: 'Eventos en Guatemala | GuateLive', description: 'Qué hacer hoy en Guatemala: conciertos, talleres, ferias y planes del día, actualizados a diario.', url: `${SITE_URL}/eventos/hoy`, images: [{ url: '/og-home.jpg', width: 1200, height: 630 }] },
 };
 
 export default async function EventosHoyPage() {

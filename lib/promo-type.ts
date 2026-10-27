@@ -19,3 +19,12 @@ export function promoType(promo: Pick<DbBankPromotion, 'discount_pct' | 'title' 
     if (/precio|tarifa|por solo|\b\d\s*x\s*Q\s*\d|mitad de precio|\bQ\s*\d/i.test(text)) return 'special-price';
     return 'other';
 }
+
+// Los bancos meten en su sección de "Restaurantes" promos que no son de comida
+// (tarifas de hotel, viajes). Se excluyen por texto: "suites" NO entra en la regla
+// porque hay hoteles con promos de comida (Clarion Suites: desayuno buffet, 2x1 en
+// cócteles). Lo usa el scraper para guardarlas inactivas.
+export function isDiningPromo(promo: { title: string; discount_label?: string | null; merchant_name?: string | null }): boolean {
+    const text = `${promo.title} ${promo.discount_label ?? ''} ${promo.merchant_name ?? ''}`;
+    return !/tarifas?\b|travel|viaj|hospedaje|habitaci/i.test(text);
+}

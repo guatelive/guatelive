@@ -11,6 +11,7 @@ export const metadata = {
     title: 'Actividades en Guatemala | GuateLive',
     description: 'Planes casi siempre disponibles en Guatemala: museos, clases, senderos y actividades recurrentes.',
     alternates: { canonical: `${SITE_URL}/actividades` },
+    openGraph: { title: 'Actividades en Guatemala | GuateLive', description: 'Planes casi siempre disponibles en Guatemala: museos, clases, senderos y actividades recurrentes.', url: `${SITE_URL}/actividades`, images: [{ url: '/og-home.jpg', width: 1200, height: 630 }] },
 };
 
 export default async function ActividadesPage() {
