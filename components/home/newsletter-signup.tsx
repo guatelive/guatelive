@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { subscribeToNewsletter, type NewsletterState } from '@/app/actions/newsletter';
+import { NEWSLETTER_INTERESTS } from '@/lib/newsletter-interests';
 
 const initialState: NewsletterState = { status: 'idle' };
 
@@ -23,6 +24,11 @@ function SubmitButton() {
 
 export function NewsletterSignup() {
     const [state, formAction] = useActionState(subscribeToNewsletter, initialState);
+    const [interests, setInterests] = useState<string[]>([]);
+
+    function toggleInterest(value: string) {
+        setInterests(prev => (prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]));
+    }
 
     return (
         <section id="newsletter" className="mx-auto mt-6 max-w-[1400px] scroll-mt-24 px-6 pb-10 md:px-10">
@@ -41,10 +47,32 @@ export function NewsletterSignup() {
                 {state.status === 'success' ? (
                     <p className="mt-5 text-sm opacity-80">Listo — ya estás suscrito.</p>
                 ) : (
-                    <form
-                        action={formAction}
-                        className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center"
-                    >
+                    <form action={formAction} className="mt-6">
+                        {/* Opcional: no hace falta elegir nada para suscribirse */}
+                        <fieldset>
+                            <legend className="mx-auto mb-3 text-sm opacity-80">¿Qué te interesa? (opcional)</legend>
+                            <div className="mx-auto flex max-w-2xl flex-wrap justify-center gap-2">
+                                {NEWSLETTER_INTERESTS.map(({ value, label }) => {
+                                    const active = interests.includes(value);
+                                    return (
+                                        <button
+                                            key={value}
+                                            type="button"
+                                            aria-pressed={active}
+                                            onClick={() => toggleInterest(value)}
+                                            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${active
+                                                ? 'bg-[#E11D2E] text-white'
+                                                : 'bg-white/10 text-background hover:bg-white/20'
+                                                }`}
+                                        >
+                                            {label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </fieldset>
+                        <input type="hidden" name="interests" value={interests.join(',')} />
+                        <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                         {/* Honeypot: campo invisible para humanos, los bots lo completan */}
                         <input
                             type="text"
@@ -62,6 +90,7 @@ export function NewsletterSignup() {
                             className="max-w-xs border-0 border-b-2 border-[#444444] bg-transparent text-background placeholder:text-background/40 focus-visible:ring-0"
                         />
                         <SubmitButton />
+                        </div>
                     </form>
                 )}
 

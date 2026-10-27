@@ -1,4 +1,5 @@
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
+import { FavoriteButton } from '@/components/favorites/favorite-button';
 import type { OpenStatus } from '@/lib/hours-utils';
 
 type PlaceCardProps = {
@@ -59,6 +60,7 @@ export function PlaceCard({ place, openNow, titleFont = 'serif' }: PlaceCardProp
                         {openNow === 'open' ? 'Abierto' : 'Cerrado'}
                     </div>
                 )}
+                {place.slug && <FavoriteButton type="place" slug={place.slug} name={place.name} />}
             </div>
 
             {/* Contenido */}

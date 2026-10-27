@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { FavoriteButton } from '@/components/favorites/favorite-button';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 import { MapPin, ExternalLink, Star, CalendarDays, Clock, Ticket } from 'lucide-react';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
@@ -221,6 +222,9 @@ export default async function EventoPage(props: { params: Params }) {
                         <h1 className="font-serif text-3xl font-bold leading-tight text-[#0A0A0A] lg:text-5xl">
                             {event.title}
                         </h1>
+                        <div className="mt-4">
+                            <FavoriteButton type="event" slug={event.slug} name={event.title} variant="inline" />
+                        </div>
                     </header>
 
                     <aside className="lg:col-start-2 lg:row-span-2 lg:row-start-1">

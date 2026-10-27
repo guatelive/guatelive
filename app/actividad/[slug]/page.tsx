@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { FavoriteButton } from '@/components/favorites/favorite-button';
 import { GalleryCarousel } from '@/components/gallery-carousel';
 import { MapPin, ExternalLink, Star, Repeat, Ticket } from 'lucide-react';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
@@ -160,6 +161,9 @@ export default async function ActividadPage(props: { params: Params }) {
                         <h1 className="font-serif text-3xl font-bold leading-tight text-[#0A0A0A] lg:text-5xl">
                             {activity.title}
                         </h1>
+                        <div className="mt-4">
+                            <FavoriteButton type="activity" slug={activity.slug} name={activity.title} variant="inline" />
+                        </div>
                     </header>
 
                     <aside className="lg:col-start-2 lg:row-span-2 lg:row-start-1">

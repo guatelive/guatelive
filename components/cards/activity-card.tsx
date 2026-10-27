@@ -1,4 +1,5 @@
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
+import { FavoriteButton } from '@/components/favorites/favorite-button';
 import { Star } from 'lucide-react';
 import type { DbActivity } from '@/lib/types';
 import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@/lib/event-categories';
@@ -58,6 +59,7 @@ export function ActivityCard({ activity, titleFont = 'serif' }: { activity: DbAc
             {rightBadge.label}
           </span>
         )}
+        <FavoriteButton type="activity" slug={activity.slug} name={activity.title} />
       </div>
 
       {/* Content */}
