@@ -36,6 +36,15 @@ export const metadata: Metadata = {
   description: 'Descubrí los mejores planes en Guatemala',
   alternates: { canonical: SITE_URL },
   verification: { google: 'Rw4muM7Z1ReeAaA841zXB3kpCAGWdSfkiKaRZ3E5hSU' },
+  // Vista previa por defecto al compartir un link (WhatsApp, Instagram, Facebook, X).
+  // Las páginas con imagen propia (lugar, evento, actividad, edición) la sobreescriben.
+  openGraph: {
+    siteName: 'GuateLive',
+    locale: 'es_GT',
+    type: 'website',
+    images: [{ url: '/og-home.jpg', width: 1200, height: 630, alt: 'GuateLive — ¿Qué hacemos hoy en Guate?' }],
+  },
+  twitter: { card: 'summary_large_image', images: ['/og-home.jpg'] },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

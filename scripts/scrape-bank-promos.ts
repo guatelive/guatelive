@@ -19,6 +19,7 @@ import { config } from 'dotenv';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { isPromoExpired } from '@/lib/promo-freshness';
+import { isDiningPromo } from '@/lib/promo-type';
 import { slugify } from '@/lib/slug';
 import { BANK_SOURCES } from './bank-sources/index';
 import { buildPlaceMatchIndex, matchPlaceByName } from './bank-sources/match-place';
@@ -94,7 +95,9 @@ async function run(bank: string, isDry: boolean) {
             valid_until: promo.validUntil,
             // Seguir listada en el sitio del banco no la hace vigente: si ya
             // pasó valid_until se guarda inactiva (ver isPromoExpired).
-            is_active: !isPromoExpired(promo.validUntil),
+            // Tampoco se muestran promos que no son de comida (tarifas de hotel,
+            // viajes) aunque el banco las ponga en "Restaurantes" (isDiningPromo).
+            is_active: !isPromoExpired(promo.validUntil) && isDiningPromo({ title: promo.title, discount_label: promo.discountText, merchant_name: promo.merchantName }),
             last_seen_at: runStartedAt,
             updated_at: runStartedAt,
         };

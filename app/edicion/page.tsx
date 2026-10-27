@@ -10,6 +10,7 @@ export const metadata = {
     title: 'Ediciones — GuateLive',
     description: 'Todas las ediciones editoriales de GuateLive. Curaduría semanal de los mejores planes en Guatemala.',
     alternates: { canonical: `${SITE_URL}/edicion` },
+    openGraph: { title: 'Ediciones semanales | GuateLive', description: 'Todas las ediciones editoriales de GuateLive. Curaduría semanal de los mejores planes en Guatemala.', url: `${SITE_URL}/edicion`, images: [{ url: '/og-home.jpg', width: 1200, height: 630 }] },
 };
 
 function getSupabase() {

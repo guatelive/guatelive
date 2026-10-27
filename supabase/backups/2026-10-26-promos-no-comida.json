@@ -1,0 +1,29 @@
+{
+  "descripcion": "Promos desactivadas por no ser de comida (isDiningPromo, 2026-10-26). Revertir: is_active = true.",
+  "promos": [
+    {
+      "id": "29f62173-2ec8-4d54-a558-77e41825491c",
+      "bank": "bac",
+      "merchant_name": "AMATIQUE BAY",
+      "title": "TARIFAS ESPECIALES - AMATIQUE BAY",
+      "discount_label": "TARIFAS ESPECIALES - AMATIQUE BAY Vigencia: hasta el 31 de diciembre 2026",
+      "is_active": true
+    },
+    {
+      "id": "c7508a77-ee96-4de3-b078-0b479dff6b5a",
+      "bank": "bac",
+      "merchant_name": "CAYMAN SUITES",
+      "title": "TARIFAS ESPECIALES - CAYMAN SUITES",
+      "discount_label": "TARIFAS ESPECIALES - CAYMAN SUITES Vigencia: hasta 31 de diciembre 2026",
+      "is_active": true
+    },
+    {
+      "id": "aca78569-01dd-4768-bfb2-f4502d046e7a",
+      "bank": "bac",
+      "merchant_name": "ARE YOU READY TO TRAVEL THE WORLD?",
+      "title": "ARE YOU READY TO TRAVEL THE WORLD?",
+      "discount_label": "ARE YOU READY TO TRAVEL THE WORLD? Vive una experiencia única en Guatemala y disfrútala con beneficios exclusivos.",
+      "is_active": true
+    }
+  ]
+}

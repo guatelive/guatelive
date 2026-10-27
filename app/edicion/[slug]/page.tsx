@@ -20,17 +20,30 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const supabase = getSupabase();
     const { data: edition } = await supabase
         .from('editions')
-        .select('title, subtitle, meta_title, meta_description, number')
+        .select('title, subtitle, meta_title, meta_description, number, cover_image_url, published_at')
         .eq('slug', slug)
         .eq('status', 'published')
         .single();
 
     if (!edition) return { title: 'Edición no encontrada — GuateLive' };
 
+    const title = edition.meta_title || `${edition.title} — GuateLive Edición Nº ${edition.number}`;
+    const description = edition.meta_description || edition.subtitle;
+    const images = edition.cover_image_url ? [{ url: edition.cover_image_url, alt: edition.title }] : undefined;
     return {
-        title: edition.meta_title || `${edition.title} — GuateLive Edición Nº ${edition.number}`,
-        description: edition.meta_description || edition.subtitle,
+        title,
+        description,
         alternates: { canonical: `${SITE_URL}/edicion/${slug}` },
+        // La portada es lo que se ve al compartir la edición del jueves por WhatsApp/Instagram.
+        openGraph: {
+            type: 'article',
+            title,
+            description: description ?? undefined,
+            url: `${SITE_URL}/edicion/${slug}`,
+            ...(edition.published_at ? { publishedTime: edition.published_at } : {}),
+            ...(images ? { images } : {}),
+        },
+        twitter: { card: 'summary_large_image', ...(images ? { images: images.map(i => i.url) } : {}) },
     };
 }
 
