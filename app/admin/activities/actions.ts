@@ -135,6 +135,15 @@ function parseActivityForm(formData: FormData) {
     });
 }
 
+// `/actividad/[slug]` es ISR (revalidate = 3600 + generateStaticParams): sin
+// revalidarla, la ficha sigue mostrando las fotos viejas hasta una hora después de guardar.
+function revalidateActivityPaths() {
+    revalidatePath('/admin/activities');
+    revalidatePath('/actividades');
+    revalidatePath('/actividad/[slug]', 'page');
+    revalidatePath('/');
+}
+
 function publishedAt(status: string): string | null {
     return status === 'published' ? new Date().toISOString() : null;
 }
@@ -170,9 +179,7 @@ export async function createActivity(formData: FormData) {
 
     if (error) throw new Error(error.message);
 
-    revalidatePath('/admin/activities');
-    revalidatePath('/actividades');
-    revalidatePath('/');
+    revalidateActivityPaths();
     redirect('/admin/activities');
 }
 
@@ -227,9 +234,7 @@ export async function updateActivity(id: string, formData: FormData) {
 
     if (error) throw new Error(error.message);
 
-    revalidatePath('/admin/activities');
-    revalidatePath('/actividades');
-    revalidatePath('/');
+    revalidateActivityPaths();
     redirect('/admin/activities');
 }
 
@@ -247,7 +252,5 @@ export async function deleteActivity(id: string) {
     await deleteActivityImage(supabase, existing?.image_url ?? null);
     await deleteActivityImages(supabase, existing?.photo_urls ?? []);
 
-    revalidatePath('/admin/activities');
-    revalidatePath('/actividades');
-    revalidatePath('/');
+    revalidateActivityPaths();
 }

@@ -4,6 +4,7 @@ import { useState, type ChangeEvent } from 'react';
 import Image from 'next/image';
 
 type PhotoItem = {
+    id: number;        // key estable — ver nota en el render
     url?: string;      // foto existente
     preview?: string;  // objectURL — solo client, no se serializa
 };
@@ -15,11 +16,13 @@ interface Props {
 // Editor de fotos extra para el carrusel de `/actividad/[slug]` — a diferencia de
 // PlacePhotosEditor no maneja `is_primary`: la portada la resuelve el campo "Imagen"
 // del form, esto es solo la galería adicional.
+let nextPhotoId = 0;
+
 export function ActivityGalleryEditor({ defaultValue = [] }: Props) {
-    const [photos, setPhotos] = useState<PhotoItem[]>(defaultValue.map(url => ({ url })));
+    const [photos, setPhotos] = useState<PhotoItem[]>(() => defaultValue.map(url => ({ id: nextPhotoId++, url })));
 
     function addSlot() {
-        setPhotos(prev => [...prev, {}]);
+        setPhotos(prev => [...prev, { id: nextPhotoId++ }]);
     }
 
     function removeSlot(i: number) {
@@ -51,8 +54,11 @@ export function ActivityGalleryEditor({ defaultValue = [] }: Props) {
         <div>
             <input type="hidden" name="photo_urls_meta" value={JSON.stringify(metaForSubmit)} />
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {/* key por id, no por índice: el <input type="file"> no es controlado, así
+                    que con key={i} quitar/mover un slot dejaba el archivo elegido en el nodo
+                    equivocado (o lo descartaba) y la foto nueva nunca llegaba al servidor. */}
                 {photos.map((photo, i) => (
-                    <div key={i} className="rounded-lg border border-[#E5E5E5] p-2">
+                    <div key={photo.id} className="rounded-lg border border-[#E5E5E5] p-2">
                         <div className="relative mb-2 h-28 w-full overflow-hidden rounded-md bg-[#F5F4F0]">
                             {photo.preview || photo.url ? (
                                 <Image src={photo.preview ?? photo.url!} alt="" fill className="object-cover" />
