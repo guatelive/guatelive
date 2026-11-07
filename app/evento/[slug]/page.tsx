@@ -11,6 +11,8 @@ import { guatNow } from '@/lib/hours-utils';
 import { DetailInfoCard, priceRowContent, type InfoRow } from '@/components/detail-info-card';
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { Breadcrumb } from '@/components/breadcrumb';
+import { MapLinks } from '@/components/map-links';
+import { mapLinks } from '@/lib/maps-links';
 import { buildBreadcrumbSchema } from '@/lib/schema-builders';
 import { ShareButton } from '@/components/evento/share-button';
 import { SITE_URL } from '@/lib/site-config';
@@ -20,7 +22,7 @@ export const revalidate = 3600;
 
 type Params = Promise<{ slug: string }>;
 
-type EventWithPlace = DbEvent & { places: { name: string; slug: string } | null };
+type EventWithPlace = DbEvent & { places: { name: string; slug: string; latitude: number | null; longitude: number | null; google_maps_url: string | null } | null };
 
 function createSb() {
     return createClient(
@@ -68,7 +70,7 @@ export default async function EventoPage(props: { params: Params }) {
 
     const { data } = await supabase
         .from('events')
-        .select('*, places(name, slug)')
+        .select('*, places(name, slug, latitude, longitude, google_maps_url)')
         .eq('slug', slug)
         .eq('status', 'published')
         .single();
@@ -116,6 +118,7 @@ export default async function EventoPage(props: { params: Params }) {
                         <span className="font-medium">{event.venue_name}</span>
                     ) : null}
                     <span className="block text-[#666666]">{event.zone}</span>
+                    <MapLinks links={mapLinks(event.places, event.venue_name, event.zone)} />
                 </>
             ),
         },

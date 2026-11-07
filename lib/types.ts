@@ -29,19 +29,28 @@ export type DbEvent = {
   status: 'pending' | 'published';
 };
 
+export type ActivityLocation = {
+  name: string;
+  zone: string;
+  schedule: string;
+};
+
 export type DbActivity = {
   id: string;
   title: string;
   slug: string;
   description: string | null;
   category: string;
+  extra_categories: string[];
   zone: string;
   venue_name: string | null;
   place_id: string | null;
   recurrence_text: string | null;
+  extra_locations: ActivityLocation[];
   price: number | null;
   is_free: boolean;
   price_tiers: PriceTier[];
+  extra_prices: PriceTier[];
   image_url: string | null;
   photo_urls: string[];
   contact_link: string | null;

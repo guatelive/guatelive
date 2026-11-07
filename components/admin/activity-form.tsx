@@ -1,16 +1,18 @@
 'use client';
 
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { TagPicker, type TagGroup } from './tag-picker';
 import { PriceTiersInput } from './price-tiers-input';
+import { ActivityLocationsInput } from './activity-locations-input';
 import { ActivityGalleryEditor } from './activity-gallery-editor';
 import { ImageCropper } from './image-cropper';
 import { EVENT_CATEGORIES } from '@/lib/event-categories';
 import { EVENT_TAG_GROUPS } from '@/lib/event-tags';
+import { MAX_UPLOAD_BYTES } from '@/lib/compress-image';
 import type { DbActivity } from '@/lib/types';
 
 type PlaceOption = { id: string; name: string };
@@ -40,6 +42,7 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
     const [imagePreview, setImagePreview] = useState<string | null>(activity?.image_url ?? null);
     const [imageRemoved, setImageRemoved] = useState(false);
     const [cropFile, setCropFile] = useState<File | null>(null);
+    const [uploadError, setUploadError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [title, setTitle] = useState(activity?.title ?? '');
@@ -87,8 +90,22 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
         if (fileInputRef.current) fileInputRef.current.value = '';
     }
 
+    // Aun comprimidas, muchas fotos nuevas juntas pueden pasarse del límite de Vercel.
+    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+        let totalBytes = 0;
+        new FormData(e.currentTarget).forEach(value => {
+            if (value instanceof File) totalBytes += value.size;
+        });
+        if (totalBytes > MAX_UPLOAD_BYTES) {
+            e.preventDefault();
+            setUploadError('Son demasiadas fotos nuevas para un solo guardado. Quitá algunas, guardá y agregalas después.');
+            return;
+        }
+        setUploadError(null);
+    }
+
     return (
-        <form action={action} className="w-full max-w-xl space-y-5">
+        <form action={action} onSubmit={handleSubmit} className="w-full max-w-xl space-y-5">
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">Título</label>
                 <Input name="title" value={title} onChange={e => setTitle(e.target.value)} required />
@@ -131,6 +148,27 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
                 </div>
             </div>
 
+            <div>
+                <label className="mb-1 block text-sm text-[#666666]">Otras categorías (opcional)</label>
+                <p className="mb-2 text-xs text-[#999999]">
+                    La actividad también aparece al filtrar por estas. La categoría de arriba es la
+                    principal: define el color y el badge de la card.
+                </p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                    {EVENT_CATEGORIES.filter(c => c !== category).map(c => (
+                        <label key={c} className="flex items-center gap-1.5 text-sm text-[#0A0A0A]">
+                            <input
+                                type="checkbox"
+                                name="extra_categories"
+                                value={c}
+                                defaultChecked={activity?.extra_categories?.includes(c)}
+                            />
+                            {c}
+                        </label>
+                    ))}
+                </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="mb-1 block text-sm text-[#666666]">Lugar / venue (nombre libre)</label>
@@ -151,6 +189,11 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
                 </div>
             </div>
 
+            <p className="-mt-3 text-xs text-[#999999]">
+                Los botones de Google Maps y Waze van a las coordenadas del lugar catalogado. Si no
+                hay, buscan el nombre libre: que sea un solo lugar, fácil de encontrar en el mapa.
+            </p>
+
             <div>
                 <label className="mb-1 block text-sm text-[#666666]">¿Cuándo se puede hacer?</label>
                 <Input
@@ -158,6 +201,20 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
                     defaultValue={activity?.recurrence_text ?? ''}
                     placeholder="Ej. Todos los sábados 8am, Abierto todos los días 9am–5pm"
                     required
+                />
+            </div>
+
+            <div>
+                <label className="mb-1 block text-sm text-[#666666]">Otras sedes (opcional)</label>
+                <p className="mb-2 text-xs text-[#999999]">
+                    Si la actividad se puede hacer en más de un lugar, la zona, el lugar y el
+                    horario de arriba son la sede principal — agregá acá las demás, cada una con
+                    su propio horario.
+                </p>
+                <ActivityLocationsInput
+                    name="extra_locations"
+                    zoneListId="zone-options"
+                    defaultValue={activity?.extra_locations}
                 />
             </div>
 
@@ -198,6 +255,21 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
                     detalle.
                 </p>
                 <PriceTiersInput name="price_tiers" defaultValue={activity?.price_tiers} />
+            </div>
+
+            <div>
+                <label className="mb-1 block text-sm text-[#666666]">
+                    Otros precios (opcional)
+                </label>
+                <p className="mb-2 text-xs text-[#999999]">
+                    Lo que se paga aparte de la entrada (ej. boletos para juegos, parqueo, alquiler
+                    de equipo). Se lista en el detalle y no cuenta para el &quot;Desde&quot; de las cards.
+                </p>
+                <PriceTiersInput
+                    name="extra_prices"
+                    defaultValue={activity?.extra_prices}
+                    placeholder="Nombre (ej. Pasaporte de 12 juegos)"
+                />
             </div>
 
             <div>
@@ -281,6 +353,8 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
                     </select>
                 </div>
             </div>
+
+            {uploadError && <p className="text-sm text-[#E11D2E]">{uploadError}</p>}
 
             <SubmitButton mode={mode} />
 

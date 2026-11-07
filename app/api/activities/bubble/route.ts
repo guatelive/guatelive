@@ -15,16 +15,18 @@ export async function GET(req: NextRequest) {
 
     let query = supabase
         .from('activities')
-        .select('id, title, slug, description, category, zone, venue_name, place_id, recurrence_text, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags')
+        .select('id, title, slug, description, category, zone, venue_name, place_id, recurrence_text, extra_locations, extra_categories, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags')
         .eq('status', 'published');
 
     if (!all && category) {
-        query = query.eq('category', category);
+        // `categories` incluye la principal y las adicionales.
+        query = query.contains('categories', [category]);
     }
 
     if (zone) {
         // Exact match ("Zona 1" no matchea "Zona 10") + sub-zonas (Zona 16 incluye Cayalá).
-        query = query.in('zone', zonesWithin(zone));
+        // `zones` incluye todas las sedes de la actividad.
+        query = query.overlaps('zones', zonesWithin(zone));
     }
 
     query = query.order('featured', { ascending: false }).order('created_at', { ascending: false });

@@ -20,7 +20,7 @@ export default async function ActividadesPage() {
         .from('activities')
         .select(`
             id, title, slug, description, category, zone, venue_name,
-            place_id, recurrence_text, price, is_free, price_tiers, image_url, contact_link,
+            place_id, recurrence_text, extra_locations, extra_categories, price, is_free, price_tiers, image_url, contact_link,
             sponsored, featured, tags, status
         `)
         .eq('status', 'published')

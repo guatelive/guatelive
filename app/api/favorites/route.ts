@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
             .in('slug', eventSlugs),
         activitySlugs.length === 0 ? { data: [], error: null } : supabase
             .from('activities')
-            .select('id, title, slug, description, category, zone, venue_name, place_id, recurrence_text, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags, status')
+            .select('id, title, slug, description, category, zone, venue_name, place_id, recurrence_text, extra_locations, extra_categories, price, is_free, price_tiers, image_url, contact_link, sponsored, featured, tags, status')
             .eq('status', 'published')
             .in('slug', activitySlugs),
     ]);

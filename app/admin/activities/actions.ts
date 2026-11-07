@@ -67,8 +67,8 @@ async function uploadActivityImage(supabase: SupabaseClient, file: File, slug: s
     return data.publicUrl;
 }
 
-function parsePriceTiers(formData: FormData): unknown {
-    const raw = formData.get('price_tiers');
+function parseJsonArrayField(formData: FormData, key: string): unknown {
+    const raw = formData.get(key);
     if (typeof raw !== 'string') return [];
     try {
         return JSON.parse(raw);
@@ -114,19 +114,24 @@ function parseActivityForm(formData: FormData) {
     const priceRaw = str(formData, 'price');
     const tagsRaw = str(formData, 'tags');
     const isFree = formData.get('is_free') === 'on';
+    const category = str(formData, 'category');
 
     return activitySchema.parse({
         title: str(formData, 'title') ?? '',
         slug: str(formData, 'slug'),
         description: str(formData, 'description'),
-        category: str(formData, 'category'),
+        category,
+        // Sin la principal: si el admin la cambia a una que ya estaba marcada, no se repite.
+        extra_categories: formData.getAll('extra_categories').filter(c => c !== category),
         zone: str(formData, 'zone') ?? '',
         venue_name: str(formData, 'venue_name'),
         place_id: str(formData, 'place_id'),
         recurrence_text: str(formData, 'recurrence_text') ?? '',
+        extra_locations: parseJsonArrayField(formData, 'extra_locations'),
         price: !isFree && priceRaw ? Math.round(parseFloat(priceRaw) * 100) / 100 : undefined,
         is_free: isFree,
-        price_tiers: parsePriceTiers(formData),
+        price_tiers: parseJsonArrayField(formData, 'price_tiers'),
+        extra_prices: parseJsonArrayField(formData, 'extra_prices'),
         contact_link: str(formData, 'contact_link'),
         sponsored: formData.get('sponsored') === 'on',
         featured: formData.get('featured') === 'on',
@@ -144,8 +149,10 @@ function revalidateActivityPaths() {
     revalidatePath('/');
 }
 
-function publishedAt(status: string): string | null {
-    return status === 'published' ? new Date().toISOString() : null;
+// Conserva la fecha original si ya estaba publicado: sin esto, cada edición la pisaría y
+// "publicado" sería igual a "editado".
+function publishedAt(status: string, previous: string | null = null): string | null {
+    return status === 'published' ? previous ?? new Date().toISOString() : null;
 }
 
 export async function createActivity(formData: FormData) {
@@ -189,7 +196,7 @@ export async function updateActivity(id: string, formData: FormData) {
 
     const { data: existing } = await supabase
         .from('activities')
-        .select('image_url, photo_urls')
+        .select('image_url, photo_urls, published_at')
         .eq('id', id)
         .single();
 
@@ -227,7 +234,7 @@ export async function updateActivity(id: string, formData: FormData) {
             description: parsed.description ?? null,
             contact_link: parsed.contact_link ?? null,
             price: parsed.price ?? null,
-            published_at: publishedAt(parsed.status),
+            published_at: publishedAt(parsed.status, existing?.published_at),
             updated_at: new Date().toISOString(),
         })
         .eq('id', id);

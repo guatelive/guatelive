@@ -163,6 +163,11 @@ export function EventForm({ mode, event, initialPlaceName, action, tagGroups = E
                 </div>
             </div>
 
+            <p className="-mt-3 text-xs text-[#999999]">
+                Los botones de Google Maps y Waze van a las coordenadas del lugar catalogado. Si no
+                hay, buscan el nombre libre: que sea un solo lugar, fácil de encontrar en el mapa.
+            </p>
+
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="mb-1 block text-sm text-[#666666]">Fecha y hora de inicio</label>

@@ -1,18 +1,43 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import { AdminSortChips } from '@/components/admin/admin-sort-chips';
 import { deleteEdition } from './actions';
 
 export const metadata = { title: 'Ediciones — Admin' };
 
-export default async function AdminEdicionesPage() {
+type SortKey = 'number_desc' | 'created_desc' | 'published_desc' | 'updated_desc';
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: 'number_desc', label: 'Número' },
+    { key: 'created_desc', label: 'Recién creadas' },
+    { key: 'published_desc', label: 'Recién publicadas' },
+    { key: 'updated_desc', label: 'Recién editadas' },
+];
+
+const SORT_COLUMNS: Record<SortKey, string> = {
+    number_desc: 'number',
+    created_desc: 'created_at',
+    published_desc: 'published_at',
+    updated_desc: 'updated_at',
+};
+
+export default async function AdminEdicionesPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ sort?: string }>;
+}) {
+    const { sort = 'number_desc' } = await searchParams;
+    const activeSort = (SORT_OPTIONS.some(o => o.key === sort) ? sort : 'number_desc') as SortKey;
+
     const supabase = await createClient();
     // Solo las columnas que necesita el listado — intro_text/closing_text/etc. son
     // pesados y no hacen falta acá (ver nota de escalabilidad en el plan).
     const { data: editions } = await supabase
         .from('editions')
         .select('id, number, slug, title, subtitle, status, published_at')
-        .order('number', { ascending: false });
+        // nullsFirst: false — sin esto, en "Recién publicadas" los borradores salen primero.
+        .order(SORT_COLUMNS[activeSort], { ascending: false, nullsFirst: false });
 
     const rows = editions ?? [];
 
@@ -23,6 +48,10 @@ export default async function AdminEdicionesPage() {
                 <Link href="/admin/ediciones/nueva">
                     <Button className="normal-case tracking-normal">+ Nueva edición</Button>
                 </Link>
+            </div>
+
+            <div className="mb-4">
+                <AdminSortChips options={SORT_OPTIONS} active={activeSort} />
             </div>
 
             <div className="overflow-hidden rounded-lg border border-[#E5E5E5] bg-white">
