@@ -8,6 +8,8 @@ import { BubbleSearch, type HeroCandidate } from "@/components/home/bubble-searc
 import { EditionPeekTab } from "@/components/home/EditionPeekTab";
 import { EventsGrid } from "@/components/home/EventsGrid";
 import { ActivitiesGrid } from "@/components/home/ActivitiesGrid";
+import { PlansCarousel } from "@/components/home/PlansCarousel";
+import { getActivePlans } from "@/lib/plans";
 import { guatNow } from "@/lib/hours-utils";
 import { toUpcomingEvents } from "@/lib/event-showtimes";
 import type { DbEvent, DbActivity, DbBankPromotion } from "@/lib/types";
@@ -77,6 +79,7 @@ export default async function HomePage() {
       .order("discount_pct", { ascending: false, nullsFirst: false }),
     supabase.from("places").select("name, slug, zone").eq("is_published", true),
   ]);
+  const activePlans = await getActivePlans(supabase, { limit: 10 });
 
   // Descuento más alto primero siempre; el shuffle diario solo varía el
   // orden entre promos empatadas en % — antes de esto, el home mostraba
@@ -132,6 +135,7 @@ export default async function HomePage() {
       {/* <MarqueeTicker /> */}
 
       <EventsGrid events={upcomingEvents} />
+      <PlansCarousel plans={activePlans} />
       <ActivitiesGrid activities={(activities ?? []) as DbActivity[]} />
       {/* Comentado intencionalmente: con "recién agregados" eliminado,
          la sección editorial quedó arriba y es fácil de encontrar sin este tab.
