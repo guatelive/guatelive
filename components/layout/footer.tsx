@@ -66,10 +66,6 @@ export async function Footer() {
       <div className="mx-auto max-w-[1400px] px-[22px] pb-8 pt-14 md:px-10 md:pt-20">
         <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="col-span-2 md:col-span-1">
-            <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-[#E11D2E]">
-              <span className="inline-block h-2 w-2 rounded-full bg-[#E11D2E]" />
-              Todo lo que pasa en Guate
-            </div>
             <p className="font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] md:text-[44px]">
               ¿Qué hacemos <span className="text-[#E11D2E]">hoy</span>
               <br />
