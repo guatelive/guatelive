@@ -1,19 +1,25 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import { AdminSortChips } from '@/components/admin/admin-sort-chips';
+import { activityCategories } from '@/lib/event-display';
 import { deleteActivity } from './actions';
 
 export const metadata = { title: 'Actividades — Admin' };
 
-type SortKey = 'created_desc' | 'title_asc';
+type SortKey = 'created_desc' | 'published_desc' | 'updated_desc' | 'title_asc';
 
 const SORT_OPTIONS: { key: SortKey; label: string }[] = [
     { key: 'created_desc', label: 'Recién creados' },
+    { key: 'published_desc', label: 'Recién publicados' },
+    { key: 'updated_desc', label: 'Recién editados' },
     { key: 'title_asc', label: 'Título A-Z' },
 ];
 
 function sortParams(key: SortKey): { column: string; ascending: boolean } {
     if (key === 'title_asc') return { column: 'title', ascending: true };
+    if (key === 'published_desc') return { column: 'published_at', ascending: false };
+    if (key === 'updated_desc') return { column: 'updated_at', ascending: false };
     return { column: 'created_at', ascending: false };
 }
 
@@ -29,8 +35,9 @@ export default async function AdminActivitiesPage({
     const supabase = await createClient();
     const { data: activities } = await supabase
         .from('activities')
-        .select('id, title, category, zone, status, sponsored, recurrence_text')
-        .order(column, { ascending });
+        .select('id, title, category, extra_categories, zone, status, sponsored, recurrence_text')
+        // nullsFirst: false — sin esto, en "Recién publicados" los borradores salen primero.
+        .order(column, { ascending, nullsFirst: false });
 
     const rows = activities ?? [];
 
@@ -43,22 +50,8 @@ export default async function AdminActivitiesPage({
                 </Link>
             </div>
 
-            {/* Sort controls */}
-            <div className="mb-4 flex items-center gap-2">
-                <span className="text-xs text-[#666666] mr-1">Ordenar:</span>
-                {SORT_OPTIONS.map(opt => (
-                    <Link
-                        key={opt.key}
-                        href={`?sort=${opt.key}`}
-                        className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                            activeSort === opt.key
-                                ? 'border-[#0A0A0A] bg-[#0A0A0A] text-white'
-                                : 'border-[#E5E5E5] text-[#666666] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'
-                        }`}
-                    >
-                        {opt.label}
-                    </Link>
-                ))}
+            <div className="mb-4">
+                <AdminSortChips options={SORT_OPTIONS} active={activeSort} />
             </div>
 
             <div className="overflow-hidden rounded-lg border border-[#E5E5E5] bg-white">
@@ -84,7 +77,7 @@ export default async function AdminActivitiesPage({
                                         </span>
                                     )}
                                 </td>
-                                <td className="px-4 py-3 text-[#666666]">{activity.category}</td>
+                                <td className="px-4 py-3 text-[#666666]">{activityCategories(activity).join(', ')}</td>
                                 <td className="px-4 py-3 text-[#666666]">{activity.zone}</td>
                                 <td className="px-4 py-3 text-[#666666]">{activity.recurrence_text || '—'}</td>
                                 <td className="px-4 py-3">

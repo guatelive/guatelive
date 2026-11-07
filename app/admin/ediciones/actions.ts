@@ -99,8 +99,10 @@ function parseEditionForm(formData: FormData) {
     });
 }
 
-function publishedAt(status: string): string | null {
-    return status === 'published' ? new Date().toISOString() : null;
+// Conserva la fecha original si ya estaba publicado: sin esto, cada edición la pisaría y
+// "publicado" sería igual a "editado".
+function publishedAt(status: string, previous: string | null = null): string | null {
+    return status === 'published' ? previous ?? new Date().toISOString() : null;
 }
 
 function revalidateEditionPaths(slug: string) {
@@ -234,7 +236,7 @@ export async function updateEdition(id: string, formData: FormData) {
 
     const { data: existing } = await supabase
         .from('editions')
-        .select('cover_image_url, strip_photos')
+        .select('cover_image_url, strip_photos, published_at')
         .eq('id', id)
         .single();
 
@@ -280,7 +282,7 @@ export async function updateEdition(id: string, formData: FormData) {
             meta_title: parsed.meta_title ?? null,
             meta_description: parsed.meta_description ?? null,
             status: parsed.status,
-            published_at: publishedAt(parsed.status),
+            published_at: publishedAt(parsed.status, existing?.published_at),
         })
         .eq('id', id);
 

@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { Button } from '@/components/ui/button';
+import { JPEG_QUALITY, MAX_OUTPUT_PX } from '@/lib/compress-image';
 
 interface Props {
     file: File;
@@ -15,8 +16,6 @@ interface Props {
 function centerAspectCrop(width: number, height: number, aspect: number): Crop {
     return centerCrop(makeAspectCrop({ unit: '%', width: 90 }, aspect, width, height), width, height);
 }
-
-const MAX_OUTPUT_PX = 1800; // lado más largo del output — suficiente para web, reduce tamaño de archivo ~70%
 
 async function getCroppedBlob(img: HTMLImageElement, crop: PixelCrop): Promise<Blob> {
     const scaleX = img.naturalWidth / img.width;
@@ -42,7 +41,7 @@ async function getCroppedBlob(img: HTMLImageElement, crop: PixelCrop): Promise<B
         outW, outH,
     );
     return new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas vacío')), 'image/jpeg', 0.88);
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas vacío')), 'image/jpeg', JPEG_QUALITY);
     });
 }
 

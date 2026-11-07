@@ -7,6 +7,7 @@ interface Props {
     name: string;
     defaultValue?: PriceTier[];
     onChange?: (tiers: PriceTier[]) => void;
+    placeholder?: string;
 }
 
 type Row = { label: string; price: string };
@@ -23,7 +24,7 @@ function serialize(rows: Row[]): PriceTier[] {
         .map(r => ({ label: r.label.trim(), price: parseFloat(r.price) }));
 }
 
-export function PriceTiersInput({ name, defaultValue = [], onChange }: Props) {
+export function PriceTiersInput({ name, defaultValue = [], onChange, placeholder = 'Nombre (ej. Nacional, VIP, Niño)' }: Props) {
     const [rows, setRows] = useState<Row[]>(toRows(defaultValue));
     const serialized = serialize(rows);
 
@@ -54,7 +55,7 @@ export function PriceTiersInput({ name, defaultValue = [], onChange }: Props) {
                                 type="text"
                                 value={row.label}
                                 onChange={e => updateRow(i, 'label', e.target.value)}
-                                placeholder="Nombre (ej. Nacional, VIP, Niño)"
+                                placeholder={placeholder}
                                 className="h-9 flex-1 rounded-md border border-[#E5E5E5] px-3 text-sm outline-none focus:border-[#0A0A0A]"
                             />
                             <div className="flex items-center gap-1">

@@ -1,4 +1,4 @@
-import type { PriceTier } from '@/lib/types';
+import type { ActivityLocation, PriceTier } from '@/lib/types';
 
 const DAYS_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const MONTHS_SHORT = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -14,8 +14,10 @@ export type PriceDisplay =
 export function priceDisplay(input: { is_free: boolean; price: number | null; price_tiers?: PriceTier[] }): PriceDisplay {
     const tiers = input.price_tiers ?? [];
     if (tiers.length > 0) {
-        const min = Math.min(...tiers.map(t => t.price));
-        return { kind: 'priced', label: `Desde Q${min}` };
+        // Un tier de Q0 (ej. niños gratis) no es el precio "desde": sí se lista en el detalle.
+        const paid = tiers.map(t => t.price).filter(price => price > 0);
+        if (paid.length === 0) return { kind: 'free' };
+        return { kind: 'priced', label: `Desde Q${Math.min(...paid)}` };
     }
     if (input.is_free) return { kind: 'free' };
     if (input.price !== null) return { kind: 'priced', label: `Q${input.price}` };
@@ -53,6 +55,31 @@ export function formatEventDateTime(dateStart: string): string {
 
 export function eventLocation(event: { venue_name: string | null; zone: string }): string {
     return event.venue_name || event.zone || '';
+}
+
+// Todas las categorías de una actividad (la principal primero).
+export function activityCategories(activity: { category: string; extra_categories?: string[] }): string[] {
+    return [activity.category, ...(activity.extra_categories ?? [])];
+}
+
+type ActivityLocationInput = {
+    venue_name: string | null;
+    zone: string;
+    recurrence_text: string | null;
+    extra_locations?: ActivityLocation[];
+};
+
+// Zonas de todas las sedes de una actividad, sin repetir (la principal primero).
+export function activityZones(activity: { zone: string; extra_locations?: ActivityLocation[] }): string[] {
+    return Array.from(new Set([activity.zone, ...(activity.extra_locations ?? []).map(l => l.zone)]));
+}
+
+// Cuándo/dónde para cards. Con varias sedes no se muestra horario: el de la principal
+// sería falso para las demás, el detalle lo lista por sede.
+export function activityCardInfo(activity: ActivityLocationInput): { when: string | null; location: string } {
+    const extras = activity.extra_locations ?? [];
+    if (extras.length === 0) return { when: activity.recurrence_text, location: eventLocation(activity) };
+    return { when: null, location: `${extras.length + 1} sedes: ${activityZones(activity).join(', ')}` };
 }
 
 // dateStart puede ser ISO completo ("2026-07-06T18:00:00") o datetime-local ("2026-07-06T18:00")

@@ -8,16 +8,19 @@ import { EVENT_CATEGORY_BADGE, EVENT_CATEGORY_ICON, type EventCategory } from '@
 import { SchemaMarkup } from '@/components/seo/schema-markup';
 import { buildBreadcrumbSchema } from '@/lib/schema-builders';
 import { Breadcrumb } from '@/components/breadcrumb';
+import { MapLinks } from '@/components/map-links';
+import { mapLinks } from '@/lib/maps-links';
 import { ShareButton } from '@/components/evento/share-button';
 import { SITE_URL } from '@/lib/site-config';
 import { DetailInfoCard, priceRowContent, type InfoRow } from '@/components/detail-info-card';
+import { activityCategories, activityZones } from '@/lib/event-display';
 import type { DbActivity } from '@/lib/types';
 
 export const revalidate = 3600;
 
 type Params = Promise<{ slug: string }>;
 
-type ActivityWithPlace = DbActivity & { places: { name: string; slug: string } | null };
+type ActivityWithPlace = DbActivity & { places: { name: string; slug: string; latitude: number | null; longitude: number | null; google_maps_url: string | null } | null };
 
 function createSb() {
     return createClient(
@@ -37,14 +40,14 @@ export async function generateMetadata(props: { params: Params }) {
     const supabase = createSb();
     const { data: activity } = await supabase
         .from('activities')
-        .select('title, description, category, zone, image_url, photo_urls')
+        .select('title, description, category, zone, extra_locations, image_url, photo_urls')
         .eq('slug', slug)
         .eq('status', 'published')
         .single();
 
     if (!activity) return { title: 'Actividad no encontrada' };
 
-    const description = activity.description ?? `${activity.category} en ${activity.zone} — GuateLive`;
+    const description = activity.description ?? `${activity.category} en ${activityZones(activity).join(', ')} — GuateLive`;
     const ogImages = [activity.image_url, ...(activity.photo_urls ?? [])]
         .filter((url): url is string => !!url)
         .map(url => ({ url }));
@@ -68,7 +71,7 @@ export default async function ActividadPage(props: { params: Params }) {
 
     const { data } = await supabase
         .from('activities')
-        .select('*, places(name, slug)')
+        .select('*, places(name, slug, latitude, longitude, google_maps_url)')
         .eq('slug', slug)
         .eq('status', 'published')
         .single();
@@ -76,28 +79,52 @@ export default async function ActividadPage(props: { params: Params }) {
     if (!data) notFound();
 
     const activity = data as ActivityWithPlace;
-    const colors = EVENT_CATEGORY_BADGE[activity.category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
     const PlaceholderIcon = EVENT_CATEGORY_ICON[activity.category as EventCategory] ?? Star;
     const priceContent = priceRowContent(activity);
-    const infoRows: InfoRow[] = [
-        ...(activity.recurrence_text ? [{ icon: Repeat, label: 'Cuándo', content: activity.recurrence_text }] : []),
-        {
+    const mainLocation = (
+        <>
+            {activity.places ? (
+                <Link href={`/lugar/${activity.places.slug}`} className="font-medium hover:underline">
+                    {activity.places.name}
+                </Link>
+            ) : activity.venue_name ? (
+                <span className="font-medium">{activity.venue_name}</span>
+            ) : null}
+            <span className="block text-[#666666]">{activity.zone}</span>
+            {activity.extra_locations.length > 0 && activity.recurrence_text && (
+                <span className="block">{activity.recurrence_text}</span>
+            )}
+            <MapLinks links={mapLinks(activity.places, activity.venue_name, activity.zone)} />
+        </>
+    );
+    const locationRows: InfoRow[] = activity.extra_locations.length > 0
+        ? [{
             icon: MapPin,
-            label: 'Lugar',
+            label: 'Sedes y horarios',
             content: (
-                <>
-                    {activity.places ? (
-                        <Link href={`/lugar/${activity.places.slug}`} className="font-medium hover:underline">
-                            {activity.places.name}
-                        </Link>
-                    ) : activity.venue_name ? (
-                        <span className="font-medium">{activity.venue_name}</span>
-                    ) : null}
-                    <span className="block text-[#666666]">{activity.zone}</span>
-                </>
+                <ul className="mt-1 space-y-3">
+                    <li>
+                        {mainLocation}
+                    </li>
+                    {activity.extra_locations.map(location => (
+                        <li key={location.name}>
+                            <span className="font-medium">{location.name}</span>
+                            <span className="block text-[#666666]">{location.zone}</span>
+                            <span className="block">{location.schedule}</span>
+                            <MapLinks links={mapLinks(null, location.name, location.zone)} />
+                        </li>
+                    ))}
+                </ul>
             ),
-        },
+        }]
+        : [
+            ...(activity.recurrence_text ? [{ icon: Repeat, label: 'Cuándo', content: activity.recurrence_text }] : []),
+            { icon: MapPin, label: 'Lugar', content: mainLocation },
+        ];
+    const infoRows: InfoRow[] = [
+        ...locationRows,
         ...(priceContent ? [{ icon: Ticket, label: activity.price_tiers.length > 0 ? 'Precios' : 'Precio', content: priceContent }] : []),
+        ...(activity.extra_prices.length > 0 ? [{ icon: Ticket, label: 'Otros precios', content: priceRowContent({ is_free: false, price: null, price_tiers: activity.extra_prices }) }] : []),
     ];
     const url = `${SITE_URL}/actividad/${activity.slug}`;
 
@@ -136,16 +163,22 @@ export default async function ActividadPage(props: { params: Params }) {
 
                 {/* Desktop: contenido a la izquierda, ficha sticky a la derecha.
                     Mobile: título → ficha → descripción, apilado. */}
-                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-x-12 lg:gap-y-8">
+                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-8">
                     <header className="lg:col-start-1 lg:row-start-1">
                         {/* Badges */}
                         <div className="mb-3 flex flex-wrap items-center gap-2">
-                            <span
-                                className="rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide"
-                                style={{ backgroundColor: colors.bg, color: colors.fg }}
-                            >
-                                {activity.category}
-                            </span>
+                            {activityCategories(activity).map(category => {
+                                const colors = EVENT_CATEGORY_BADGE[category as EventCategory] ?? EVENT_CATEGORY_BADGE['Otros'];
+                                return (
+                                    <span
+                                        key={category}
+                                        className="rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wide"
+                                        style={{ backgroundColor: colors.bg, color: colors.fg }}
+                                    >
+                                        {category}
+                                    </span>
+                                );
+                            })}
                             {activity.featured && (
                                 <span className="rounded bg-[#FBEFD8] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-[#8A5A00]">
                                     Destacado

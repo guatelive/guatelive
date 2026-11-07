@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import { AdminSortChips } from '@/components/admin/admin-sort-chips';
 import { deletePlace } from './actions';
 
 export const metadata = { title: 'Lugares — Admin' };
@@ -13,19 +14,38 @@ const FILTER_OPTIONS: { key: FilterKey; label: string }[] = [
     { key: 'draft', label: 'Borradores' },
 ];
 
+type SortKey = 'name_asc' | 'created_desc' | 'published_desc' | 'updated_desc';
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: 'name_asc', label: 'Nombre A-Z' },
+    { key: 'created_desc', label: 'Recién creados' },
+    { key: 'published_desc', label: 'Recién publicados' },
+    { key: 'updated_desc', label: 'Recién editados' },
+];
+
+function sortParams(key: SortKey): { column: string; ascending: boolean } {
+    if (key === 'created_desc') return { column: 'created_at', ascending: false };
+    if (key === 'published_desc') return { column: 'published_at', ascending: false };
+    if (key === 'updated_desc') return { column: 'updated_at', ascending: false };
+    return { column: 'name', ascending: true };
+}
+
 export default async function AdminPlacesPage({
     searchParams,
 }: {
-    searchParams: Promise<{ filter?: string; q?: string }>;
+    searchParams: Promise<{ filter?: string; q?: string; sort?: string }>;
 }) {
-    const { filter = 'all', q = '' } = await searchParams;
+    const { filter = 'all', q = '', sort = 'name_asc' } = await searchParams;
     const activeFilter = (FILTER_OPTIONS.some(o => o.key === filter) ? filter : 'all') as FilterKey;
+    const activeSort = (SORT_OPTIONS.some(o => o.key === sort) ? sort : 'name_asc') as SortKey;
+    const { column, ascending } = sortParams(activeSort);
 
     const supabase = await createClient();
     let query = supabase
         .from('places')
         .select('id, name, zone, primary_category, is_published, place_photos(count)')
-        .order('name', { ascending: true });
+        // nullsFirst: false — sin esto, en "Recién publicados" los borradores salen primero.
+        .order(column, { ascending, nullsFirst: false });
 
     if (activeFilter === 'published') query = query.eq('is_published', true);
     if (activeFilter === 'draft') query = query.eq('is_published', false);
@@ -46,6 +66,7 @@ export default async function AdminPlacesPage({
             <div className="mb-4 flex flex-wrap items-center gap-4">
                 <form action="/admin/places" method="GET" className="flex items-center gap-2">
                     <input type="hidden" name="filter" value={activeFilter} />
+                    <input type="hidden" name="sort" value={activeSort} />
                     <input
                         type="text"
                         name="q"
@@ -60,7 +81,7 @@ export default async function AdminPlacesPage({
                         Buscar
                     </button>
                     {q && (
-                        <Link href={`/admin/places?filter=${activeFilter}`} className="text-xs text-[#666666] hover:underline">
+                        <Link href={`/admin/places?filter=${activeFilter}&sort=${activeSort}`} className="text-xs text-[#666666] hover:underline">
                             Limpiar
                         </Link>
                     )}
@@ -71,7 +92,7 @@ export default async function AdminPlacesPage({
                     {FILTER_OPTIONS.map(opt => (
                         <Link
                             key={opt.key}
-                            href={`?filter=${opt.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                            href={`?filter=${opt.key}&sort=${activeSort}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
                             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                                 activeFilter === opt.key
                                     ? 'border-[#0A0A0A] bg-[#0A0A0A] text-white'
@@ -82,6 +103,14 @@ export default async function AdminPlacesPage({
                         </Link>
                     ))}
                 </div>
+            </div>
+
+            <div className="mb-4">
+                <AdminSortChips
+                    options={SORT_OPTIONS}
+                    active={activeSort}
+                    params={{ filter: activeFilter, ...(q ? { q } : {}) }}
+                />
             </div>
 
             <div className="overflow-hidden rounded-lg border border-[#E5E5E5] bg-white">

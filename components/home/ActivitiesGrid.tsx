@@ -2,12 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { FavoriteButton } from '@/components/favorites/favorite-button';
-import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
+import { ActivityCard, handleTiltLeave, handleTiltMove } from '@/components/cards/activity-card';
 import { useCarouselTakeover } from '@/hooks/use-carousel-takeover';
 import type { DbActivity } from '@/lib/types';
-import { eventLocation } from '@/lib/event-display';
-import { priceDisplay } from '@/lib/event-display';
 
 // Sticker wall (home v2): cinta adhesiva + tilt 3D en hover — ver
 // design_handoff_home_v2/README.md sección 5. Auto-avanza carta por carta como
@@ -18,27 +15,6 @@ import { priceDisplay } from '@/lib/event-display';
 // el carrusel al usuario (feedback beta 2026-10-19, ver hooks/use-carousel-takeover.ts).
 // No corre con prefers-reduced-motion. Ver ADR-023 en docs/decisions.md para el resto
 // del razonamiento (tabla separada, sin scraper).
-function rot(id: number, spread: number) {
-    return ((id * 41) % (spread * 2 + 1)) - spread;
-}
-
-function handleTiltMove(e: React.MouseEvent<HTMLElement>) {
-    const el = e.currentTarget;
-    const base = el.dataset.baseRotate || '';
-    const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transform = `${base} perspective(900px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.03)`;
-    el.style.boxShadow = '0 20px 40px rgba(0,0,0,0.25)';
-    el.style.zIndex = '5';
-}
-
-function handleTiltLeave(e: React.MouseEvent<HTMLElement>) {
-    const el = e.currentTarget;
-    el.style.transform = el.dataset.baseRotate || 'none';
-    el.style.boxShadow = '0 8px 20px rgba(0,0,0,0.1)';
-    el.style.zIndex = '1';
-}
 
 // Barra de progreso chica debajo del sticker wall (mobile) — mismo mecanismo que
 // BubbleScrollRow en bubble-search.tsx, para avisar que se puede seguir deslizando.
@@ -96,8 +72,9 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const id = setInterval(() => {
             const container = scrollRef.current;
-            const count = activities.length;
-            if (!container || pausedRef.current || tookControlRef.current || count < 2) return;
+            // +1: la última parada es la carta de "Ver todas".
+            const count = activities.length + 1;
+            if (!container || pausedRef.current || tookControlRef.current) return;
             if (container.scrollWidth <= container.clientWidth) return;
             const atEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 4;
             const next = atEnd ? 0 : (indexRef.current + 1) % count;
@@ -162,82 +139,30 @@ export function ActivitiesGrid({ activities }: { activities: DbActivity[] }) {
                     alignItems: 'flex-start', paddingTop: 16, paddingBottom: 16,
                 }}
             >
-                {activities.map(activity => {
-                    const baseRotate = rot(activity.id.charCodeAt(0) + activity.id.length, 3);
-                    const price = priceDisplay(activity);
-                    const location = eventLocation(activity);
-                    const meta = [activity.recurrence_text, location].filter(Boolean).join(' · ');
-                    return (
-                        <Link
-                            key={activity.id}
-                            href={`/actividad/${activity.slug}`}
-                            data-base-rotate={`rotate(${baseRotate}deg)`}
-                            onMouseMove={handleTiltMove}
-                            onMouseLeave={handleTiltLeave}
-                            style={{
-                                position: 'relative', width: 290, flexShrink: 0,
-                                background: '#fff', border: '1px solid #eee', borderRadius: 4,
-                                boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                                transform: `rotate(${baseRotate}deg)`,
-                                transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-                                textDecoration: 'none', display: 'block',
-                            }}
-                        >
-                            {/* Cinta adhesiva */}
-                            <div style={{
-                                position: 'absolute', top: -10, left: '50%',
-                                transform: 'translateX(-50%) rotate(-3deg)',
-                                width: 56, height: 20, background: 'rgba(225,29,46,0.85)',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
-                            }} />
+                {activities.map(activity => <ActivityCard key={activity.id} activity={activity} width={290} />)}
 
-                            <div style={{ padding: '10px 10px 0', position: 'relative', height: 190 }}>
-                                <FavoriteButton type="activity" slug={activity.slug} name={activity.title} />
-                                {activity.image_url ? (
-                                    <ImageWithSkeleton
-                                        src={activity.image_url}
-                                        alt={activity.title}
-                                        fill
-                                        sizes="290px"
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    <div style={{ width: '100%', height: '100%', background: '#F4F4F4' }} />
-                                )}
-                            </div>
-
-                            <div style={{ padding: '12px 14px 16px' }}>
-                                <div
-                                    className="line-clamp-2"
-                                    style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, marginBottom: 4, color: '#111111' }}
-                                >
-                                    {activity.title}
-                                </div>
-                                {meta && (
-                                    <div className="line-clamp-1" style={{ color: '#777777', fontSize: 12, marginBottom: 6 }}>
-                                        {meta}
-                                    </div>
-                                )}
-                                {price.kind !== 'unknown' && (
-                                    <div style={{ color: '#E11D2E', fontWeight: 800, fontSize: 14 }}>
-                                        {price.kind === 'free' ? 'Gratis' : price.label}
-                                    </div>
-                                )}
-                            </div>
-                        </Link>
-                    );
-                })}
-
-                {/* Placeholder de próxima actividad */}
-                <div style={{ width: 290, height: 260, flexShrink: 0 }}>
-                    <div style={{
-                        border: '2px dashed #d0d0d0', borderRadius: 4, height: '100%',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: '#b0b0b0', fontSize: 13, textAlign: 'center', padding: 16,
-                    }}>
-                        + Próxima actividad
-                    </div>
-                </div>
+                {/* Cierre del carrusel: lleva al listado completo */}
+                <Link
+                    href="/actividades"
+                    data-base-rotate="rotate(2deg)"
+                    onMouseMove={handleTiltMove}
+                    onMouseLeave={handleTiltLeave}
+                    style={{
+                        position: 'relative', width: 290, flexShrink: 0, alignSelf: 'stretch',
+                        background: '#E11D2E', borderRadius: 4,
+                        boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+                        transform: 'rotate(2deg)',
+                        transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                        textDecoration: 'none', padding: 24,
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        gap: 8, textAlign: 'center', color: '#FFFFFF',
+                    }}
+                >
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, lineHeight: 1.15 }}>
+                        Ver todas las actividades
+                    </span>
+                    <span style={{ fontSize: 24, lineHeight: 1 }}>→</span>
+                </Link>
             </div>
 
             {/* Barra de progreso mobile: indica que se puede seguir deslizando */}

@@ -1,22 +1,27 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import { AdminSortChips } from '@/components/admin/admin-sort-chips';
 import { showtimesLabel } from '@/lib/event-showtimes';
 import { deleteEvent } from './actions';
 
 export const metadata = { title: 'Eventos — Admin' };
 
-type SortKey = 'date_asc' | 'date_desc' | 'created_desc';
+type SortKey = 'date_asc' | 'date_desc' | 'created_desc' | 'published_desc' | 'updated_desc';
 
 const SORT_OPTIONS: { key: SortKey; label: string }[] = [
     { key: 'date_desc', label: 'Fecha ↓ (más recientes)' },
     { key: 'date_asc',  label: 'Fecha ↑ (más antiguos)' },
     { key: 'created_desc', label: 'Recién creados' },
+    { key: 'published_desc', label: 'Recién publicados' },
+    { key: 'updated_desc', label: 'Recién editados' },
 ];
 
 function sortParams(key: SortKey): { column: string; ascending: boolean } {
     if (key === 'date_asc')     return { column: 'date_start',  ascending: true  };
     if (key === 'created_desc') return { column: 'created_at',  ascending: false };
+    if (key === 'published_desc') return { column: 'published_at', ascending: false };
+    if (key === 'updated_desc') return { column: 'updated_at',  ascending: false };
     return                             { column: 'date_start',  ascending: false };
 }
 
@@ -33,7 +38,8 @@ export default async function AdminEventsPage({
     const { data: events } = await supabase
         .from('events')
         .select('id, title, category, zone, date_start, extra_dates, status, sponsored, source, contact_link')
-        .order(column, { ascending });
+        // nullsFirst: false — sin esto, en "Recién publicados" los borradores salen primero.
+        .order(column, { ascending, nullsFirst: false });
 
     const rows = events ?? [];
 
@@ -46,22 +52,8 @@ export default async function AdminEventsPage({
                 </Link>
             </div>
 
-            {/* Sort controls */}
-            <div className="mb-4 flex items-center gap-2">
-                <span className="text-xs text-[#666666] mr-1">Ordenar:</span>
-                {SORT_OPTIONS.map(opt => (
-                    <Link
-                        key={opt.key}
-                        href={`?sort=${opt.key}`}
-                        className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                            activeSort === opt.key
-                                ? 'border-[#0A0A0A] bg-[#0A0A0A] text-white'
-                                : 'border-[#E5E5E5] text-[#666666] hover:border-[#0A0A0A] hover:text-[#0A0A0A]'
-                        }`}
-                    >
-                        {opt.label}
-                    </Link>
-                ))}
+            <div className="mb-4">
+                <AdminSortChips options={SORT_OPTIONS} active={activeSort} />
             </div>
 
             <div className="overflow-hidden rounded-lg border border-[#E5E5E5] bg-white">

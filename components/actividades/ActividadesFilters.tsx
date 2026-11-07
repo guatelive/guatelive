@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import { ActivityCard } from '@/components/cards/activity-card';
 import { FilterChipRow, distinctOptions, interestOptions } from '@/components/filters/filter-chip-row';
 import { matchesZone } from '@/lib/zone-hierarchy';
+import { activityCategories, activityZones } from '@/lib/event-display';
 import type { DbActivity } from '@/lib/types';
 
 // Zonas y categorías se derivan de las actividades ya cargadas por page.tsx (no de
@@ -12,8 +12,8 @@ import type { DbActivity } from '@/lib/types';
 // resultados — hoy el catálogo de actividades es chico y la mayoría de categorías
 // todavía no tienen ninguna fila.
 export function ActividadesFilters({ activities }: { activities: DbActivity[] }) {
-    const zones = useMemo(() => distinctOptions(activities.map(a => a.zone)), [activities]);
-    const categories = useMemo(() => distinctOptions(activities.map(a => a.category)), [activities]);
+    const zones = useMemo(() => distinctOptions(activities.flatMap(activityZones)), [activities]);
+    const categories = useMemo(() => distinctOptions(activities.flatMap(activityCategories)), [activities]);
     const interests = useMemo(() => interestOptions(activities), [activities]);
 
     const [zone, setZone] = useState<string | null>(null);
@@ -23,8 +23,8 @@ export function ActividadesFilters({ activities }: { activities: DbActivity[] })
 
     const filtered = useMemo(() => {
         return activities.filter(a =>
-            (!zone || matchesZone(a.zone, zone)) &&
-            (!category || a.category === category) &&
+            (!zone || activityZones(a).some(z => matchesZone(z, zone))) &&
+            (!category || activityCategories(a).includes(category)) &&
             (!interest || a.tags.includes(interest)) &&
             (!onlyFree || a.is_free)
         );
@@ -72,16 +72,8 @@ export function ActividadesFilters({ activities }: { activities: DbActivity[] })
             </p>
 
             {filtered.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {filtered.map(activity => (
-                        <Link
-                            key={activity.id}
-                            href={`/actividad/${activity.slug}`}
-                            className="block text-left hover:opacity-90 transition-opacity"
-                        >
-                            <ActivityCard activity={activity} />
-                        </Link>
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
+                    {filtered.map(activity => <ActivityCard key={activity.id} activity={activity} />)}
                 </div>
             ) : (
                 <div className="text-center py-12">

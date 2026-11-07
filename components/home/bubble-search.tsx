@@ -1167,16 +1167,8 @@ export function BubbleSearch({ heroPhotos }: { heroPhotos?: HeroCandidate[] }) {
                     </div>
 
                     {activityBubbleResults.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {activityBubbleResults.map(a => (
-                                <Link
-                                    key={a.id}
-                                    href={`/actividad/${a.slug}`}
-                                    className="block hover:opacity-90 transition-opacity"
-                                >
-                                    <ActivityCard activity={a} titleFont="display" />
-                                </Link>
-                            ))}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
+                            {activityBubbleResults.map(a => <ActivityCard key={a.id} activity={a} />)}
                         </div>
                     ) : (
                         <div style={{ textAlign: 'center', padding: '48px 0' }}>

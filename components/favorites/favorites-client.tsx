@@ -88,12 +88,8 @@ export function FavoritesClient() {
             {activities.length > 0 && (
                 <section>
                     <h2 className="mb-4 font-serif text-xl font-bold text-[#0A0A0A]">Actividades</h2>
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                        {activities.map(a => (
-                            <Link key={a.id} href={`/actividad/${a.slug}`} className="block hover:opacity-90 transition-opacity">
-                                <ActivityCard activity={a} />
-                            </Link>
-                        ))}
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+                        {activities.map(a => <ActivityCard key={a.id} activity={a} />)}
                     </div>
                 </section>
             )}

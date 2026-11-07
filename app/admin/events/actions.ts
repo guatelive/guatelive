@@ -126,8 +126,10 @@ function revalidateEventPaths(slug: string) {
     revalidatePath(`/evento/${slug}`);
 }
 
-function publishedAt(status: string): string | null {
-    return status === 'published' ? new Date().toISOString() : null;
+// Conserva la fecha original si ya estaba publicado: sin esto, cada edición la pisaría y
+// "publicado" sería igual a "editado".
+function publishedAt(status: string, previous: string | null = null): string | null {
+    return status === 'published' ? previous ?? new Date().toISOString() : null;
 }
 
 export async function createEvent(formData: FormData) {
@@ -168,7 +170,7 @@ export async function updateEvent(id: string, formData: FormData) {
 
     const { data: existing } = await supabase
         .from('events')
-        .select('image_url')
+        .select('image_url, published_at')
         .eq('id', id)
         .single();
 
@@ -197,7 +199,8 @@ export async function updateEvent(id: string, formData: FormData) {
             contact_link: parsed.contact_link ?? null,
             price: parsed.price ?? null,
             date_end: parsed.date_end ?? null,
-            published_at: publishedAt(parsed.status),
+            published_at: publishedAt(parsed.status, existing?.published_at),
+            updated_at: new Date().toISOString(),
         })
         .eq('id', id);
 

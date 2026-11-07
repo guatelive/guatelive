@@ -44,11 +44,12 @@ export async function GET(req: NextRequest) {
         return data ?? [];
     }
     async function activityZones(): Promise<ZoneRow[]> {
-        let q = supabase.from('activities').select('zone').eq('status', 'published').not('zone', 'is', null);
-        if (kind === 'activity' && !all && category) q = q.eq('category', category);
+        // `zones` incluye todas las sedes de la actividad.
+        let q = supabase.from('activities').select('zones').eq('status', 'published');
+        if (kind === 'activity' && !all && category) q = q.contains('categories', [category]);
         const { data, error } = await q;
         if (error) throw error;
-        return data ?? [];
+        return (data ?? []).flatMap(row => (row.zones as string[]).map(zone => ({ zone })));
     }
 
     let rows: ZoneRow[];
