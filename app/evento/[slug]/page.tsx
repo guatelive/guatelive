@@ -17,6 +17,7 @@ import { buildBreadcrumbSchema } from '@/lib/schema-builders';
 import { ShareButton } from '@/components/evento/share-button';
 import { SITE_URL } from '@/lib/site-config';
 import type { DbEvent } from '@/lib/types';
+import { PhotoCredit } from '@/components/photo-credit';
 
 export const revalidate = 3600;
 
@@ -181,7 +182,7 @@ export default async function EventoPage(props: { params: Params }) {
                 <Breadcrumb items={breadcrumbItems} className="mb-6" />
 
                 {/* Imagen hero — una sola imagen, no la galería multi-foto de lugares */}
-                <div className="relative mb-8 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80 lg:h-[440px]">
+                <div className={`relative h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80 lg:h-[440px] ${event.image_url && event.image_credit ? 'mb-2' : 'mb-8'}`}>
                     {event.image_url ? (
                         <ImageWithSkeleton
                             src={event.image_url}
@@ -197,6 +198,9 @@ export default async function EventoPage(props: { params: Params }) {
                         </div>
                     )}
                 </div>
+                {event.image_url && event.image_credit && (
+                    <PhotoCredit credit={event.image_credit} className="mb-8" />
+                )}
 
                 {/* Desktop: contenido a la izquierda, ficha sticky a la derecha.
                     Mobile: título → ficha → descripción, apilado. */}
