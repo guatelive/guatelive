@@ -22,6 +22,7 @@ export type DbEvent = {
   is_free: boolean;
   price_tiers: PriceTier[];
   image_url: string | null;
+  image_credit: string | null;
   contact_link: string | null;
   sponsored: boolean;
   featured: boolean;
@@ -53,6 +54,7 @@ export type DbActivity = {
   extra_prices: PriceTier[];
   image_url: string | null;
   photo_urls: string[];
+  image_credit: string | null;
   contact_link: string | null;
   sponsored: boolean;
   featured: boolean;

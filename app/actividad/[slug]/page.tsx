@@ -15,6 +15,7 @@ import { SITE_URL } from '@/lib/site-config';
 import { DetailInfoCard, priceRowContent, type InfoRow } from '@/components/detail-info-card';
 import { activityCategories, activityZones } from '@/lib/event-display';
 import type { DbActivity } from '@/lib/types';
+import { PhotoCredit } from '@/components/photo-credit';
 
 export const revalidate = 3600;
 
@@ -152,7 +153,12 @@ export default async function ActividadPage(props: { params: Params }) {
                     igual que /lugar/[slug] (GalleryCarousel). Sin foto: placeholder de
                     ícono de categoría, igual que antes. */}
                 {galleryPhotos.length > 0 ? (
-                    <GalleryCarousel photos={galleryPhotos} altLabel="actividad" />
+                    <>
+                        <GalleryCarousel photos={galleryPhotos} altLabel="actividad" />
+                        {activity.image_credit && (
+                            <PhotoCredit credit={activity.image_credit} className="-mt-4 mb-6 md:-mt-6" />
+                        )}
+                    </>
                 ) : (
                     <div className="relative mb-6 h-64 w-full overflow-hidden rounded-2xl bg-[#1A1A1A] sm:h-80">
                         <div className="flex h-full items-center justify-center">

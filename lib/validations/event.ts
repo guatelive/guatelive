@@ -17,6 +17,7 @@ export const eventSchema = z.object({
     is_free: z.boolean(),
     price_tiers: priceTiersSchema.default([]),
     image_url: z.string().url().optional(),
+    image_credit: z.string().trim().max(120).optional(),
     contact_link: z.string().url().optional(),
     sponsored: z.boolean(),
     featured: z.boolean(),

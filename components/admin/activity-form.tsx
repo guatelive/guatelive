@@ -326,6 +326,12 @@ export function ActivityForm({ mode, activity, initialPlaceName, action, tagGrou
             </div>
 
             <div>
+                <label className="mb-1 block text-sm text-[#666666]">Crédito de la foto (opcional)</label>
+                <Input name="image_credit" defaultValue={activity?.image_credit ?? ''} maxLength={120} placeholder="Ej. eticket.gt, Instagram @organizador" />
+                <p className="mt-1 text-xs text-[#999999]">Se muestra debajo de las fotos (portada y galería) en la página de la actividad. Vacío = no se muestra crédito.</p>
+            </div>
+
+            <div>
                 <label className="mb-1 block text-sm text-[#666666]">Link de contacto</label>
                 <Input type="url" name="contact_link" defaultValue={activity?.contact_link ?? ''} placeholder="https://…" />
             </div>

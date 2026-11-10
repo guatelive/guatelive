@@ -25,6 +25,7 @@ export const activitySchema = z.object({
     extra_prices: priceTiersSchema.default([]),
     image_url: z.string().url().optional(),
     photo_urls: z.array(z.string().url()).default([]),
+    image_credit: z.string().trim().max(120).optional(),
     contact_link: z.string().url().optional(),
     sponsored: z.boolean(),
     featured: z.boolean(),
