@@ -373,6 +373,7 @@ export default async function HomePage() {
                           alt={photo.name ?? ''}
                           fill
                           sizes="200px"
+                          variant="sm"
                           className="object-cover"
                           style={{
                             transform: 'scale(1.12)',

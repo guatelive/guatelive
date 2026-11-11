@@ -77,7 +77,7 @@ export function ActivityGalleryEditor({ defaultValue = [] }: Props) {
                     <div key={photo.id} className="rounded-lg border border-[#E5E5E5] p-2">
                         <div className="relative mb-2 h-28 w-full overflow-hidden rounded-md bg-[#F5F4F0]">
                             {photo.preview || photo.url ? (
-                                <Image src={photo.preview ?? photo.url!} alt="" fill className="object-cover" />
+                                <Image src={photo.preview ?? photo.url!} alt="" fill unoptimized className="object-cover" />
                             ) : (
                                 <div className="flex h-full items-center justify-center text-xs text-[#999]">Sin foto</div>
                             )}

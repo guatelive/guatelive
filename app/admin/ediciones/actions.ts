@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { storagePathsFor, uploadOptimizedImage } from '@/lib/images/upload';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { editionSchema, type EditionItemFormData } from '@/lib/validations/edition';
@@ -43,34 +44,23 @@ async function ensureUniqueSlug(
     }
 }
 
-function extractStoragePath(imageUrl: string): string | null {
-    const marker = '/storage/v1/object/public/images/';
-    const idx = imageUrl.indexOf(marker);
-    return idx === -1 ? null : imageUrl.slice(idx + marker.length);
-}
-
 async function deleteEditionImage(supabase: SupabaseClient, imageUrl: string | null | undefined) {
     if (!imageUrl) return;
-    const path = extractStoragePath(imageUrl);
-    if (!path) return;
-    const { data, error } = await supabase.storage.from('images').remove([path]);
+    const paths = storagePathsFor(imageUrl);
+    if (paths.length === 0) return;
+    const { data, error } = await supabase.storage.from('images').remove(paths);
     if (error) {
         console.error('No se pudo borrar la imagen huérfana:', error.message);
     } else if (!data || data.length === 0) {
         // Supabase Storage no tira error si RLS filtra el archivo silenciosamente
         // (ej. falta política de SELECT) — sin este check, la imagen queda huérfana
         // sin ninguna señal de que algo salió mal.
-        console.error(`No se pudo borrar la imagen huérfana (0 archivos removidos, ¿falta política RLS de SELECT?): ${path}`);
+        console.error(`No se pudo borrar la imagen huérfana (0 archivos removidos, ¿falta política RLS de SELECT?): ${paths.join(', ')}`);
     }
 }
 
 async function uploadEditionImage(supabase: SupabaseClient, file: File, name: string): Promise<string> {
-    const ext = file.name.split('.').pop() || 'jpg';
-    const path = `editions/${name}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from('images').upload(path, file);
-    if (error) throw new Error(`No se pudo subir la imagen: ${error.message}`);
-    const { data } = supabase.storage.from('images').getPublicUrl(path);
-    return data.publicUrl;
+    return uploadOptimizedImage(supabase, file, `editions/${name}-${Date.now()}`);
 }
 
 function parseEditionForm(formData: FormData) {

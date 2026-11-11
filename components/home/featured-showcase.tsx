@@ -114,6 +114,7 @@ export function FeaturedShowcase() {
                   alt={f.title}
                   fill
                   sizes="33vw"
+                  variant="sm"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />

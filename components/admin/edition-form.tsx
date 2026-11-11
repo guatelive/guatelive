@@ -202,7 +202,7 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
                         <h2 className="font-serif text-lg text-[#0A0A0A]">Foto de portada</h2>
                         {coverPreview && (
                             <div className="relative h-40 w-64 overflow-hidden rounded-md">
-                                <Image src={coverPreview} alt="" fill className="object-cover" />
+                                <Image src={coverPreview} alt="" fill unoptimized className="object-cover" />
                                 <button
                                     type="button"
                                     onClick={handleRemoveCover}
@@ -235,7 +235,7 @@ export function EditionForm({ mode, edition, nextNumber, action }: Props) {
                                     <div className="relative h-[130px] w-full overflow-hidden rounded-lg border border-[#E5E5E5] bg-[#FAFAFA]">
                                         {stripPhotos[i] ? (
                                             <>
-                                                <Image src={stripPhotos[i]!} alt="" fill className="object-cover" />
+                                                <Image src={stripPhotos[i]!} alt="" fill unoptimized className="object-cover" />
                                                 <button
                                                     type="button"
                                                     onClick={() => clearStripPhoto(i)}
