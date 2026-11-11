@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { storagePathsFor, uploadOptimizedImage } from '@/lib/images/upload';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { activitySchema } from '@/lib/validations/activity';
@@ -32,19 +33,13 @@ async function ensureUniqueSlug(
     }
 }
 
-function extractStoragePath(imageUrl: string): string | null {
-    const marker = '/storage/v1/object/public/images/';
-    const idx = imageUrl.indexOf(marker);
-    return idx === -1 ? null : imageUrl.slice(idx + marker.length);
-}
-
 async function deleteActivityImage(supabase: SupabaseClient, imageUrl: string | null) {
     if (!imageUrl) return;
     await deleteActivityImages(supabase, [imageUrl]);
 }
 
 async function deleteActivityImages(supabase: SupabaseClient, imageUrls: string[]) {
-    const paths = imageUrls.map(extractStoragePath).filter((p): p is string => !!p);
+    const paths = imageUrls.flatMap(storagePathsFor);
     if (paths.length === 0) return;
     const { data, error } = await supabase.storage.from('images').remove(paths);
     if (error) {
@@ -58,13 +53,8 @@ async function deleteActivityImages(supabase: SupabaseClient, imageUrls: string[
 }
 
 async function uploadActivityImage(supabase: SupabaseClient, file: File, slug: string, index?: number): Promise<string> {
-    const ext = file.name.split('.').pop() || 'jpg';
     const suffix = index === undefined ? '' : `-${index}`;
-    const path = `activities/${slug}-${Date.now()}${suffix}.${ext}`;
-    const { error } = await supabase.storage.from('images').upload(path, file);
-    if (error) throw new Error(`No se pudo subir la imagen: ${error.message}`);
-    const { data } = supabase.storage.from('images').getPublicUrl(path);
-    return data.publicUrl;
+    return uploadOptimizedImage(supabase, file, `activities/${slug}-${Date.now()}${suffix}`);
 }
 
 function parseJsonArrayField(formData: FormData, key: string): unknown {

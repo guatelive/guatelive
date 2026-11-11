@@ -223,7 +223,7 @@ export function EditionItemsEditor({ defaultValue = [], onItemsChange }: Props) 
                                         item.photo_orientation === 'landscape' ? 'h-24 w-32' : 'h-28 w-[75px]'
                                     }`}
                                 >
-                                    <Image src={item.photo_preview ?? item.photo_url!} alt="" fill className="object-cover" />
+                                    <Image src={item.photo_preview ?? item.photo_url!} alt="" fill unoptimized className="object-cover" />
                                     <button
                                         type="button"
                                         onClick={() => removeItemPhoto(i)}

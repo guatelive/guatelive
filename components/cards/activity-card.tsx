@@ -81,6 +81,7 @@ export function ActivityCard({ activity, width = '100%' }: { activity: DbActivit
             alt={activity.title}
             fill
             sizes="(max-width: 640px) 90vw, 400px"
+            variant="sm"
             className="object-cover"
           />
         ) : (

@@ -107,6 +107,7 @@ export function EventExplorer({ events, initialIndex, onClose }: Props) {
                   src={event.image_url}
                   alt={event.title}
                   fill
+                  sizes="100vw"
                   priority={i === initialIndex}
                   className="object-cover"
                 />

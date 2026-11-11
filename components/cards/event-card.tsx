@@ -58,6 +58,7 @@ export function EventCard({ event, titleFont = 'serif' }: { event: DbEvent; titl
             alt={event.title}
             fill
             sizes="(max-width: 640px) 85vw, 200px"
+            variant="sm"
             className="object-cover"
           />
         ) : (
