@@ -67,6 +67,8 @@ scripts/bank-sources/.debug/
 !scripts/check-place-status.ts
 !scripts/event-sources/
 !scripts/event-sources/**
+# Migración de fotos viejas de Storage a webp pre-optimizado (límite de Image Optimization de Vercel)
+!scripts/migrate-images-to-webp.ts
 
 # GuateLive — SQL sueltas de mantenimiento, corridas a mano, no versionadas como migración
 supabase/scripts/
