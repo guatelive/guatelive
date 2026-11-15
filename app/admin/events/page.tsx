@@ -2,7 +2,9 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { AdminSortChips } from '@/components/admin/admin-sort-chips';
+import { ConfirmDeleteButton } from '@/components/admin/confirm-delete-button';
 import { showtimesLabel } from '@/lib/event-showtimes';
+import { guatNow } from '@/lib/hours-utils';
 import { deleteEvent } from './actions';
 
 export const metadata = { title: 'Eventos — Admin' };
@@ -17,6 +19,8 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
     { key: 'updated_desc', label: 'Recién editados' },
 ];
 
+type Tab = 'upcoming' | 'past';
+
 function sortParams(key: SortKey): { column: string; ascending: boolean } {
     if (key === 'date_asc')     return { column: 'date_start',  ascending: true  };
     if (key === 'created_desc') return { column: 'created_at',  ascending: false };
@@ -28,20 +32,35 @@ function sortParams(key: SortKey): { column: string; ascending: boolean } {
 export default async function AdminEventsPage({
     searchParams,
 }: {
-    searchParams: Promise<{ sort?: string }>;
+    searchParams: Promise<{ sort?: string; tab?: string }>;
 }) {
-    const { sort = 'date_desc' } = await searchParams;
+    const { sort = 'date_desc', tab: tabParam } = await searchParams;
     const activeSort = (SORT_OPTIONS.some(o => o.key === sort) ? sort : 'date_desc') as SortKey;
+    const tab: Tab = tabParam === 'past' ? 'past' : 'upcoming';
     const { column, ascending } = sortParams(activeSort);
 
+    // Mismo criterio que los listados públicos: un evento es "pasado" cuando ya pasó su
+    // ÚLTIMA función (date_last, columna generada), no la primera — una obra con 4
+    // funciones sigue en "Próximos" hasta la última.
+    const now = guatNow().toISOString();
+
     const supabase = await createClient();
-    const { data: events } = await supabase
+    let query = supabase
         .from('events')
-        .select('id, title, category, zone, date_start, extra_dates, status, sponsored, source, contact_link')
+        .select('id, title, category, zone, date_start, extra_dates, status, sponsored, source, contact_link');
+    query = tab === 'past' ? query.lt('date_last', now) : query.gte('date_last', now);
+    const [{ data: events }, { count: upcomingCount }, { count: pastCount }] = await Promise.all([
         // nullsFirst: false — sin esto, en "Recién publicados" los borradores salen primero.
-        .order(column, { ascending, nullsFirst: false });
+        query.order(column, { ascending, nullsFirst: false }),
+        supabase.from('events').select('id', { count: 'exact', head: true }).gte('date_last', now),
+        supabase.from('events').select('id', { count: 'exact', head: true }).lt('date_last', now),
+    ]);
 
     const rows = events ?? [];
+    const tabs: { key: Tab; label: string; count: number | null }[] = [
+        { key: 'upcoming', label: 'Próximos', count: upcomingCount },
+        { key: 'past', label: 'Pasados', count: pastCount },
+    ];
 
     return (
         <div>
@@ -52,8 +71,25 @@ export default async function AdminEventsPage({
                 </Link>
             </div>
 
+            <div className="mb-4 flex gap-6 border-b border-[#E5E5E5]">
+                {tabs.map(t => (
+                    <Link
+                        key={t.key}
+                        href={`?${new URLSearchParams({ tab: t.key, sort: activeSort })}`}
+                        className={`-mb-px border-b-2 pb-2 text-sm font-medium transition-colors ${
+                            tab === t.key
+                                ? 'border-[#0A0A0A] text-[#0A0A0A]'
+                                : 'border-transparent text-[#666666] hover:text-[#0A0A0A]'
+                        }`}
+                    >
+                        {t.label}
+                        {t.count !== null && <span className="ml-1.5 text-xs text-[#999999]">{t.count}</span>}
+                    </Link>
+                ))}
+            </div>
+
             <div className="mb-4">
-                <AdminSortChips options={SORT_OPTIONS} active={activeSort} />
+                <AdminSortChips options={SORT_OPTIONS} active={activeSort} params={{ tab }} />
             </div>
 
             <div className="overflow-hidden rounded-lg border border-[#E5E5E5] bg-white">
@@ -132,9 +168,7 @@ export default async function AdminEventsPage({
                                         Editar
                                     </Link>
                                     <form action={deleteEvent.bind(null, event.id)} className="inline">
-                                        <button type="submit" className="text-[#E11D2E] hover:underline">
-                                            Borrar
-                                        </button>
+                                        <ConfirmDeleteButton />
                                     </form>
                                 </td>
                             </tr>
@@ -142,7 +176,7 @@ export default async function AdminEventsPage({
                         {rows.length === 0 && (
                             <tr>
                                 <td colSpan={7} className="px-4 py-8 text-center text-[#666666]">
-                                    No hay eventos todavía.
+                                    {tab === 'past' ? 'No hay eventos pasados.' : 'No hay eventos próximos.'}
                                 </td>
                             </tr>
                         )}
